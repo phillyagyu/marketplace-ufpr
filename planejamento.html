@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tema 11: Marketplace no Campus — Plano de Execução</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        bg: '#101216',
+                        panel: '#181b20',
+                        panelHover: '#1f232a',
+                        border: '#282c34',
+                        accent: '#ffdd33',
+                        accentMuted: '#c7aa22',
+                        success: '#4ade80',
+                        info: '#60a5fa',
+                        purple: '#c084fc',
+                        orange: '#fb923c',
+                        danger: '#f87171'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #101216;
+            color: #e4e4ef;
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #101216;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #282c34;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3b404c;
+        }
+        .checkbox-custom {
+            appearance: none;
+            width: 1.25rem;
+            height: 1.25rem;
+            border: 2px solid #525866;
+            border-radius: 0.35rem;
+            background-color: #101216;
+            cursor: pointer;
+            display: inline-grid;
+            place-content: center;
+            transition: all 0.15s ease;
+        }
+        .checkbox-custom:checked {
+            background-color: #ffdd33;
+            border-color: #ffdd33;
+        }
+        .checkbox-custom:checked::before {
+            content: "";
+            width: 0.65rem;
+            height: 0.4rem;
+            border-left: 2.5px solid #101216;
+            border-bottom: 2.5px solid #101216;
+            transform: rotate(-45deg) translate(1px, -1px);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-accent selection:text-bg">
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 hidden bg-panel border border-accent text-white px-4 py-3 rounded-lg shadow-2xl flex items-center gap-3 transition-all duration-300">
+        <span class="w-2.5 h-2.5 rounded-full bg-accent animate-ping"></span>
+        <span id="toast-msg" class="text-sm font-medium">Progresso salvo!</span>
+    </div>
+
+    <!-- Modal for Reset Confirmation -->
+    <div id="reset-modal" class="fixed inset-0 z-50 hidden bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-panel border border-border rounded-xl max-w-md w-full p-6 shadow-2xl">
+            <h3 class="text-lg font-bold text-white mb-2">Restaurar plano original?</h3>
+            <p class="text-sm text-gray-400 mb-6">Isso limpará todas as marcações de tarefas concluídas, alterações de responsáveis e anotações salvas neste navegador.</p>
+            <div class="flex justify-end gap-3">
+                <button onclick="closeResetModal()" class="px-4 py-2 rounded-lg text-sm font-medium bg-gray-800 hover:bg-gray-700 text-gray-200 transition">Cancelar</button>
+                <button onclick="confirmReset()" class="px-4 py-2 rounded-lg text-sm font-bold bg-danger hover:bg-red-500 text-gray-950 transition">Sim, restaurar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="border-b border-border bg-panel/80 backdrop-blur sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div>
+                    <div class="flex flex-wrap items-center gap-2 mb-1">
+                        <span class="px-2.5 py-0.5 text-xs font-mono font-semibold bg-accent/15 text-accent border border-accent/30 rounded-full">TEMA 11</span>
+                        <span class="px-2.5 py-0.5 text-xs font-mono bg-blue-500/15 text-blue-400 border border-blue-500/30 rounded-full">04/11 a 19/11 (15 dias)</span>
+                        <span class="text-xs text-gray-400 font-mono">Design e Arquitetura de Software</span>
+                    </div>
+                    <h1 class="text-xl sm:text-2xl font-bold text-white tracking-tight">Marketplace de Serviços no Campus</h1>
+                    <p class="text-xs sm:text-sm text-gray-400 mt-0.5">Oferta, solicitação, disponibilidade, contratação, conclusão e avaliações na comunidade acadêmica</p>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-wrap items-center gap-2">
+                    <button onclick="exportState()" class="px-3 py-1.5 rounded-lg text-xs font-mono font-medium bg-gray-800 hover:bg-gray-700 text-gray-200 border border-border transition flex items-center gap-1.5">
+                        <svg class="w-3.5 h-3.5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                        Exportar JSON
+                    </button>
+                    <label class="px-3 py-1.5 rounded-lg text-xs font-mono font-medium bg-gray-800 hover:bg-gray-700 text-gray-200 border border-border transition flex items-center gap-1.5 cursor-pointer">
+                        <svg class="w-3.5 h-3.5 text-info" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                        Importar JSON
+                        <input type="file" id="import-input" accept=".json" class="hidden" onchange="importState(event)">
+                    </label>
+                    <button onclick="openResetModal()" class="px-3 py-1.5 rounded-lg text-xs font-mono font-medium bg-red-950/40 hover:bg-red-900/50 text-red-300 border border-red-800/50 transition">
+                        Resetar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full space-y-6">
+
+        <!-- Top Metrics & Evaluation Weights -->
+        <section class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+            <!-- Overall Progress & Team Filter -->
+            <div class="lg:col-span-5 bg-panel border border-border rounded-xl p-5 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-mono uppercase tracking-wider text-gray-400">Progresso Geral das Tarefas</span>
+                        <span id="overall-count" class="text-xs font-mono text-gray-400">0/0 concluídas</span>
+                    </div>
+                    <div class="flex items-baseline gap-3 mb-3">
+                        <span id="overall-percent" class="text-4xl font-bold font-mono text-accent">0%</span>
+                        <span id="weighted-score" class="text-xs font-mono px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">Nota Ponderada Estimada: 0%</span>
+                    </div>
+                    <div class="w-full h-2.5 bg-gray-800 rounded-full overflow-hidden mb-5">
+                        <div id="overall-bar" class="h-full bg-accent transition-all duration-500 rounded-full" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Team Member Filter Pills -->
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-mono uppercase tracking-wider text-gray-400">Filtrar por Integrante (Clique para filtrar)</span>
+                        <button onclick="setMemberFilter('ALL')" id="clear-filter-btn" class="text-xs text-accent hover:underline hidden">Mostrar todos</button>
+                    </div>
+                    <div id="member-cards" class="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                        <!-- Rendered by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Evaluation Criteria Breakdown (100% Weight from PDF) -->
+            <div class="lg:col-span-7 bg-panel border border-border rounded-xl p-5">
+                <div class="flex items-center justify-between mb-3">
+                    <h2 class="text-xs font-mono uppercase tracking-wider text-gray-400">Critérios de Avaliação do Edital (Pesos)</h2>
+                    <span class="text-xs text-gray-400">Foco: Coerência entre Requisitos → Arquitetura → Código</span>
+                </div>
+                <div id="criteria-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <!-- Rendered by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Navigation Tabs -->
+        <nav class="flex flex-wrap gap-2 border-b border-border pb-3">
+            <button onclick="switchTab('roadmap')" id="tab-roadmap" class="px-4 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-2 bg-accent text-gray-950">
+                <span>1. Cronograma & Tarefas (04/11–19/11)</span>
+            </button>
+            <button onclick="switchTab('blueprint')" id="tab-blueprint" class="px-4 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-2 bg-panel text-gray-300 hover:bg-panelHover border border-border">
+                <span>2. Guia Técnico Prático (Tema 11)</span>
+            </button>
+            <button onclick="switchTab('consistency')" id="tab-consistency" class="px-4 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-2 bg-panel text-gray-300 hover:bg-panelHover border border-border">
+                <span>3. Validador de Consistência & Git</span>
+            </button>
+            <button onclick="switchTab('defense')" id="tab-defense" class="px-4 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-2 bg-panel text-gray-300 hover:bg-panelHover border border-border">
+                <span>4. Simulador de Defesa & Cenários</span>
+            </button>
+        </nav>
+
+        <!-- TAB 1: ROADMAP & TASKS -->
+        <section id="view-roadmap" class="space-y-6">
+            <!-- Quick Toolbar -->
+            <div class="bg-panel/60 border border-border rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <span class="w-3 h-3 rounded-full bg-accent"></span>
+                    <p class="text-xs sm:text-sm text-gray-300">
+                        <strong>Dica de Gestão:</strong> Você pode trocar o responsável de qualquer tarefa clicando no seletor de nome ao lado direito do item.
+                    </p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <label class="text-xs font-mono text-gray-400">Status:</label>
+                    <select id="status-filter" onchange="renderRoadmap()" class="bg-bg border border-border rounded-lg px-2.5 py-1.5 text-xs text-gray-200 focus:outline-none focus:border-accent">
+                        <option value="ALL">Todas as tarefas</option>
+                        <option value="PENDING">Apenas pendentes</option>
+                        <option value="DONE">Apenas concluídas</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Sprints Container -->
+            <div id="sprints-container" class="space-y-6">
+                <!-- Populated by JS -->
+            </div>
+
+            <!-- Group Shared Scratchpad / Notes -->
+            <div class="bg-panel border border-border rounded-xl p-5">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                        <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                        Bloco de Notas do Grupo (Links, Reuniões, Decisões Rápidas)
+                    </h3>
+                    <span class="text-xs font-mono text-gray-400">Salvo automaticamente</span>
+                </div>
+                <textarea id="team-notes" oninput="saveNotes(this.value)" rows="4" placeholder="Cole aqui o link do repositório GitHub, link do Figma/PlantUML, horários das dailies ou dúvidas para o professor..." class="w-full bg-bg border border-border rounded-lg p-3 text-sm text-gray-200 font-mono focus:outline-none focus:border-accent"></textarea>
+            </div>
+        </section>
+
+        <!-- TAB 2: TECHNICAL BLUEPRINT FOR TEMA 11 -->
+        <section id="view-blueprint" class="hidden space-y-6">
+            <div class="bg-blue-950/30 border border-blue-700/40 rounded-xl p-4">
+                <h3 class="text-sm font-bold text-blue-300 mb-1">Por que esta aba existe?</h3>
+                <p class="text-xs sm:text-sm text-gray-300">
+                    O edital exige que as escolhas não sejam genéricas. Abaixo está a <strong>modelagem de referência completa pensada especificamente para o Tema 11 (Marketplace de Serviços no Campus)</strong> para acelerar o trabalho de Mateus, Helen, Phillip e Eloiza.
+                </p>
+            </div>
+
+            <!-- 1. ASRs (Requisitos Arquiteturalmente Significativos) -->
+            <div class="bg-panel border border-border rounded-xl p-5 space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-2 border-b border-border pb-3">
+                    <div>
+                        <span class="text-xs font-mono text-accent uppercase">Seção 1 do Edital (15%)</span>
+                        <h3 class="text-lg font-bold text-white">3 ASRs Concretos para o Marketplace no Campus</h3>
+                    </div>
+                    <span class="text-xs font-mono bg-gray-800 px-2.5 py-1 rounded text-gray-300">Evite frases vagas como "o sistema deve ser rápido"</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-bg border border-border rounded-lg p-4">
+                        <div class="text-xs font-mono text-accent mb-1">ASR-01 • Concorrência e Integridade</div>
+                        <h4 class="font-bold text-white text-sm mb-2">Prevenção de Dupla Contratação de Horário (Double-Booking)</h4>
+                        <p class="text-xs text-gray-300 leading-relaxed mb-3">
+                            Quando dois estudantes tentam contratar o mesmo slot de horário de um prestador (ex.: monitoria de Cálculo às 14h de sexta) simultaneamente, o sistema deve garantir atomicidade para que apenas 1 contratação seja confirmada e a outra receba erro de indisponibilidade.
+                        </p>
+                        <div class="text-[11px] font-mono text-gray-400 bg-panel p-2 rounded border border-border">
+                            <strong>Impacto Arquitetural:</strong> Exige controle transacional no banco relacional e validação de estado dentro da entidade de domínio (<code class="text-accent">AgendaDisponibilidade</code> / <code class="text-accent">Contratacao</code>).
+                        </div>
+                    </div>
+
+                    <div class="bg-bg border border-border rounded-lg p-4">
+                        <div class="text-xs font-mono text-info mb-1">ASR-02 • Modificabilidade / Interoperabilidade</div>
+                        <h4 class="font-bold text-white text-sm mb-2">Desacoplamento de Serviços Externos (Notificação e Pagamento/Vínculo)</h4>
+                        <p class="text-xs text-gray-300 leading-relaxed mb-3">
+                            O mecanismo de notificação (E-mail institucional, Telegram ou WhatsApp) e validação de vínculo acadêmico pode mudar sem que nenhuma linha de código das regras de negócio de Contratação ou Avaliação seja alterada.
+                        </p>
+                        <div class="text-[11px] font-mono text-gray-400 bg-panel p-2 rounded border border-border">
+                            <strong>Impacto Arquitetural:</strong> Aplicação do princípio de Inversão de Dependência (DIP) e padrão Ports & Adapters (Interfaces no domínio, implementações na camada de infraestrutura).
+                        </div>
+                    </div>
+
+                    <div class="bg-bg border border-border rounded-lg p-4">
+                        <div class="text-xs font-mono text-purple mb-1">ASR-03 • Testabilidade Isolada</div>
+                        <h4 class="font-bold text-white text-sm mb-2">Execução da Fatia Vertical sem Infraestrutura Real</h4>
+                        <p class="text-xs text-gray-300 leading-relaxed mb-3">
+                            As regras críticas do marketplace (impedir auto-contratação, exigir serviço "CONCLUÍDO" antes de permitir avaliação, bloquear horário) devem ser 100% testáveis via testes automatizados em menos de 2 segundos usando dublês/fakes.
+                        </p>
+                        <div class="text-[11px] font-mono text-gray-400 bg-panel p-2 rounded border border-border">
+                            <strong>Impacto Arquitetural:</strong> Separação estrita entre Domínio/Aplicação e Infraestrutura, permitindo injetar <code class="text-accent">NotificadorFake</code> e repositório em memória ou SQLite nos testes.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Fatia Vertical do Protótipo + Dependência Externa -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-panel border border-border rounded-xl p-5 space-y-4">
+                    <div class="border-b border-border pb-3">
+                        <span class="text-xs font-mono text-success uppercase">Seções 7 e 8 do Edital (20%)</span>
+                        <h3 class="text-lg font-bold text-white">Escopo Exato do Protótipo (Fatia Vertical)</h3>
+                        <p class="text-xs text-gray-400">Não faça CRUD de tudo! Implemente apenas este fluxo de ponta a ponta com extrema coerência:</p>
+                    </div>
+
+                    <div class="space-y-3 text-xs sm:text-sm">
+                        <div class="p-3 bg-bg rounded-lg border border-border flex gap-3">
+                            <span class="font-mono font-bold text-accent">1.</span>
+                            <div>
+                                <strong class="text-white">Caso de Uso que Modifica Estado:</strong>
+                                <p class="text-gray-300 font-mono text-xs mt-0.5">SolicitarContratacaoUseCase.executar(solicitanteId, ofertaServicoId, slotHorarioId)</p>
+                                <p class="text-gray-400 text-xs mt-1">Verifica se o solicitante não é o próprio prestador, valida se o slot está <code class="text-emerald-400">DISPONIVEL</code>, muda status do slot para <code class="text-amber-400">RESERVADO</code>, cria a <code class="text-white">Contratacao</code> com estado <code class="text-info">CONFIRMADA</code>, persiste no banco e dispara notificação.</p>
+                            </div>
+                        </div>
+
+                        <div class="p-3 bg-bg rounded-lg border border-border flex gap-3">
+                            <span class="font-mono font-bold text-accent">2.</span>
+                            <div>
+                                <strong class="text-white">Consulta (Query):</strong>
+                                <p class="text-gray-300 font-mono text-xs mt-0.5">ConsultarServicosDisponiveisUseCase / ListarContratacoesPorUsuario</p>
+                                <p class="text-gray-400 text-xs mt-1">Retorna as ofertas de serviços no campus (ex.: Revisão ABNT, Aula de Cálculo, Formatação de Notebook) com seus respectivos horários livres e nota média do prestador.</p>
+                            </div>
+                        </div>
+
+                        <div class="p-3 bg-bg rounded-lg border border-border flex gap-3">
+                            <span class="font-mono font-bold text-accent">3.</span>
+                            <div>
+                                <strong class="text-white">Fluxos Alternativos / Erros de Domínio:</strong>
+                                <ul class="list-disc list-inside text-gray-400 text-xs mt-1 space-y-1">
+                                    <li><code class="text-red-400">HorarioIndisponivelException</code>: Tentativa de contratar um horário já reservado.</li>
+                                    <li><code class="text-red-400">AutoContratacaoNaoPermitidaException</code>: Prestador tentando contratar o próprio serviço.</li>
+                                    <li><code class="text-red-400">AvaliacaoInvalidaException</code>: Tentativa de avaliar um serviço que ainda não está <code class="text-emerald-400">CONCLUIDO</code>.</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="p-3 bg-bg rounded-lg border border-border flex gap-3">
+                            <span class="font-mono font-bold text-accent">4.</span>
+                            <div>
+                                <strong class="text-white">Dependência Externa Substituível (Interface):</strong>
+                                <p class="text-gray-400 text-xs mt-1">Interface <code class="text-accent">NotificadorServico</code> implementada por <code class="text-info">EmailAcademicoNotificador</code> e <code class="text-purple">NotificadorFake</code> (para testes e demonstração local).</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Sugestão de Classes de Domínio (GRASP & SOLID) e 3 ADRs -->
+                <div class="bg-panel border border-border rounded-xl p-5 space-y-4">
+                    <div class="border-b border-border pb-3">
+                        <span class="text-xs font-mono text-purple uppercase">Seções 2 e 6 do Edital (30%)</span>
+                        <h3 class="text-lg font-bold text-white">Classes de Domínio & Os 3 ADRs Obrigatórios</h3>
+                    </div>
+
+                    <div>
+                        <h4 class="text-xs font-mono uppercase text-gray-400 mb-2">Conceitos Principais do Domínio (GRASP / SOLID)</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                            <div class="bg-bg p-2.5 rounded border border-border">
+                                <strong class="text-accent font-mono">MembroComunidade</strong>
+                                <p class="text-gray-400 mt-0.5">Atua como Prestador e/ou Solicitante (Matrícula/SIAPE, Nome, Email, Reputação).</p>
+                            </div>
+                            <div class="bg-bg p-2.5 rounded border border-border">
+                                <strong class="text-accent font-mono">ServicoOferecido</strong>
+                                <p class="text-gray-400 mt-0.5">Information Expert sobre preço/hora, categoria e lista de <code class="text-gray-200">SlotDisponibilidade</code>.</p>
+                            </div>
+                            <div class="bg-bg p-2.5 rounded border border-border">
+                                <strong class="text-accent font-mono">Contratacao</strong>
+                                <p class="text-gray-400 mt-0.5">Controla ciclo de vida (<code class="text-gray-200">PENDENTE → CONFIRMADA → CONCLUIDA → CANCELADA</code>).</p>
+                            </div>
+                            <div class="bg-bg p-2.5 rounded border border-border">
+                                <strong class="text-accent font-mono">Avaliacao</strong>
+                                <p class="text-gray-400 mt-0.5">Nota (1 a 5) e comentário vinculados a uma <code class="text-gray-200">Contratacao</code> concluída.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="text-xs font-mono uppercase text-gray-400 mb-2">Os 3 ADRs Recomendados (<code class="text-gray-300">docs/adr/</code>)</h4>
+                        <div class="space-y-2 text-xs">
+                            <div class="bg-bg p-2.5 rounded border border-border">
+                                <span class="font-mono font-bold text-info">ADR-001:</span> <strong class="text-white">Adoção de Monólito Modular com Arquitetura em Camadas Centrada no Domínio (Hexagonal/Clean) em vez de Microsserviços.</strong>
+                                <p class="text-gray-400 mt-0.5">Justificativa: Equipe de 4 pessoas, prazo de 15 dias, necessidade de transações ACID entre Contratação e Agenda sem overhead de rede distribuída.</p>
+                            </div>
+                            <div class="bg-bg p-2.5 rounded border border-border">
+                                <span class="font-mono font-bold text-info">ADR-002:</span> <strong class="text-white">Padrão Ports & Adapters (DIP) para Isolamento do Serviço de Notificação e Pagamento/Validação.</strong>
+                                <p class="text-gray-400 mt-0.5">Justificativa: Atende ao ASR-02 e ASR-03, permitindo testes rápidos com <code class="text-accent">NotificadorFake</code> e futura troca de E-mail para WhatsApp.</p>
+                            </div>
+                            <div class="bg-bg p-2.5 rounded border border-border">
+                                <span class="font-mono font-bold text-info">ADR-003:</span> <strong class="text-white">Controle Transacional e Máquina de Estados na Entidade para Reservas de Horário e Conclusão.</strong>
+                                <p class="text-gray-400 mt-0.5">Justificativa: Atende ao ASR-01 evitando conflito de agenda e garante que avaliações só ocorram após conclusão formal do serviço.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: CONSISTENCY CHECKER & GIT STRUCTURE -->
+        <section id="view-consistency" class="hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Consistency Checklist -->
+                <div class="lg:col-span-7 bg-panel border border-border rounded-xl p-5 space-y-4">
+                    <div>
+                        <span class="text-xs font-mono text-accent uppercase">Auditoria de Coerência (Peso Crítico na Nota)</span>
+                        <h3 class="text-lg font-bold text-white">Checklist de Consistência entre Modelos e Código</h3>
+                        <p class="text-xs text-gray-400 mt-1">O professor destacou no edital: <em>"uma operação utilizada no Diagrama de Sequência deve fazer sentido em relação às responsabilidades no Diagrama de Classes e no código"</em>.</p>
+                    </div>
+
+                    <div id="consistency-list" class="space-y-2.5">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Repository Structure -->
+                <div class="lg:col-span-5 bg-panel border border-border rounded-xl p-5 flex flex-col justify-between space-y-4">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-mono text-info uppercase">Seção 10 do Edital</span>
+                            <button onclick="copyRepoStructure()" class="px-2.5 py-1 bg-gray-800 hover:bg-gray-700 text-xs font-mono text-accent rounded border border-border transition">
+                                Copiar estrutura
+                            </button>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-3">Estrutura Obrigatória do Repositório Git</h3>
+                        <pre id="repo-tree" class="bg-bg border border-border rounded-lg p-4 text-xs font-mono text-gray-300 overflow-x-auto leading-relaxed">campus-service-marketplace/
+├── README.md                  # Instruções de build, testes e execução
+├── docs/
+│   ├── requisitos.md          # Contexto, Atores, 6-10 RFs, Restrições, 3 ASRs
+│   ├── dominio-design.md      # Conceitos, Responsabilidades, GRASP e SOLID
+│   ├── arquitetura.md         # Componentes, Interfaces, Persistência e Evolução
+│   ├── tradeoffs.md           # Comparativo: Monólito Simples vs Modular vs Microsserviços
+│   └── adr/
+│       ├── ADR-001-estilo-arquitetural.md
+│       ├── ADR-002-integracao-notificacao.md
+│       └── ADR-003-controle-disponibilidade.md
+├── diagramas/
+│   ├── classes.puml           # (e .png/.svg exportado)
+│   ├── sequencia.puml         # Fluxo: Solicitar Contratação + Notificar
+│   ├── comunicacao.puml       # Colaboração entre objetos no caso de uso
+│   └── componentes.puml       # Organização em pacotes/camadas e dependências
+└── src/
+    ├── main/
+    │   ├── domain/            # Entidades, Value Objects, Exceptions, Ports (Interfaces)
+    │   ├── application/       # UseCases (SolicitarContratacao, ConsultarServicos)
+    │   ├── infrastructure/    # Repositories (SQLite/Postgres), EmailNotificador, NotificadorFake
+    │   └── presentation/      # CLI ou REST Controller enxuto
+    └── test/                  # Testes unitários e de integração da fatia vertical</pre>
+                    </div>
+
+                    <div class="bg-amber-950/30 border border-amber-700/40 rounded-lg p-3 text-xs text-amber-200">
+                        <strong>Atenção ao que NÃO fazer (Seção 11):</strong> Não percam tempo criando tela de login com JWT complexo, painel admin ou 15 telas de CRUD. O protótipo pode ser uma API REST enxuta ou CLI interativa acompanhada de uma suíte de testes automatizados impecável.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 4: DEFENSE SIMULATOR & EVOLUTION SCENARIOS -->
+        <section id="view-defense" class="hidden space-y-6">
+            <div class="bg-panel border border-border rounded-xl p-5">
+                <span class="text-xs font-mono text-accent uppercase">Seções 9 e 13 do Edital</span>
+                <h3 class="text-lg font-bold text-white">Simulador de Perguntas da Defesa & Mudanças de Cenário</h3>
+                <p class="text-xs sm:text-sm text-gray-400 mt-1">
+                    Na apresentação final (19/11), o professor sorteará ou perguntará sobre mudanças arquiteturais. Clique em cada cenário abaixo para ver a resposta técnica alinhada à arquitetura do grupo:
+                </p>
+
+                <div class="mt-5 space-y-3" id="defense-accordions">
+                    <!-- Scenario 1 -->
+                    <div class="bg-bg border border-border rounded-lg overflow-hidden">
+                        <button onclick="toggleDefense(1)" class="w-full px-4 py-3.5 text-left flex items-center justify-between hover:bg-panelHover transition">
+                            <div class="flex items-center gap-3">
+                                <span class="px-2 py-0.5 text-xs font-mono bg-purple-500/20 text-purple-300 rounded">Cenário 1</span>
+                                <span class="font-semibold text-sm text-white">"E se precisarmos substituir o envio de E-mail pelo WhatsApp ou Push Notification?"</span>
+                            </div>
+                            <span class="text-accent font-mono text-sm" id="def-icon-1">+</span>
+                        </button>
+                        <div id="def-body-1" class="hidden px-4 pb-4 pt-2 border-t border-border text-xs sm:text-sm text-gray-300 space-y-2">
+                            <p><strong class="text-emerald-400">O que permanece inalterado:</strong> Todas as entidades de domínio (<code class="font-mono text-white">Contratacao</code>, <code class="font-mono text-white">ServicoOferecido</code>), o caso de uso <code class="font-mono text-white">SolicitarContratacaoUseCase</code>, os controladores e o banco de dados não sofrem nenhuma alteração.</p>
+                            <p><strong class="text-amber-400">O que é afetado:</strong> Apenas a camada de Infraestrutura. Criamos uma nova classe <code class="font-mono text-white">WhatsAppNotificadorAdapter</code> que implementa a interface <code class="font-mono text-accent">NotificadorServico</code> e trocamos a injeção de dependência no arquivo de configuração/main.</p>
+                            <p><strong class="text-info">Princípio que ajudou:</strong> Dependency Inversion Principle (DIP - SOLID) e padrão Adapter documentado no ADR-002.</p>
+                        </div>
+                    </div>
+
+                    <!-- Scenario 2 -->
+                    <div class="bg-bg border border-border rounded-lg overflow-hidden">
+                        <button onclick="toggleDefense(2)" class="w-full px-4 py-3.5 text-left flex items-center justify-between hover:bg-panelHover transition">
+                            <div class="flex items-center gap-3">
+                                <span class="px-2 py-0.5 text-xs font-mono bg-blue-500/20 text-blue-300 rounded">Cenário 2</span>
+                                <span class="font-semibold text-sm text-white">"E se trocarmos o banco de dados atual (ex: SQLite/Memória) por PostgreSQL ou MongoDB?"</span>
+                            </div>
+                            <span class="text-accent font-mono text-sm" id="def-icon-2">+</span>
+                        </button>
+                        <div id="def-body-2" class="hidden px-4 pb-4 pt-2 border-t border-border text-xs sm:text-sm text-gray-300 space-y-2">
+                            <p><strong class="text-emerald-400">O que permanece inalterado:</strong> As regras de negócio de disponibilidade, validação de conflito de agenda, cálculo de reputação e casos de uso continuam intactos porque dependem apenas das interfaces <code class="font-mono text-accent">ContratacaoRepository</code> e <code class="font-mono text-accent">ServicoRepository</code>.</p>
+                            <p><strong class="text-amber-400">O que é afetado:</strong> A implementação concreta do repositório dentro de <code class="font-mono text-white">src/infrastructure/persistence/</code> e os scripts de migração/conexão.</p>
+                            <p><strong class="text-info">Cuidado Arquitetural (Trade-off):</strong> Se migrarmos para um banco NoSQL sem transação multi-documento, precisaríamos garantir que o <code class="font-mono text-white">SlotDisponibilidade</code> seja um subdocumento embutido dentro de <code class="font-mono text-white">ServicoOferecido</code> para manter a atualização atômica exigida pelo ASR-01.</p>
+                        </div>
+                    </div>
+
+                    <!-- Scenario 3 -->
+                    <div class="bg-bg border border-border rounded-lg overflow-hidden">
+                        <button onclick="toggleDefense(3)" class="w-full px-4 py-3.5 text-left flex items-center justify-between hover:bg-panelHover transition">
+                            <div class="flex items-center gap-3">
+                                <span class="px-2 py-0.5 text-xs font-mono bg-emerald-500/20 text-emerald-300 rounded">Cenário 3</span>
+                                <span class="font-semibold text-sm text-white">"E se a universidade decidir lançar um Aplicativo Mobile além da interface atual?"</span>
+                            </div>
+                            <span class="text-accent font-mono text-sm" id="def-icon-3">+</span>
+                        </button>
+                        <div id="def-body-3" class="hidden px-4 pb-4 pt-2 border-t border-border text-xs sm:text-sm text-gray-300 space-y-2">
+                            <p><strong class="text-emerald-400">O que permanece inalterado:</strong> Toda a camada de Aplicação (Use Cases), Domínio e Persistência. Como não colocamos regra de negócio na interface gráfica ou no Controller (evitamos Smart UI), os casos de uso já expõem DTOs prontos para consumo.</p>
+                            <p><strong class="text-amber-400">O que é afetado:</strong> Apenas a camada de Apresentação/Entrada, que expõe os endpoints REST JSON consumidos tanto pela Web quanto pelo App Mobile.</p>
+                        </div>
+                    </div>
+
+                    <!-- Scenario 4 -->
+                    <div class="bg-bg border border-border rounded-lg overflow-hidden">
+                        <button onclick="toggleDefense(4)" class="w-full px-4 py-3.5 text-left flex items-center justify-between hover:bg-panelHover transition">
+                            <div class="flex items-center gap-3">
+                                <span class="px-2 py-0.5 text-xs font-mono bg-orange-500/20 text-orange-300 rounded">Cenário 4</span>
+                                <span class="font-semibold text-sm text-white">"E se precisarmos extrair o módulo de Avaliações ou Pagamentos para implantação independente (Microsserviço)?"</span>
+                            </div>
+                            <span class="text-accent font-mono text-sm" id="def-icon-4">+</span>
+                        </button>
+                        <div id="def-body-4" class="hidden px-4 pb-4 pt-2 border-t border-border text-xs sm:text-sm text-gray-300 space-y-2">
+                            <p><strong class="text-emerald-400">Como nossa arquitetura facilita:</strong> Como optamos por um <strong>Monólito Modular</strong> com fronteiras bem definidas e baixo acoplamento entre pacotes, o módulo de Avaliações se comunica apenas por contratos bem definidos (IDs de contratação e interfaces).</p>
+                            <p><strong class="text-amber-400">O que precisaria ser adaptado:</strong> A chamada local em memória seria substituída por um adaptador HTTP/Mensageria (evento <code class="font-mono text-accent">ServicoConcluidoEvent</code>), e a chave estrangeira física no banco seria trocada por referência lógica (<code class="font-mono text-white">contratacaoId</code>).</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Suggested 10-minute Presentation Pitch Structure -->
+            <div class="bg-panel border border-border rounded-xl p-5">
+                <h3 class="text-base font-bold text-white mb-3">Roteiro Sugerido para a Apresentação (Divisão para os 4 Integrantes)</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+                    <div class="bg-bg p-3.5 rounded-lg border border-border">
+                        <span class="font-mono text-accent font-bold">Parte 1 • Mateus (2-3 min)</span>
+                        <h4 class="font-bold text-white mt-1 mb-1">Problema, Requisitos & ASRs</h4>
+                        <p class="text-gray-400">Contextualiza o Marketplace no Campus, apresenta os atores (Prestador/Solicitante) e explica por que os 3 ASRs (concorrência de horário, desacoplamento externo e testabilidade) guiaram o projeto.</p>
+                    </div>
+                    <div class="bg-bg p-3.5 rounded-lg border border-border">
+                        <span class="font-mono text-info font-bold">Parte 2 • Helen (2-3 min)</span>
+                        <h4 class="font-bold text-white mt-1 mb-1">Domínio, GRASP/SOLID & UML</h4>
+                        <p class="text-gray-400">Mostra o Diagrama de Classes, Sequência e Comunicação, destacando onde aplicou Information Expert, Controller, Low Coupling e Inversão de Dependência.</p>
+                    </div>
+                    <div class="bg-bg p-3.5 rounded-lg border border-border">
+                        <span class="font-mono text-purple font-bold">Parte 3 • Eloiza (2-3 min)</span>
+                        <h4 class="font-bold text-white mt-1 mb-1">Arquitetura, Trade-offs & ADRs</h4>
+                        <p class="text-gray-400">Apresenta o Diagrama de Componentes (Monólito Modular + Ports & Adapters), compara com Microsserviços/Monólito Simples e resume os 3 ADRs e cenários de evolução.</p>
+                    </div>
+                    <div class="bg-bg p-3.5 rounded-lg border border-border">
+                        <span class="font-mono text-success font-bold">Parte 4 • Phillip (3 min)</span>
+                        <h4 class="font-bold text-white mt-1 mb-1">Demo ao Vivo do Protótipo</h4>
+                        <p class="text-gray-400">Executa a fatia vertical (contratar serviço, consultar agenda, provocar erro de horário ocupado) e roda os testes automatizados usando o <code class="text-accent">NotificadorFake</code>.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-border bg-panel py-4 mt-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500 gap-2">
+            <span>Trabalho Final — Design e Arquitetura de Software (2026-2) • Tema 11</span>
+            <span>Equipe: Mateus, Helen, Phillip e Eloiza • Entrega: 19/11/2026</span>
+        </div>
+    </footer>
+
+    <script>
+        // --- INITIAL DATA STRUCTURE ---
+        const TEAM_MEMBERS = [
+            { id: 'Mateus', name: 'Mateus', color: 'bg-amber-500/15 text-amber-300 border-amber-500/30' },
+            { id: 'Helen', name: 'Helen', color: 'bg-blue-500/15 text-blue-300 border-blue-500/30' },
+            { id: 'Phillip', name: 'Phillip', color: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30' },
+            { id: 'Eloiza', name: 'Eloiza', color: 'bg-purple-500/15 text-purple-300 border-purple-500/30' },
+            { id: 'Todos', name: 'Todos (Grupo)', color: 'bg-gray-700/60 text-gray-200 border-gray-600' }
+        ];
+
+        const EVALUATION_CRITERIA = [
+            { id: 'REQ', name: '1. Requisitos & ASRs', weight: 15, color: 'bg-amber-400' },
+            { id: 'DOM', name: '2. Modelo de Domínio & Design', weight: 15, color: 'bg-blue-400' },
+            { id: 'UML', name: '3. Modelagem UML & Consistência', weight: 15, color: 'bg-purple-400' },
+            { id: 'ARQ', name: '4. Proposta Arquitetural', weight: 20, color: 'bg-emerald-400' },
+            { id: 'ADR', name: '5. Alternativas, Trade-offs & ADRs', weight: 15, color: 'bg-orange-400' },
+            { id: 'PRO', name: '6. Protótipo, Testes & Evolução', weight: 20, color: 'bg-rose-400' }
+        ];
+
+        const DEFAULT_SPRINTS = [
+            {
+                id: 'sprint-1',
+                title: 'Fase 1: Alinhamento, Problema, Requisitos e ASRs',
+                period: '04/11 a 06/11 (Qua - Sex)',
+                goal: 'Fechar o escopo do Marketplace no Campus, criar o repositório Git e concluir 100% da Seção 1 do edital (docs/requisitos.md).',
+                tasks: [
+                    {
+                        id: 't1',
+                        title: 'Criar repositório Git com a estrutura oficial de pastas',
+                        desc: 'Inicializar repo com docs/, docs/adr/, diagramas/, src/ e README.md inicial.',
+                        assignee: 'Phillip',
+                        due: '04/11',
+                        category: 'PRO',
+                        done: false
+                    },
+                    {
+                        id: 't2',
+                        title: 'Redigir Contexto do Sistema, Atores e Restrições (Seção 1.a, 1.b, 1.d)',
+                        desc: 'Definir Prestador (aluno/servidor), Solicitante e Regras do Campus (apenas membros com vínculo ativo, sem auto-contratação).',
+                        assignee: 'Mateus',
+                        due: '05/11',
+                        category: 'REQ',
+                        done: false
+                    },
+                    {
+                        id: 't3',
+                        title: 'Definir entre 6 e 10 Requisitos Funcionais (Seção 1.c)',
+                        desc: 'RF01 Cadastrar serviço, RF02 Configurar slots de horário, RF03 Buscar serviços disponíveis, RF04 Solicitar contratação, RF05 Confirmar/Cancelar, RF06 Concluir serviço, RF07 Avaliar serviço, RF08 Notificar partes.',
+                        assignee: 'Helen',
+                        due: '05/11',
+                        category: 'REQ',
+                        done: false
+                    },
+                    {
+                        id: 't4',
+                        title: 'Especificar e Justificar os 3 ASRs Concretos (Seção 1.e, 1.f)',
+                        desc: 'Detalhar ASR-01 (Concorrência na reserva de horário), ASR-02 (Substituibilidade de integrações externas) e ASR-03 (Testabilidade isolada do domínio) em docs/requisitos.md.',
+                        assignee: 'Eloiza',
+                        due: '06/11',
+                        category: 'REQ',
+                        done: false
+                    }
+                ]
+            },
+            {
+                id: 'sprint-2',
+                title: 'Fase 2: Modelo de Domínio, GRASP, SOLID e Arquitetura Base',
+                period: '07/11 a 10/11 (Sáb - Ter)',
+                goal: 'Distribuir responsabilidades entre as classes de domínio, definir os pacotes arquiteturais e rascunhar os diagramas principais.',
+                tasks: [
+                    {
+                        id: 't5',
+                        title: 'Documentar Conceitos do Domínio e Responsabilidades (Seção 2)',
+                        desc: 'Mapear MembroComunidade, ServicoOferecido, SlotDisponibilidade, Contratacao, Avaliacao e a interface NotificadorServico.',
+                        assignee: 'Helen',
+                        due: '08/11',
+                        category: 'DOM',
+                        done: false
+                    },
+                    {
+                        id: 't6',
+                        title: 'Escrever Justificativas GRASP, SOLID, Coesão e Acoplamento (Seção 2)',
+                        desc: 'Explicar Information Expert (ServicoOferecido valida disponibilidade), Controller/UseCase (SolicitarContratacaoUseCase), DIP (NotificadorServico) e Single Responsibility.',
+                        assignee: 'Mateus',
+                        due: '09/11',
+                        category: 'DOM',
+                        done: false
+                    },
+                    {
+                        id: 't7',
+                        title: 'Definir Proposta Arquitetural em docs/arquitetura.md (Seção 4)',
+                        desc: 'Detalhar estilo Monólito Modular + Arquitetura em Camadas Centrada no Domínio (Ports & Adapters), persistência, interfaces e dependências entre módulos.',
+                        assignee: 'Eloiza',
+                        due: '10/11',
+                        category: 'ARQ',
+                        done: false
+                    },
+                    {
+                        id: 't8',
+                        title: 'Definir assinatura exata dos métodos da Fatia Vertical (Contrato Código <-> UML)',
+                        desc: 'Congelar nomes de classes e métodos (ex: solicitarContratacao, reservarSlot, enviarConfirmacao) para que código e UML usem exatamente os mesmos nomes.',
+                        assignee: 'Phillip',
+                        due: '10/11',
+                        category: 'UML',
+                        done: false
+                    }
+                ]
+            },
+            {
+                id: 'sprint-3',
+                title: 'Fase 3: Modelagem UML (4 Diagramas) e Documentação de ADRs/Trade-offs',
+                period: '11/11 a 14/11 (Qua - Sáb)',
+                goal: 'Construir os 4 diagramas PlantUML consistentes entre si e redigir a análise de alternativas e os 3 ADRs.',
+                tasks: [
+                    {
+                        id: 't9',
+                        title: 'Elaborar Diagrama de Classes e Diagrama de Componentes (Seção 3.1 e 3.4)',
+                        desc: 'Criar diagramas/classes.puml e diagramas/componentes.puml evidenciando a inversão de dependência do Notificador e Repositório.',
+                        assignee: 'Helen',
+                        due: '12/11',
+                        category: 'UML',
+                        done: false
+                    },
+                    {
+                        id: 't10',
+                        title: 'Elaborar Diagrama de Sequência e Diagrama de Comunicação (Seção 3.2 e 3.3)',
+                        desc: 'Modelar o fluxo "Solicitar Contratação de Serviço" com verificação de disponibilidade, persistência e chamada ao Notificador.',
+                        assignee: 'Mateus',
+                        due: '13/11',
+                        category: 'UML',
+                        done: false
+                    },
+                    {
+                        id: 't11',
+                        title: 'Redigir Análise de Alternativas e Trade-offs em docs/tradeoffs.md (Seção 5)',
+                        desc: 'Comparar Alternativa A (Monólito Simples/Smart UI), Alternativa B (Monólito Modular Hexagonal - Escolhida) e Alternativa C (Microsserviços) frente aos 3 ASRs.',
+                        assignee: 'Eloiza',
+                        due: '13/11',
+                        category: 'ADR',
+                        done: false
+                    },
+                    {
+                        id: 't12',
+                        title: 'Escrever os 3 ADRs completos em docs/adr/ (Seção 6)',
+                        desc: 'ADR-001 (Monólito Modular vs Microsserviços), ADR-002 (Ports & Adapters para Notificação Externa) e ADR-003 (Controle Transacional de Disponibilidade).',
+                        assignee: 'Eloiza',
+                        due: '14/11',
+                        category: 'ADR',
+                        done: false
+                    }
+                ]
+            },
+            {
+                id: 'sprint-4',
+                title: 'Fase 4: Implementação do Protótipo Funcional e Testes',
+                period: '12/11 a 16/11 (Qui - Seg)',
+                goal: 'Codificar a fatia vertical enxuta, a dependência externa substituível e os testes automatizados que provam a arquitetura.',
+                tasks: [
+                    {
+                        id: 't13',
+                        title: 'Implementar Entidades de Domínio e Exceções de Negócio (Seção 7)',
+                        desc: 'Codificar ServicoOferecido, SlotDisponibilidade, Contratacao, Avaliacao e regras contra auto-contratação e horário indisponível.',
+                        assignee: 'Phillip',
+                        due: '13/11',
+                        category: 'PRO',
+                        done: false
+                    },
+                    {
+                        id: 't14',
+                        title: 'Implementar Casos de Uso (Comando + Consulta) e Persistência (Seção 7)',
+                        desc: 'Implementar SolicitarContratacaoUseCase, ConsultarServicosDisponiveisUseCase e Repositório com persistência real (SQLite/PostgreSQL/Arquivo).',
+                        assignee: 'Phillip',
+                        due: '15/11',
+                        category: 'PRO',
+                        done: false
+                    },
+                    {
+                        id: 't15',
+                        title: 'Implementar Dependência Externa Substituível (Seção 8)',
+                        desc: 'Criar interface NotificadorServico + implementação EmailNotificador (ou Console/SMTP) + NotificadorFake para testes.',
+                        assignee: 'Mateus',
+                        due: '15/11',
+                        category: 'PRO',
+                        done: false
+                    },
+                    {
+                        id: 't16',
+                        title: 'Criar Testes Automatizados (Sucesso, Consulta e Fluxo de Erro)',
+                        desc: 'Testar: 1) Contratação com sucesso e disparo no NotificadorFake; 2) Erro ao tentar contratar horário já reservado; 3) Consulta de serviços disponíveis.',
+                        assignee: 'Helen',
+                        due: '16/11',
+                        category: 'PRO',
+                        done: false
+                    }
+                ]
+            },
+            {
+                id: 'sprint-5',
+                title: 'Fase 5: Análise de Evolução, Auditoria de Consistência e Defesa',
+                period: '17/11 a 19/11 (Ter - Qui)',
+                goal: 'Responder à Seção 9 (Evolução), revisar consistência entre UML e código, finalizar README e ensaiar a apresentação.',
+                tasks: [
+                    {
+                        id: 't17',
+                        title: 'Documentar Análise de Evolução com 2 Cenários de Mudança (Seção 9)',
+                        desc: 'Explicar impacto de: 1) Trocar banco de dados (SQLite/Postgres); 2) Trocar E-mail por WhatsApp ou incluir App Mobile (quais classes mudam e quais ficam intactas).',
+                        assignee: 'Eloiza',
+                        due: '17/11',
+                        category: 'ARQ',
+                        done: false
+                    },
+                    {
+                        id: 't18',
+                        title: 'Executar pente-fino de consistência (Diagramas UML vs Código-Fonte)',
+                        desc: 'Conferir se nomes de classes, métodos e pacotes nos 4 diagramas batem 100% com a pasta src/.',
+                        assignee: 'Helen',
+                        due: '18/11',
+                        category: 'UML',
+                        done: false
+                    },
+                    {
+                        id: 't19',
+                        title: 'Finalizar README.md com guia de execução em 1 comando e links para docs',
+                        desc: 'Garantir que qualquer pessoa consiga clonar o repositório, rodar os testes e executar o protótipo facilmente.',
+                        assignee: 'Phillip',
+                        due: '18/11',
+                        category: 'PRO',
+                        done: false
+                    },
+                    {
+                        id: 't20',
+                        title: 'Simulação da Defesa e Entrega Final do Link Git (Seção 13)',
+                        desc: 'Ensaiar apresentação de 10 minutos (Mateus, Helen, Eloiza, Phillip) e submeter o link do repositório.',
+                        assignee: 'Todos',
+                        due: '19/11',
+                        category: 'ADR',
+                        done: false
+                    }
+                ]
+            }
+        ];
+
+        const DEFAULT_CONSISTENCY_CHECKS = [
+            { id: 'c1', text: 'Os nomes das classes no Diagrama de Classes são idênticos aos arquivos dentro de src/domain e src/application.', done: false },
+            { id: 'c2', text: 'Todas as chamadas de método mostradas no Diagrama de Sequência existem nas respectivas classes do Diagrama de Classes.', done: false },
+            { id: 'c3', text: 'O Diagrama de Comunicação representa exatamente a mesma colaboração de objetos do Diagrama de Sequência.', done: false },
+            { id: 'c4', text: 'O Diagrama de Componentes/Pacotes mostra a seta de dependência apontando da Infraestrutura para o Domínio (Inversão de Dependência).', done: false },
+            { id: 'c5', text: 'Nenhuma classe do pacote domain/ importa bibliotecas de banco de dados, HTTP ou envio de e-mail.', done: false },
+            { id: 'c6', text: 'Os 3 ADRs citam explicitamente os ASRs definidos em docs/requisitos.md como justificativa da decisão.', done: false },
+            { id: 'c7', text: 'O protótipo executa os 5 itens obrigatórios: muda estado, faz consulta, trata fluxo de erro, persiste dados e usa dependência externa via interface.', done: false }
+        ];
+
+        const STORAGE_KEY = 'software_design_tema11_tracker_v1';
+
+        let appState = {
+            sprints: JSON.parse(JSON.stringify(DEFAULT_SPRINTS)),
+            consistencyChecks: JSON.parse(JSON.stringify(DEFAULT_CONSISTENCY_CHECKS)),
+            notes: ' Repositório GitHub: (colar link aqui)\n Reunião de Alinhamento Inicial: 04/11 às 20h\n Linguagem escolhida para o protótipo: (ex: TypeScript / Java / Python / C#)',
+            selectedMemberFilter: 'ALL'
+        };
+
+        // --- INITIALIZATION ---
+        window.onload = function () {
+            loadState();
+            renderAll();
+        };
+
+        function loadState() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    if (parsed.sprints) appState.sprints = parsed.sprints;
+                    if (parsed.consistencyChecks) appState.consistencyChecks = parsed.consistencyChecks;
+                    if (typeof parsed.notes === 'string') appState.notes = parsed.notes;
+                }
+            } catch (e) {
+                console.error('Erro ao carregar estado do LocalStorage:', e);
+            }
+            document.getElementById('team-notes').value = appState.notes;
+        }
+
+        function saveState(message = 'Progresso salvo automaticamente!') {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+                showToast(message);
+            } catch (e) {
+                console.error('Erro ao salvar no LocalStorage:', e);
+            }
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-msg');
+            toastMsg.textContent = msg;
+            toast.classList.remove('hidden');
+            clearTimeout(window.toastTimer);
+            window.toastTimer = setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 2200);
+        }
+
+        // --- RENDER FUNCTIONS ---
+        function renderAll() {
+            renderMetricsAndFilters();
+            renderRoadmap();
+            renderConsistencyChecks();
+        }
+
+        function getAllTasks() {
+            return appState.sprints.flatMap(s => s.tasks);
+        }
+
+        function renderMetricsAndFilters() {
+            const allTasks = getAllTasks();
+            const completedTasks = allTasks.filter(t => t.done);
+            const totalPct = allTasks.length ? Math.round((completedTasks.length / allTasks.length) * 100) : 0;
+
+            document.getElementById('overall-count').textContent = `${completedTasks.length}/${allTasks.length} tarefas concluídas`;
+            document.getElementById('overall-percent').textContent = `${totalPct}%`;
+            document.getElementById('overall-bar').style.width = `${totalPct}%`;
+
+            // Calculate Weighted Grade Progress
+            let weightedSum = 0;
+            const criteriaContainer = document.getElementById('criteria-grid');
+            criteriaContainer.innerHTML = '';
+
+            EVALUATION_CRITERIA.forEach(crit => {
+                const critTasks = allTasks.filter(t => t.category === crit.id);
+                const critDone = critTasks.filter(t => t.done).length;
+                const critRatio = critTasks.length ? (critDone / critTasks.length) : 0;
+                const earnedWeight = Math.round(critRatio * crit.weight * 10) / 10;
+                weightedSum += critRatio * crit.weight;
+
+                const pct = Math.round(critRatio * 100);
+
+                const card = document.createElement('div');
+                card.className = 'bg-bg border border-border rounded-lg p-2.5 flex flex-col justify-between';
+                card.innerHTML = `
+                    <div class="flex items-center justify-between text-xs mb-1.5">
+                        <span class="font-medium text-gray-200 truncate pr-2">${crit.name}</span>
+                        <span class="font-mono text-[11px] text-accent shrink-0">${earnedWeight}% / ${crit.weight}%</span>
+                    </div>
+                    <div class="w-full h-1.5 bg-gray-800 rounded-full overflow-hidden">
+                        <div class="h-full ${crit.color} transition-all duration-300" style="width: ${pct}%"></div>
+                    </div>
+                `;
+                criteriaContainer.appendChild(card);
+            });
+
+            document.getElementById('weighted-score').textContent = `Nota Ponderada Estimada: ${Math.round(weightedSum)}%`;
+
+            // Render Member Cards
+            const memberCards = document.getElementById('member-cards');
+            memberCards.innerHTML = '';
+
+            const clearBtn = document.getElementById('clear-filter-btn');
+            if (appState.selectedMemberFilter !== 'ALL') {
+                clearBtn.classList.remove('hidden');
+            } else {
+                clearBtn.classList.add('hidden');
+            }
+
+            TEAM_MEMBERS.forEach(member => {
+                const mTasks = allTasks.filter(t => t.assignee === member.id);
+                const mDone = mTasks.filter(t => t.done).length;
+                const isSelected = appState.selectedMemberFilter === member.id;
+
+                const btn = document.createElement('button');
+                btn.onclick = () => setMemberFilter(isSelected ? 'ALL' : member.id);
+                btn.className = `p-2.5 rounded-lg border text-left transition flex flex-col justify-between ${
+                    isSelected
+                        ? 'bg-accent/15 border-accent ring-1 ring-accent'
+                        : 'bg-bg border-border hover:border-gray-600'
+                }`;
+                btn.innerHTML = `
+                    <div class="flex items-center justify-between w-full mb-1">
+                        <span class="text-xs font-bold text-white truncate">${member.id}</span>
+                        <span class="text-[10px] font-mono px-1.5 py-0.2 rounded ${member.color} border">${mDone}/${mTasks.length}</span>
+                    </div>
+                    <div class="w-full bg-gray-800 h-1 rounded-full overflow-hidden mt-1">
+                        <div class="bg-accent h-full transition-all" style="width: ${mTasks.length ? Math.round((mDone/mTasks.length)*100) : 0}%"></div>
+                    </div>
+                `;
+                memberCards.appendChild(btn);
+            });
+        }
+
+        function setMemberFilter(memberId) {
+            appState.selectedMemberFilter = memberId;
+            renderMetricsAndFilters();
+            renderRoadmap();
+        }
+
+        function renderRoadmap() {
+            const container = document.getElementById('sprints-container');
+            const statusFilter = document.getElementById('status-filter').value;
+            container.innerHTML = '';
+
+            appState.sprints.forEach(sprint => {
+                const filteredTasks = sprint.tasks.filter(t => {
+                    const memberMatch = appState.selectedMemberFilter === 'ALL' || t.assignee === appState.selectedMemberFilter;
+                    const statusMatch =
+                        statusFilter === 'ALL' ||
+                        (statusFilter === 'DONE' && t.done) ||
+                        (statusFilter === 'PENDING' && !t.done);
+                    return memberMatch && statusMatch;
+                });
+
+                if (filteredTasks.length === 0) return;
+
+                const sprintDone = sprint.tasks.filter(t => t.done).length;
+                const sprintPct = Math.round((sprintDone / sprint.tasks.length) * 100);
+
+                const sprintEl = document.createElement('div');
+                sprintEl.className = 'bg-panel border border-border rounded-xl overflow-hidden';
+
+                let tasksHtml = '';
+                filteredTasks.forEach(task => {
+                    const critObj = EVALUATION_CRITERIA.find(c => c.id === task.category) || { name: task.category };
+                    const memberObj = TEAM_MEMBERS.find(m => m.id === task.assignee) || TEAM_MEMBERS[0];
+
+                    const optionsHtml = TEAM_MEMBERS.map(m =>
+                        `<option value="${m.id}" ${m.id === task.assignee ? 'selected' : ''}>${m.id}</option>`
+                    ).join('');
+
+                    tasksHtml += `
+                        <div class="p-4 hover:bg-panelHover transition flex flex-col sm:flex-row sm:items-start justify-between gap-4 ${task.done ? 'opacity-65 bg-bg/40' : ''}">
+                            <label class="flex items-start gap-3.5 cursor-pointer flex-1">
+                                <input type="checkbox" class="checkbox-custom mt-0.5 shrink-0" ${task.done ? 'checked' : ''} onchange="toggleTask('${sprint.id}', '${task.id}')">
+                                <div class="space-y-1">
+                                    <div class="flex flex-wrap items-center gap-2">
+                                        <span class="text-sm font-semibold ${task.done ? 'line-through text-gray-400' : 'text-white'}">${task.title}</span>
+                                        <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-gray-800 text-gray-300 border border-border">${critObj.name}</span>
+                                    </div>
+                                    <p class="text-xs text-gray-400 leading-relaxed">${task.desc}</p>
+                                </div>
+                            </label>
+
+                            <div class="flex items-center gap-2 self-end sm:self-center shrink-0">
+                                <span class="text-xs font-mono px-2 py-1 rounded bg-bg border border-border text-gray-300" title="Prazo sugerido">
+                                    📅 ${task.due}
+                                </span>
+                                <select onchange="changeAssignee('${sprint.id}', '${task.id}', this.value)" class="text-xs font-mono px-2.5 py-1 rounded border cursor-pointer focus:outline-none ${memberObj.color}">
+                                    ${optionsHtml}
+                                </select>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                sprintEl.innerHTML = `
+                    <div class="px-5 py-4 bg-bg/60 border-b border-border flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div>
+                            <div class="flex items-center gap-2.5">
+                                <h3 class="text-base font-bold text-white">${sprint.title}</h3>
+                                <span class="text-xs font-mono px-2.5 py-0.5 rounded-full bg-accent/15 text-accent border border-accent/30">${sprint.period}</span>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-1">${sprint.goal}</p>
+                        </div>
+                        <div class="flex items-center gap-3 shrink-0">
+                            <span class="text-xs font-mono text-gray-300">${sprintDone}/${sprint.tasks.length} (${sprintPct}%)</span>
+                            <div class="w-24 h-2 bg-gray-800 rounded-full overflow-hidden">
+                                <div class="h-full bg-success transition-all duration-300" style="width: ${sprintPct}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="divide-y divide-border">
+                        ${tasksHtml}
+                    </div>
+                `;
+
+                container.appendChild(sprintEl);
+            });
+        }
+
+        function toggleTask(sprintId, taskId) {
+            const sprint = appState.sprints.find(s => s.id === sprintId);
+            if (!sprint) return;
+            const task = sprint.tasks.find(t => t.id === taskId);
+            if (!task) return;
+            task.done = !task.done;
+            saveState();
+            renderMetricsAndFilters();
+            renderRoadmap();
+        }
+
+        function changeAssignee(sprintId, taskId, newAssignee) {
+            const sprint = appState.sprints.find(s => s.id === sprintId);
+            if (!sprint) return;
+            const task = sprint.tasks.find(t => t.id === taskId);
+            if (!task) return;
+            task.assignee = newAssignee;
+            saveState(`Responsável atualizado para ${newAssignee}`);
+            renderMetricsAndFilters();
+            renderRoadmap();
+        }
+
+        function saveNotes(val) {
+            appState.notes = val;
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+        }
+
+        // --- CONSISTENCY CHECKLIST ---
+        function renderConsistencyChecks() {
+            const list = document.getElementById('consistency-list');
+            list.innerHTML = '';
+
+            appState.consistencyChecks.forEach(item => {
+                const row = document.createElement('label');
+                row.className = `p-3 rounded-lg border flex items-start gap-3 cursor-pointer transition ${
+                    item.done ? 'bg-emerald-950/20 border-emerald-700/40 text-gray-400 line-through' : 'bg-bg border-border hover:border-gray-600 text-gray-200'
+                }`;
+                row.innerHTML = `
+                    <input type="checkbox" class="checkbox-custom mt-0.5 shrink-0" ${item.done ? 'checked' : ''} onchange="toggleConsistency('${item.id}')">
+                    <span class="text-xs sm:text-sm leading-relaxed">${item.text}</span>
+                `;
+                list.appendChild(row);
+            });
+        }
+
+        function toggleConsistency(id) {
+            const item = appState.consistencyChecks.find(c => c.id === id);
+            if (item) {
+                item.done = !item.done;
+                saveState('Checklist de consistência atualizado!');
+                renderConsistencyChecks();
+            }
+        }
+
+        // --- TABS & ACCORDIONS ---
+        function switchTab(tabName) {
+            const tabs = ['roadmap', 'blueprint', 'consistency', 'defense'];
+            tabs.forEach(t => {
+                const view = document.getElementById(`view-${t}`);
+                const btn = document.getElementById(`tab-${t}`);
+                if (t === tabName) {
+                    view.classList.remove('hidden');
+                    btn.className = 'px-4 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-2 bg-accent text-gray-950';
+                } else {
+                    view.classList.add('hidden');
+                    btn.className = 'px-4 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-2 bg-panel text-gray-300 hover:bg-panelHover border border-border';
+                }
+            });
+        }
+
+        function toggleDefense(num) {
+            const body = document.getElementById(`def-body-${num}`);
+            const icon = document.getElementById(`def-icon-${num}`);
+            if (body.classList.contains('hidden')) {
+                body.classList.remove('hidden');
+                icon.textContent = '−';
+            } else {
+                body.classList.add('hidden');
+                icon.textContent = '+';
+            }
+        }
+
+        // --- UTILITIES (COPY, EXPORT, IMPORT, RESET) ---
+        function copyRepoStructure() {
+            const text = document.getElementById('repo-tree').innerText;
+            const temp = document.createElement('textarea');
+            temp.value = text;
+            document.body.appendChild(temp);
+            temp.select();
+            document.execCommand('copy');
+            document.body.removeChild(temp);
+            showToast('Estrutura de pastas copiada para a área de transferência!');
+        }
+
+        function exportState() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState, null, 2));
+            const dlAnchor = document.createElement('a');
+            dlAnchor.setAttribute("href", dataStr);
+            dlAnchor.setAttribute("download", "plano-tema11-marketplace.json");
+            document.body.appendChild(dlAnchor);
+            dlAnchor.click();
+            dlAnchor.remove();
+            showToast('Arquivo JSON exportado!');
+        }
+
+        function importState(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (imported.sprints) {
+                        appState = imported;
+                        document.getElementById('team-notes').value = appState.notes || '';
+                        saveState('Plano importado com sucesso!');
+                        renderAll();
+                    }
+                } catch (err) {
+                    showToast('Erro ao ler arquivo JSON.');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function openResetModal() {
+            document.getElementById('reset-modal').classList.remove('hidden');
+        }
+
+        function closeResetModal() {
+            document.getElementById('reset-modal').classList.add('hidden');
+        }
+
+        function confirmReset() {
+            appState = {
+                sprints: JSON.parse(JSON.stringify(DEFAULT_SPRINTS)),
+                consistencyChecks: JSON.parse(JSON.stringify(DEFAULT_CONSISTENCY_CHECKS)),
+                notes: ' Repositório GitHub: (colar link aqui)\n Reunião de Alinhamento Inicial: 04/11 às 20h\n Linguagem escolhida para o protótipo: (ex: TypeScript / Java / Python / C#)',
+                selectedMemberFilter: 'ALL'
+            };
+            document.getElementById('team-notes').value = appState.notes;
+            saveState('Plano restaurado para o padrão inicial!');
+            renderAll();
+            closeResetModal();
+        }
+    </script>
+</body>
+</html>
