@@ -1,0 +1,81 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+class MembroComunidade {
+  - id: str
+  - nome: str
+  - email: str
+  - registro_academico: str
+}
+
+class Servico <<Raiz de Agregado>> {
+  - id: str
+  - prestador_id: str
+  - titulo: str
+  - descricao: str
+  - categoria: str
+  - valor: float
+  + adicionar_slot(inicio: datetime, fim: datetime)
+  + obter_slots_livres(): list[SlotDisponibilidade]
+  + validar_contratante(solicitante_id: str)
+}
+
+class SlotDisponibilidade <<Entidade Interna>> {
+  - id: str
+  - servico_id: str
+  - inicio: datetime
+  - fim: datetime
+  - status: StatusSlot
+  + esta_livre(): bool
+  + reservar()
+  + liberar()
+}
+
+class Contratacao <<Raiz de Agregado>> {
+  - id: str
+  - servico_id: str
+  - slot_id: str
+  - solicitante_id: str
+  - prestador_id: str
+  - status: StatusContratacao
+  - criado_em: datetime
+  + concluir()
+  + cancelar()
+  + registrar_avaliacao(nota: int, comentario: str): Avaliacao
+}
+
+class Avaliacao <<Objeto de Valor>> {
+  - id: str
+  - contratacao_id: str
+  - nota: int
+  - comentario: str
+  - data: datetime
+}
+
+class ErroDominio <<Exceção>> {
+  - mensagem: str
+}
+
+Servico "1" *-- "0..*" SlotDisponibilidade : contém >
+Contratacao "1" *-- "0..1" Avaliacao : contém >
+MembroComunidade "1" -- "0..*" Servico : oferece >
+MembroComunidade "1" -- "0..*" Contratacao : solicita >
+
+note left of Servico::validar_contratante
+  **Information Expert**: 
+  Lança AutoContratacaoError se
+  solicitante_id == prestador_id.
+end note
+
+note right of Contratacao::registrar_avaliacao
+  **Creator**: 
+  A Contratacao instancia a Avaliacao 
+  após checar status == CONCLUIDA.
+end note
+
+note right of SlotDisponibilidade::reservar
+  **Information Expert**:
+  Lança SlotIndisponivelError se
+  status != LIVRE, blindando a agenda.
+end note
+@enduml
