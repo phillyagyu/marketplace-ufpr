@@ -66,3 +66,75 @@ O núcleo do **CampusHub** foi modelado segundo a abordagem de **Modelo de Domí
 * **LSP (*Liskov Substitution Principle*):** Qualquer implementação de `NotificadorPort` (`EmailNotificador` ou `NotificadorFake`) e de `ContratacaoRepository` (`SqliteContratacaoRepository` ou `InMemoryContratacaoRepository`) pode substituir a outra em tempo de execução ou nos testes automatizados sem quebrar o comportamento esperado pelo `SolicitarContratacaoUseCase`.
 * **ISP (*Interface Segregation Principle*):** Em vez de uma interface monolítica `DadosPort` com dezenas de métodos não relacionados, separamos as portas por contexto (`ServicoRepository`, `ContratacaoRepository` e `NotificadorPort`), de modo que `ConsultarServicosUseCase` dependa apenas de `ServicoRepository`.
 * **DIP (*Dependency Inversion Principle*):** Módulos de alto nível (`SolicitarContratacaoUseCase`) não dependem de módulos de baixo nível (`SqliteContratacaoRepository`, `EmailNotificador`). Ambos dependem das abstrações definidas em `src/ports/` (classes base abstratas com `abc.ABC`), sendo conectadas na inicialização (`main.py`) via Injeção de Dependência pelo construtor.
+
+---
+
+# 4. Proposta Arquitetural
+
+## 4.1 Organização Arquitetural Adotada
+
+Para atender aos requisitos funcionais e aos Requisitos Arquiteturalmente Significativos (ASR-01, ASR-02 e ASR-03), o **CampusHub** adota a seguinte combinação explícita de estilos e padrões arquiteturais:
+
+> **Monolito Modular**
+> **+ Organização em Camadas** *(Apresentação, Aplicação, Domínio, Infraestrutura)*
+> **+ Padrão Ports & Adapters** *(Arquitetura Hexagonal Simplificada nos limites externos)*
+> **+ Inversão de Dependência (DIP)** *via Injeção de Dependência no Bootstrap*
+
+### Como essa arquitetura aparece concretamente na solução:
+
+1. **Monolito Modular:** Todo o sistema é implantado e executado como uma única unidade de processo Python (`src/`), evitando a sobrecarga operacional de rede e serialização distribuída, mas mantendo fronteiras rígidas de pacotes internos.
+
+
+2. **Organização em Camadas Concêntricas:** O fluxo de controle entra pela camada de Apresentação (`adapters/inbound`), passa pela Camada de Aplicação (`application`) que orquestra os Casos de Uso, e atinge o núcleo de negócio na Camada de Domínio (`domain`).
+
+
+3. **Ports & Adapters (Hexagonal Simplificada):** As dependências em direção ao banco de dados e aos sistemas externos são invertidas através do pacote `ports/`. A camada de Aplicação define e consome abstrações puras (`ServicoRepository`, `ContratacaoRepository`, `NotificadorPort`), enquanto a camada de Infraestrutura (`adapters/outbound`) fornece os adaptadores concretos (`Sqlite...`, `EmailNotificador`, `NotificadorFake`).
+
+---
+
+## 4.2 Principais Componentes, Módulos e Responsabilidades
+
+| Componente / Pacote (`src/`) | Papel Arquitetural | Responsabilidades |
+| --- | --- | --- |
+| **`domain/`** | Núcleo de Domínio | Contém as entidades (`Servico`, `SlotDisponibilidade`, `Contratacao`, `Avaliacao`), enumerações de estado e exceções de negócio (`AutoContratacaoError`, `SlotIndisponivelError`). **Não possui dependência de nenhum outro pacote do sistema nem de bibliotecas externas.** |
+| **`ports/`** | Portas de Saída (*Outbound Ports*) | Declara as interfaces abstratas (`abc.ABC`) que o núcleo exige do mundo externo para persistência e comunicação (`ServicoRepository`, `ContratacaoRepository`, `NotificadorPort`). |
+| **`application/`** | Casos de Uso (*Application Layer*) | Contém os coordenadores transacionais (`SolicitarContratacaoUseCase`, `ConsultarServicosUseCase`, `ConcluirEAvaliarUseCase`). Orquestra a busca nos repositórios, a execução das regras nas entidades de domínio e o disparo de notificações. |
+| **`adapters/inbound/`** | Adaptadores Primários (*Driving*) | Recebe os estímulos externos (ex: `MarketplaceController` via CLI / Script de Demonstração da Fatia Vertical e a suíte de testes automatizados Pytest) e invoca os Casos de Uso. |
+| **`adapters/outbound/`** | Adaptadores Secundários (*Driven*) | Implementa tecnicamente as portas de saída: acesso a dados via `sqlite3` (`SqliteServicoRepository`, `SqliteContratacaoRepository`), repositórios em memória e adaptadores de envio de mensagens (`EmailNotificador`, `NotificadorFake`). |
+| **`main.py` (*Composition Root*)** | Inicializador / Bootstrap | Único ponto do sistema que conhece todas as classes concretas simultaneamente para instanciar os adaptadores e injetá-los nos Casos de Uso. |
+
+---
+
+## 4.3 Dependências entre Componentes
+
+A regra estrutural fundamental do projeto é que **todas as dependências de código-fonte apontam para dentro (em direção ao Domínio)**:
+
+* `adapters/inbound` $\rightarrow$ depende de `application` e `domain`.
+* `adapters/outbound` $\rightarrow$ depende de `ports` e `domain`.
+* `application` $\rightarrow$ depende exclusivamente de `domain` e `ports` *(nunca importa nada de `adapters`)*.
+* `ports` $\rightarrow$ depende exclusivamente de `domain`.
+* `domain` $\rightarrow$ não depende de ninguém *(zero acoplamento externo)*.
+
+---
+
+## 4.4 Interfaces Relevantes, Mecanismos de Comunicação, Persistência e Integrações
+
+* **Mecanismos de Comunicação Interna:** Chamadas de métodos síncronas em memória dentro do mesmo processo Python, trafegando entidades de domínio validadas ou tipos primitivos.
+
+
+* **Persistência:** Isolada pelas interfaces `ServicoRepository` e `ContratacaoRepository`. Na implementação padrão do protótipo (`SqliteServicoRepository` e `SqliteContratacaoRepository`), utiliza a biblioteca nativa `sqlite3` com transações atômicas (`with self.conn:`) para garantir que a atualização do status do `SlotDisponibilidade` para `RESERVADO` e a inserção da `Contratacao` ocorram sem risco de inconsistência (atendendo ao **ASR-02**).
+
+
+* **Integrações Externas Substituíveis:** Isoladas pela interface `NotificadorPort` com a assinatura `notificar(destinatario: str, assunto: str, mensagem: str) -> None`. Conta com duas implementações prontas no código:
+
+
+1. `EmailNotificador`: Adaptador de produção que formata e despacha o alerta simulando protocolo SMTP institucional.
+
+
+2. `NotificadorFake`: Adaptador de teste (*Test Double / Spy*) que armazena as notificações em uma lista em memória (`mensagens_enviadas`) para inspeção determinística em testes automatizados e execução offline (atendendo aos **ASR-01** e **ASR-03**).
+
+* **Contrato Interno de API (Casos de Uso):**
+  * `SolicitarContratacaoUseCase.executar(servico_id: str, slot_id: str, solicitante_id: str) -> Contratacao`
+  * `ConsultarServicosUseCase.executar(apenas_com_slots_livres: bool = True) -> list[Servico]`
+  * `ConcluirEAvaliarUseCase.concluir(contratacao_id: str) -> Contratacao`
+  * `ConcluirEAvaliarUseCase.avaliar(contratacao_id: str, nota: int, comentario: str) -> Avaliacao`
