@@ -1,0 +1,60 @@
+@startuml
+skinparam componentStyle uml2
+skinparam backgroundColor transparent
+
+package "Core (Domínio e Aplicação)" {
+    package "src/application (Casos de Uso)" <<Application>> {
+        [SolicitarContratacaoUseCase]
+        [ConsultarServicosUseCase]
+        [ConcluirEAvaliarUseCase]
+    }
+    
+    package "src/ports (Interfaces Outbound)" <<Ports>> {
+        interface "ServicoRepository" as IServicoRepo
+        interface "ContratacaoRepository" as IContratacaoRepo
+        interface "NotificadorPort" as INotificadorPort
+    }
+    
+    package "src/domain (Modelo Rico)" <<Domain>> {
+        [Servico]
+        [SlotDisponibilidade]
+        [Contratacao]
+        [Avaliacao]
+        [ErroDominio]
+    }
+}
+
+package "Infraestrutura (Adaptadores)" <<Infrastructure>> {
+    [SqliteContratacaoRepository]
+    [InMemoryContratacaoRepository]
+    [EmailNotificador]
+    [NotificadorFake]
+}
+
+package "Apresentação (Entrada)" <<Presentation>> {
+    [MarketplaceCLIController]
+}
+
+' Fluxo de controle e Injeção de Dependências
+[MarketplaceCLIController] --> [SolicitarContratacaoUseCase] : invoca
+
+' O Caso de Uso orquestra o domínio e as portas
+[SolicitarContratacaoUseCase] --> [Servico]
+[SolicitarContratacaoUseCase] --> [Contratacao]
+[SolicitarContratacaoUseCase] --> IServicoRepo
+[SolicitarContratacaoUseCase] --> IContratacaoRepo
+[SolicitarContratacaoUseCase] --> INotificadorPort
+
+' Adaptadores implementam as portas garantindo o DIP
+[SqliteContratacaoRepository] ..|> IContratacaoRepo
+[InMemoryContratacaoRepository] ..|> IContratacaoRepo
+[EmailNotificador] ..|> INotificadorPort
+[NotificadorFake] ..|> INotificadorPort
+
+note right of INotificadorPort
+  **Indirection / Protected Variations:**
+  O núcleo não conhece "SMTP" ou "SQLite".
+  Qualquer mudança na infraestrutura não 
+  afeta o diretório src/application.
+end note
+@enduml

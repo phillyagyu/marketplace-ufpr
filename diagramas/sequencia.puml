@@ -1,0 +1,58 @@
+@startuml
+actor Solicitante
+participant "cli:\nMarketplaceCLIController" as CLI
+participant "useCase:\nSolicitarContratacaoUseCase" as UC
+participant "servico_repo:\nServicoRepository" as SRepo
+participant "servico:\nServico" as Servico
+participant "slot:\nSlotDisponibilidade" as Slot
+participant "nova_contratacao:\nContratacao" as Contratacao <<Creator>>
+participant "contratacao_repo:\nContratacaoRepository" as CRepo
+participant "notificador:\nNotificadorPort" as Notif
+
+Solicitante -> CLI : confirmar compra
+activate CLI
+CLI -> UC : executar(solic_id, serv_id, slot_id)
+activate UC
+
+UC -> SRepo : buscar_por_id(serv_id)
+activate SRepo
+SRepo --> UC : servico
+deactivate SRepo
+
+UC -> Servico : validar_contratante(solic_id)
+activate Servico
+note right of Servico
+  Lança ErroDominio se
+  houver auto-contratação
+end note
+Servico --> UC
+deactivate Servico
+
+UC -> Slot : reservar()
+activate Slot
+note right of Slot
+  Lança ErroDominio 
+  se não estiver LIVRE
+end note
+Slot --> UC
+deactivate Slot
+
+UC -> Contratacao ** : __init__(solic_id, serv_id, slot_id...)
+note right: Nasce com status\nCONFIRMADA ou PENDENTE
+
+UC -> CRepo : salvar(nova_contratacao)
+activate CRepo
+CRepo --> UC : sucesso
+deactivate CRepo
+
+UC -> Notif : notificar(prestador, assunto, msg)
+activate Notif
+note right: Pure Fabrication (Adapter)
+Notif --> UC : sucesso
+deactivate Notif
+
+UC --> CLI : contratacao_id
+deactivate UC
+CLI --> Solicitante : sucesso
+deactivate CLI
+@enduml

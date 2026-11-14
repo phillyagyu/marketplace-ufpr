@@ -1,0 +1,31 @@
+@startuml
+skinparam rectangle {
+    backgroundColor transparent
+    borderColor black
+}
+
+actor Solicitante
+
+rectangle "<u>use_case: SolicitarContratacaoUseCase</u>" as UC
+rectangle "<u>servico_repo: ServicoRepository</u>" as SRepo
+rectangle "<u>servico: Servico</u>" as Servico
+rectangle "<u>slot: SlotDisponibilidade</u>" as Slot
+rectangle "<u>nova_contratacao: Contratacao</u>" as Contratacao
+rectangle "<u>contratacao_repo: ContratacaoRepository</u>" as CRepo
+rectangle "<u>notificador: NotificadorPort</u>" as Notificador
+
+Solicitante -right-> UC : " executar(solic_id, serv_id, slot_id)"
+
+UC -down-> SRepo : " 1. buscar_por_id(serv_id)"
+UC -down-> Servico : " 2. validar_contratante(solic_id)"
+UC -down-> Slot : " 3. reservar()"
+UC -down-> Contratacao : " 4. <<create>>"
+UC -down-> CRepo : " 5. salvar(nova_contratacao)"
+UC -down-> Notificador : " 6. notificar(prestador, assunto, msg)"
+
+note right of UC
+  **Controller GRASP**:
+  Apenas coordena a colaboração,
+  sem conter a lógica especialista.
+end note
+@enduml

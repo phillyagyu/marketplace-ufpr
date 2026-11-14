@@ -1,0 +1,72 @@
+@startuml componentes
+skinparam componentStyle uml2
+skinparam packageStyle rectangle
+
+package "CampusHub - Monolito Modular ( Camadas + Ports & Adapters )" {
+
+    package "adapters.inbound (Apresentação / Entrada)" {
+        [MarketplaceCLI / DemoRunner] as CLI
+        [TestSuite (Pytest)] as Tests
+    }
+
+    package "application (Camada de Aplicação)" {
+        [SolicitarContratacaoUseCase] as UC_Contratar
+        [ConsultarServicosUseCase] as UC_Consultar
+        [ConcluirEAvaliarUseCase] as UC_Avaliar
+    }
+
+    package "ports (Portas de Saída / Contratos)" {
+        interface "ServicoRepository" as IServicoRepo
+        interface "ContratacaoRepository" as IContratacaoRepo
+        interface "NotificadorPort" as INotificador
+    }
+
+    package "domain (Núcleo de Domínio)" {
+        [Entidades e Regras\n(Servico, SlotDisponibilidade,\nContratacao, Avaliacao)] as DomainModel
+    }
+
+    package "adapters.outbound (Infraestrutura / Saída)" {
+        [SqliteServicoRepository] as SqliteServ
+        [SqliteContratacaoRepository] as SqliteCont
+        [EmailNotificador] as EmailAdap
+        [NotificadorFake] as FakeAdap
+    }
+}
+
+database "SQLite DB\n(campushub.db / :memory:)" as DB
+cloud "Servidor SMTP /\nAPI Externa" as SMTP
+
+' Dependências de Entrada -> Aplicação
+CLI --> UC_Contratar : invoca
+CLI --> UC_Consultar : invoca
+CLI --> UC_Avaliar : invoca
+Tests --> UC_Contratar : testa isoladamente
+
+' Dependências da Aplicação -> Domínio e Portas
+UC_Contratar --> DomainModel : manipula
+UC_Consultar --> DomainModel : lê
+UC_Avaliar --> DomainModel : manipula
+
+UC_Contratar --> IServicoRepo : usa porta
+UC_Contratar --> IContratacaoRepo : usa porta
+UC_Contratar --> INotificador : usa porta
+UC_Consultar --> IServicoRepo : usa porta
+UC_Avaliar --> IContratacaoRepo : usa porta
+UC_Avaliar --> INotificador : usa porta
+
+' Portas conhecem apenas tipos do Domínio
+IServicoRepo ..> DomainModel
+IContratacaoRepo ..> DomainModel
+
+' Adaptadores de Saída implementam as Portas (Inversão de Dependência - DIP)
+SqliteServ ..|> IServicoRepo : <<implements>>
+SqliteCont ..|> IContratacaoRepo : <<implements>>
+EmailAdap ..|> INotificador : <<implements>>
+FakeAdap ..|> INotificador : <<implements>>
+
+' Infraestrutura conversa com mundo externo
+SqliteServ --> DB : SQL
+SqliteCont --> DB : SQL
+EmailAdap --> SMTP : SMTP / HTTP
+
+@enduml
