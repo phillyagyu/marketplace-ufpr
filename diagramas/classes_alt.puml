@@ -15,6 +15,13 @@ package "domain (Domínio)" {
         CANCELADA
     }
 
+    class MembroComunidade {
+        +id: str
+        +nome: str
+        +email: str
+        +registro_academico: str
+    }
+
     class Servico {
         +id: str
         +prestador_id: str
@@ -23,7 +30,7 @@ package "domain (Domínio)" {
         +categoria: str
         +valor: float
         +slots: List<SlotDisponibilidade>
-        +adicionar_slot(slot: SlotDisponibilidade): void
+        +adicionar_slot(inicio: datetime, fim: datetime): SlotDisponibilidade
         +buscar_slot(slot_id: str): SlotDisponibilidade
         +obter_slots_livres(): List<SlotDisponibilidade>
         +validar_contratante(solicitante_id: str): void
@@ -63,6 +70,8 @@ package "domain (Domínio)" {
         +validar_nota(): void
     }
 
+    MembroComunidade "1" -- "0..*" Servico : oferece >
+    MembroComunidade "1" -- "0..*" Contratacao : solicita >
     Servico "1" *-- "1..*" SlotDisponibilidade : possui >
     Contratacao "1" *-- "0..1" Avaliacao : contém >
     Contratacao ..> Servico : refere-se a >
