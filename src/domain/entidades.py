@@ -2,8 +2,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Optional
 
-from excecoes import *
-
+from .excecoes import *
 
 class StatusSlot(Enum):
     LIVRE = "livre"
@@ -25,12 +24,16 @@ class MembroComunidade:
 
 # controla o estado da janela de horário
 class SlotDisponibilidade:
-    def __init__(self, id: str, servico_id: str, inicio: datetime, fim: datetime, status: StatusSlot = StatusSlot.LIVRE):
+    def __init__(self, id: str, servico_id: str, inicio: datetime, fim: datetime, status=None):
         self.id = id
         self.servico_id = servico_id
         self.inicio = inicio
         self.fim = fim
-        self.status = status
+
+        if status is not None:
+            self.status = status
+        else:
+            self.status = StatusSlot.LIVRE
 
     def esta_livre(self) -> bool:
         return self.status == StatusSlot.LIVRE
@@ -62,7 +65,7 @@ class Servico:
         numero_slot = len(self.slots) + 1
         novo_id = f"slot-{numero_slot}"
         
-        novo_slot = SlotDisponibilidade(id = novo_id, servico_id = self.id, inicio = inicio, fim = fim, status = StatusSlot.LIVRE)
+        novo_slot = SlotDisponibilidade(novo_id, self.id, inicio, fim)
         self.slots.append(novo_slot)
         return novo_slot
 
@@ -85,12 +88,17 @@ class Servico:
 
 
 class Avaliacao:
-    def __init__(self, id: str, contratacao_id: str, nota: int, comentario: str, criado_em: datetime = datetime.now(),):
+    def __init__(self, id: str, contratacao_id: str, nota: int, comentario: str, criado_em = None):
         self.id = id
         self.contratacao_id = contratacao_id
         self.nota = nota
         self.comentario = comentario.strip()
-        self.criado_em = criado_em
+
+        if criado_em is not None:
+            self.criado_em = criado_em
+        else:
+            self.criado_em = datetime.now()
+
         self.validar_nota()
 
     def validar_nota(self) -> None:
@@ -101,14 +109,23 @@ class Avaliacao:
 
 
 class Contratacao:
-    def __init__(self, id: str, servico_id: str, slot_id: str, solicitante_id: str, prestador_id: str, status: StatusContratacao = StatusContratacao.CONFIRMADA, criado_em: datetime = datetime.now(), avaliacao: Optional[Avaliacao] = None):
+    def __init__(self, id: str, servico_id: str, slot_id: str, solicitante_id: str, prestador_id: str, status=None, criado_em=None, avaliacao=None):
         self.id = id
         self.servico_id = servico_id
         self.slot_id = slot_id
         self.solicitante_id = solicitante_id
         self.prestador_id = prestador_id
-        self.status = status
-        self.criado_em = criado_em
+
+        if status is not None:
+            self.status = status
+        else:
+            self.status = StatusContratacao.CONFIRMADA
+
+        if criado_em is not None:
+            self.criado_em = criado_em
+        else:
+            self.criado_em = datetime.now()
+
         self.avaliacao = avaliacao
 
     def concluir(self) -> None:
@@ -128,6 +145,6 @@ class Contratacao:
             raise TransicaoEstadoInvalidaError("Esta contratação já possui uma avaliação registrada.")
 
         id_avaliacao = f"aval-{self.id}"
-        nova_avaliacao = Avaliacao(id = id_avaliacao, contratacao_id = self.id, nota = nota, comentario = comentario)
+        nova_avaliacao = Avaliacao(id_avaliacao, self.id, nota, comentario)
         self.avaliacao = nova_avaliacao
         return self.avaliacao

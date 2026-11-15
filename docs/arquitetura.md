@@ -96,7 +96,7 @@ Para atender aos requisitos funcionais e aos Requisitos Arquiteturalmente Signif
 
 | Componente / Pacote (`src/`) | Papel Arquitetural | Responsabilidades |
 | --- | --- | --- |
-| **`domain/`** | Núcleo de Domínio | Contém as entidades (`Servico`, `SlotDisponibilidade`, `Contratacao`, `Avaliacao`), enumerações de estado e exceções de negócio (`AutoContratacaoError`, `SlotIndisponivelError`). **Não possui dependência de nenhum outro pacote do sistema nem de bibliotecas externas.** |
+| **`domain/`** | Núcleo de Domínio | Contém as entidades (`MembroComunidade`, `Servico`, `SlotDisponibilidade`, `Contratacao`, `Avaliacao`), enumerações de estado e exceções de negócio (`AutoContratacaoError`, `SlotIndisponivelError`). **Não possui dependência de nenhum outro pacote do sistema nem de bibliotecas externas.** |
 | **`ports/`** | Portas de Saída (*Outbound Ports*) | Declara as interfaces abstratas (`abc.ABC`) que o núcleo exige do mundo externo para persistência e comunicação (`ServicoRepository`, `ContratacaoRepository`, `NotificadorPort`). |
 | **`application/`** | Casos de Uso (*Application Layer*) | Contém os coordenadores transacionais (`SolicitarContratacaoUseCase`, `ConsultarServicosUseCase`, `ConcluirEAvaliarUseCase`). Orquestra a busca nos repositórios, a execução das regras nas entidades de domínio e o disparo de notificações. |
 | **`adapters/inbound/`** | Adaptadores Primários (*Driving*) | Recebe os estímulos externos (ex: `MarketplaceController` via CLI / Script de Demonstração da Fatia Vertical e a suíte de testes automatizados Pytest) e invoca os Casos de Uso. |
