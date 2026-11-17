@@ -1,31 +1,36 @@
-@startuml
-skinparam rectangle {
-    backgroundColor transparent
-    borderColor black
+@startuml comunicacao
+skinparam linestyle ortho
+skinparam object {
+    BackgroundColor White
+    BorderColor Black
 }
 
-actor Solicitante
+actor "Solicitante" as User
+object "controller : MarketplaceController" as Ctrl
+object "useCase : SolicitarContratacaoUseCase" as UC
+object "servicoRepo : ServicoRepository" as SRepo
+object "servico : Servico" as Serv
+object "slot : SlotDisponibilidade" as Slot
+object "contratacao : Contratacao" as Cont
+object "contratacaoRepo : ContratacaoRepository" as CRepo
+object "notificador : NotificadorPort" as Notif
 
-rectangle "<u>use_case: SolicitarContratacaoUseCase</u>" as UC
-rectangle "<u>servico_repo: ServicoRepository</u>" as SRepo
-rectangle "<u>servico: Servico</u>" as Servico
-rectangle "<u>slot: SlotDisponibilidade</u>" as Slot
-rectangle "<u>nova_contratacao: Contratacao</u>" as Contratacao
-rectangle "<u>contratacao_repo: ContratacaoRepository</u>" as CRepo
-rectangle "<u>notificador: NotificadorPort</u>" as Notificador
+User -down-> Ctrl : 1: solicitar_contratacao(servico_id, slot_id, solicitante_id)
+Ctrl -down-> UC : 1.1: executar(servico_id, slot_id, solicitante_id)
 
-Solicitante -right-> UC : " executar(solic_id, serv_id, slot_id)"
-
-UC -down-> SRepo : " 1. buscar_por_id(serv_id)"
-UC -down-> Servico : " 2. validar_contratante(solic_id)"
-UC -down-> Slot : " 3. reservar()"
-UC -down-> Contratacao : " 4. <<create>>"
-UC -down-> CRepo : " 5. salvar(nova_contratacao)"
-UC -down-> Notificador : " 6. notificar(prestador, assunto, msg)"
+UC -left-> SRepo : 1.2: buscar_por_id(servico_id)\n1.6: salvar(servico)
+UC -down-> Serv : 1.3: validar_contratante(solicitante_id)\n1.4: buscar_slot(slot_id)
+UC -down-> Slot : 1.5: reservar()
+UC -right-> Cont : 1.5.1: <<create>>(id, servico_id, slot_id, solicitante_id, prestador_id, CONFIRMADA)
+UC -right-> CRepo : 1.7: salvar(contratacao)
+UC -up-> Notif : 1.8: notificar(prestador_id, assunto, msg)
 
 note right of UC
-  **Controller GRASP**:
-  Apenas coordena a colaboração,
-  sem conter a lógica especialista.
+  **Controller (GRASP) & DIP (SOLID)**:
+  Coordena a colaboração radiando mensagens
+  para as Entidades de Domínio (1.3, 1.4, 1.5, 1.5.1)
+  e para as Portas de Saída abstratas (1.2, 1.6, 1.7, 1.8),
+  sem conter lógica especialista nem acoplamento técnico.
 end note
+
 @enduml

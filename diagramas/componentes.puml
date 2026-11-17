@@ -1,60 +1,85 @@
-@startuml
+@startuml componentes
 skinparam componentStyle uml2
-skinparam backgroundColor transparent
+skinparam packageStyle rectangle
 
-package "Core (Domínio e Aplicação)" {
-    package "src/application (Casos de Uso)" <<Application>> {
-        [SolicitarContratacaoUseCase]
-        [ConsultarServicosUseCase]
-        [ConcluirEAvaliarUseCase]
+package "CampusHub - Monolito Modular ( Camadas + Ports & Adapters )" {
+
+    package "adapters.inbound (Apresentação / Entrada)" <<Presentation>> {
+        [MarketplaceController (CLI / DemoRunner)] as CLI
+        [TestSuite (Pytest)] as Tests
     }
-    
-    package "src/ports (Interfaces Outbound)" <<Ports>> {
+
+    package "application (Camada de Aplicação / Casos de Uso)" <<Application>> {
+        [SolicitarContratacaoUseCase] as UC_Contratar
+        [ConsultarServicosUseCase] as UC_Consultar
+        [ConcluirEAvaliarUseCase] as UC_Avaliar
+    }
+
+    package "ports (Portas de Saída / Contratos Abstratos)" <<Ports>> {
         interface "ServicoRepository" as IServicoRepo
         interface "ContratacaoRepository" as IContratacaoRepo
-        interface "NotificadorPort" as INotificadorPort
+        interface "NotificadorPort" as INotificador
     }
-    
-    package "src/domain (Modelo Rico)" <<Domain>> {
-        [Servico]
-        [SlotDisponibilidade]
-        [Contratacao]
-        [Avaliacao]
-        [ErroDominio]
+
+    package "domain (Núcleo de Domínio Rico)" <<Domain>> {
+        [Entidades, Objetos de Valor e Exceções\n(MembroComunidade, Servico, SlotDisponibilidade,\nContratacao, Avaliacao, ErroDominio)] as DomainModel
+    }
+
+    package "adapters.outbound (Infraestrutura / Saída)" <<Infrastructure>> {
+        [SqliteServicoRepository] as SqliteServ
+        [SqliteContratacaoRepository] as SqliteCont
+        [InMemoryServicoRepository] as MemServ
+        [InMemoryContratacaoRepository] as MemCont
+        [EmailNotificador] as EmailAdap
+        [NotificadorFake] as FakeAdap
     }
 }
 
-package "Infraestrutura (Adaptadores)" <<Infrastructure>> {
-    [SqliteContratacaoRepository]
-    [InMemoryContratacaoRepository]
-    [EmailNotificador]
-    [NotificadorFake]
-}
+database "SQLite DB\n(campushub.db)" as DB
+cloud "Servidor SMTP /\nAPI Externa" as SMTP
 
-package "Apresentação (Entrada)" <<Presentation>> {
-    [MarketplaceCLIController]
-}
+' Dependências de Entrada -> Aplicação
+CLI --> UC_Contratar : invoca
+CLI --> UC_Consultar : invoca
+CLI --> UC_Avaliar : invoca
+Tests --> UC_Contratar : testa isoladamente
+Tests --> UC_Consultar : testa isoladamente
+Tests --> UC_Avaliar : testa isoladamente
 
-' Fluxo de controle e Injeção de Dependências
-[MarketplaceCLIController] --> [SolicitarContratacaoUseCase] : invoca
+' Dependências da Aplicação -> Domínio e Portas
+UC_Contratar --> DomainModel : manipula
+UC_Consultar --> DomainModel : lê
+UC_Avaliar --> DomainModel : manipula
 
-' O Caso de Uso orquestra o domínio e as portas
-[SolicitarContratacaoUseCase] --> [Servico]
-[SolicitarContratacaoUseCase] --> [Contratacao]
-[SolicitarContratacaoUseCase] --> IServicoRepo
-[SolicitarContratacaoUseCase] --> IContratacaoRepo
-[SolicitarContratacaoUseCase] --> INotificadorPort
+UC_Contratar --> IServicoRepo : usa porta
+UC_Contratar --> IContratacaoRepo : usa porta
+UC_Contratar --> INotificador : usa porta
+UC_Consultar --> IServicoRepo : usa porta
+UC_Avaliar --> IContratacaoRepo : usa porta
+UC_Avaliar --> INotificador : usa porta
 
-' Adaptadores implementam as portas garantindo o DIP
-[SqliteContratacaoRepository] ..|> IContratacaoRepo
-[InMemoryContratacaoRepository] ..|> IContratacaoRepo
-[EmailNotificador] ..|> INotificadorPort
-[NotificadorFake] ..|> INotificadorPort
+' Portas conhecem apenas tipos do Domínio
+IServicoRepo ..> DomainModel
+IContratacaoRepo ..> DomainModel
 
-note right of INotificadorPort
-  **Indirection / Protected Variations:**
-  O núcleo não conhece "SMTP" ou "SQLite".
-  Qualquer mudança na infraestrutura não 
-  afeta o diretório src/application.
+' Adaptadores de Saída implementam as Portas (Inversão de Dependência - DIP)
+SqliteServ ..|> IServicoRepo : <<implements>>
+MemServ ..|> IServicoRepo : <<implements>>
+SqliteCont ..|> IContratacaoRepo : <<implements>>
+MemCont ..|> IContratacaoRepo : <<implements>>
+EmailAdap ..|> INotificador : <<implements>>
+FakeAdap ..|> INotificador : <<implements>>
+
+' Infraestrutura conversa com mundo externo
+SqliteServ --> DB : SQL (sqlite3)
+SqliteCont --> DB : SQL (sqlite3)
+EmailAdap --> SMTP : SMTP / HTTP
+
+note right of INotificador
+  **Indirection & Protected Variations (GRASP) / DIP (SOLID):**
+  O núcleo (application + domain) desconhece SQLite ou SMTP.
+  Substituir banco ou meio de notificação (ASR-01 / ASR-03)
+  exige apenas trocar o adaptador injetado no bootstrap (main.py).
 end note
+
 @enduml

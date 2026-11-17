@@ -1,58 +1,92 @@
-@startuml
-actor Solicitante
-participant "cli:\nMarketplaceCLIController" as CLI
-participant "useCase:\nSolicitarContratacaoUseCase" as UC
-participant "servico_repo:\nServicoRepository" as SRepo
-participant "servico:\nServico" as Servico
-participant "slot:\nSlotDisponibilidade" as Slot
-participant "nova_contratacao:\nContratacao" as Contratacao <<Creator>>
-participant "contratacao_repo:\nContratacaoRepository" as CRepo
-participant "notificador:\nNotificadorPort" as Notif
+@startuml sequencia
+autonumber
+actor "Solicitante" as User
+participant "controller:\nMarketplaceController" as Ctrl <<Inbound Adapter>>
+participant "useCase:\nSolicitarContratacaoUseCase" as UC <<Controller GRASP>>
+participant "servicoRepo:\nServicoRepository" as SRepo <<Outbound Port>>
+participant "servico:\nServico" as Serv <<Information Expert>>
+participant "slot:\nSlotDisponibilidade" as Slot <<Information Expert>>
+participant "contratacao:\nContratacao" as Cont <<Aggregate Root>>
+participant "contratacaoRepo:\nContratacaoRepository" as CRepo <<Outbound Port>>
+participant "notificador:\nNotificadorPort" as Notif <<Outbound Port>>
 
-Solicitante -> CLI : confirmar compra
-activate CLI
-CLI -> UC : executar(solic_id, serv_id, slot_id)
+User -> Ctrl : solicitar_contratacao(servico_id, slot_id, solicitante_id)
+activate Ctrl
+
+Ctrl -> UC : executar(servico_id, slot_id, solicitante_id)
 activate UC
 
-UC -> SRepo : buscar_por_id(serv_id)
+UC -> SRepo : buscar_por_id(servico_id)
 activate SRepo
 SRepo --> UC : servico
 deactivate SRepo
 
-UC -> Servico : validar_contratante(solic_id)
-activate Servico
-note right of Servico
-  Lança ErroDominio se
-  houver auto-contratação
+UC -> Serv : validar_contratante(solicitante_id)
+activate Serv
+note right of Serv
+  **Information Expert (GRASP)**:
+  Valida RES01 (proibição de
+  auto-contratação) no Domínio.
 end note
-Servico --> UC
-deactivate Servico
 
-UC -> Slot : reservar()
-activate Slot
-note right of Slot
-  Lança ErroDominio 
-  se não estiver LIVRE
-end note
-Slot --> UC
-deactivate Slot
+alt solicitante_id == servico.prestador_id (Erro de Negócio: RES01)
+    Serv --> UC : lança AutoContratacaoError
+    UC --> Ctrl : propaga AutoContratacaoError
+    Ctrl --> User : Exibe erro: "Prestador não pode contratar o próprio serviço"
+else contratante válido
+    Serv --> UC : ok
+    deactivate Serv
 
-UC -> Contratacao ** : __init__(solic_id, serv_id, slot_id...)
-note right: Nasce com status\nCONFIRMADA ou PENDENTE
+    UC -> Serv : buscar_slot(slot_id)
+    activate Serv
+    Serv --> UC : slot
+    deactivate Serv
 
-UC -> CRepo : salvar(nova_contratacao)
-activate CRepo
-CRepo --> UC : sucesso
-deactivate CRepo
+    UC -> Slot : reservar()
+    activate Slot
+    note right of Slot
+      **Information Expert (GRASP)**:
+      Protege invariante de horário
+      exclusivo (RES02 / ASR-02).
+    end note
 
-UC -> Notif : notificar(prestador, assunto, msg)
-activate Notif
-note right: Pure Fabrication (Adapter)
-Notif --> UC : sucesso
-deactivate Notif
+    alt slot.status != LIVRE (Erro de Negócio: RES02 / ASR-02)
+        Slot --> UC : lança SlotIndisponivelError
+        UC --> Ctrl : propaga SlotIndisponivelError
+        Ctrl --> User : Exibe erro: "Horário selecionado já está reservado"
+    else slot está LIVRE
+        Slot -> Slot : status = StatusSlot.RESERVADO
+        Slot --> UC : ok
+        deactivate Slot
 
-UC --> CLI : contratacao_id
+        create Cont
+        UC -> Cont : <<create>>(id, servico_id, slot_id, solicitante_id, prestador_id, CONFIRMADA)
+
+        UC -> SRepo : salvar(servico)
+        activate SRepo
+        SRepo --> UC : ok (slot atualizado para RESERVADO)
+        deactivate SRepo
+
+        UC -> CRepo : salvar(contratacao)
+        activate CRepo
+        CRepo --> UC : ok (contratação persistida)
+        deactivate CRepo
+
+        UC -> Notif : notificar(prestador_id, "Nova Contratação Confirmada - CampusHub", detalhes)
+        activate Notif
+        note right of Notif
+          **Pure Fabrication / Protected Variations**:
+          Disparo isolado via NotificadorPort (ASR-01)
+          após persistência concluída com sucesso.
+        end note
+        Notif --> UC : ok
+        deactivate Notif
+
+        UC --> Ctrl : retorna contratacao
+        Ctrl --> User : Confirma contratação criada (ID e horário reservado)
+    end
+end
+
 deactivate UC
-CLI --> Solicitante : sucesso
-deactivate CLI
+deactivate Ctrl
 @enduml
