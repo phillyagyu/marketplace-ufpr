@@ -3,7 +3,7 @@ skinparam classAttributeIconSize 0
 skinparam monochrome false
 skinparam packageStyle rectangle
 
-package "domain (Domínio)" {
+package "domain (Núcleo de Domínio Rico)" {
     enum StatusSlot {
         LIVRE
         RESERVADO
@@ -15,14 +15,14 @@ package "domain (Domínio)" {
         CANCELADA
     }
 
-    class MembroComunidade {
+    class MembroComunidade <<Entidade>> {
         +id: str
         +nome: str
         +email: str
         +registro_academico: str
     }
 
-    class Servico {
+    class Servico <<Raiz de Agregado>> {
         +id: str
         +prestador_id: str
         +titulo: str
@@ -36,7 +36,7 @@ package "domain (Domínio)" {
         +validar_contratante(solicitante_id: str): void
     }
 
-    class SlotDisponibilidade {
+    class SlotDisponibilidade <<Entidade Interna>> {
         +id: str
         +servico_id: str
         +inicio: datetime
@@ -47,7 +47,7 @@ package "domain (Domínio)" {
         +liberar(): void
     }
 
-    class Contratacao {
+    class Contratacao <<Raiz de Agregado>> {
         +id: str
         +servico_id: str
         +slot_id: str
@@ -61,7 +61,7 @@ package "domain (Domínio)" {
         +registrar_avaliacao(nota: int, comentario: str): Avaliacao
     }
 
-    class Avaliacao {
+    class Avaliacao <<Objeto de Valor>> {
         +id: str
         +contratacao_id: str
         +nota: int
@@ -70,17 +70,48 @@ package "domain (Domínio)" {
         +validar_nota(): void
     }
 
+    class ErroDominio <<Exceção>> {
+        +mensagem: str
+    }
+    class AutoContratacaoError <<Exceção>>
+    class SlotIndisponivelError <<Exceção>>
+    class TransicaoEstadoInvalidaError <<Exceção>>
+    class NotaInvalidaError <<Exceção>>
+
+    ErroDominio <|-- AutoContratacaoError
+    ErroDominio <|-- SlotIndisponivelError
+    ErroDominio <|-- TransicaoEstadoInvalidaError
+    ErroDominio <|-- NotaInvalidaError
+
     MembroComunidade "1" -- "0..*" Servico : oferece >
     MembroComunidade "1" -- "0..*" Contratacao : solicita >
-    Servico "1" *-- "1..*" SlotDisponibilidade : possui >
+    Servico "1" *-- "0..*" SlotDisponibilidade : possui >
     Contratacao "1" *-- "0..1" Avaliacao : contém >
     Contratacao ..> Servico : refere-se a >
     Contratacao ..> SlotDisponibilidade : reserva >
     SlotDisponibilidade --> StatusSlot
     Contratacao --> StatusContratacao
+
+    note left of Servico::validar_contratante
+      **Information Expert (GRASP)**:
+      Lança AutoContratacaoError se
+      solicitante_id == prestador_id (RES01).
+    end note
+
+    note right of SlotDisponibilidade::reservar
+      **Information Expert (GRASP)**:
+      Lança SlotIndisponivelError se
+      status != LIVRE, evitando overbooking (ASR-02).
+    end note
+
+    note right of Contratacao::registrar_avaliacao
+      **Creator (GRASP)**:
+      Contratacao instancia Avaliacao somente
+      após validar status == CONCLUIDA (RES03).
+    end note
 }
 
-package "ports (Portas / Interfaces)" {
+package "ports (Portas de Saída / Interfaces)" {
     interface ServicoRepository <<interface>> {
         +salvar(servico: Servico): void
         +buscar_por_id(servico_id: str): Optional<Servico>
@@ -98,17 +129,24 @@ package "ports (Portas / Interfaces)" {
     }
 }
 
-package "application (Casos de Uso)" {
-    class SolicitarContratacaoUseCase {
+package "application (Camada de Aplicação / Casos de Uso)" {
+    class SolicitarContratacaoUseCase <<Controller>> {
         -servico_repo: ServicoRepository
         -contratacao_repo: ContratacaoRepository
         -notificador: NotificadorPort
         +executar(servico_id: str, slot_id: str, solicitante_id: str): Contratacao
     }
 
-    class ConsultarServicosUseCase {
+    class ConsultarServicosUseCase <<Controller>> {
         -servico_repo: ServicoRepository
         +executar(apenas_com_slots_livres: bool): List<Servico>
+    }
+
+    class ConcluirEAvaliarUseCase <<Controller>> {
+        -contratacao_repo: ContratacaoRepository
+        -notificador: NotificadorPort
+        +concluir(contratacao_id: str): Contratacao
+        +avaliar(contratacao_id: str, nota: int, comentario: str): Avaliacao
     }
 
     SolicitarContratacaoUseCase --> ServicoRepository
@@ -117,9 +155,12 @@ package "application (Casos de Uso)" {
     SolicitarContratacaoUseCase ..> Servico : valida e reserva
     SolicitarContratacaoUseCase ..> Contratacao : instancia
     ConsultarServicosUseCase --> ServicoRepository
+    ConcluirEAvaliarUseCase --> ContratacaoRepository
+    ConcluirEAvaliarUseCase --> NotificadorPort
+    ConcluirEAvaliarUseCase ..> Contratacao : conclui e avalia
 }
 
-package "adapters.outbound (Infraestrutura)" {
+package "adapters.outbound (Infraestrutura / Pure Fabrication)" {
     class SqliteServicoRepository {
         -conn: Connection
         +salvar(servico: Servico): void
@@ -129,6 +170,20 @@ package "adapters.outbound (Infraestrutura)" {
 
     class SqliteContratacaoRepository {
         -conn: Connection
+        +salvar(contratacao: Contratacao): void
+        +buscar_por_id(contratacao_id: str): Optional<Contratacao>
+        +listar_por_usuario(usuario_id: str): List<Contratacao>
+    }
+
+    class InMemoryServicoRepository {
+        -servicos: dict<str, Servico>
+        +salvar(servico: Servico): void
+        +buscar_por_id(servico_id: str): Optional<Servico>
+        +listar_disponiveis(): List<Servico>
+    }
+
+    class InMemoryContratacaoRepository {
+        -contratacoes: dict<str, Contratacao>
         +salvar(contratacao: Contratacao): void
         +buscar_por_id(contratacao_id: str): Optional<Contratacao>
         +listar_por_usuario(usuario_id: str): List<Contratacao>
@@ -145,7 +200,9 @@ package "adapters.outbound (Infraestrutura)" {
     }
 
     SqliteServicoRepository ..|> ServicoRepository
+    InMemoryServicoRepository ..|> ServicoRepository
     SqliteContratacaoRepository ..|> ContratacaoRepository
+    InMemoryContratacaoRepository ..|> ContratacaoRepository
     EmailNotificador ..|> NotificadorPort
     NotificadorFake ..|> NotificadorPort
 }

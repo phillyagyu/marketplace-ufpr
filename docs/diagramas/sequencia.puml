@@ -1,14 +1,14 @@
 @startuml sequencia
 autonumber
 actor "Solicitante" as User
-participant "controller:\nMarketplaceController" as Ctrl
-participant "useCase:\nSolicitarContratacaoUseCase" as UC
-participant "servicoRepo:\nServicoRepository" as SRepo
-participant "servico:\nServico" as Serv
-participant "slot:\nSlotDisponibilidade" as Slot
-participant "contratacao:\nContratacao" as Cont
-participant "contratacaoRepo:\nContratacaoRepository" as CRepo
-participant "notificador:\nNotificadorPort" as Notif
+participant "controller:\nMarketplaceController" as Ctrl <<Inbound Adapter>>
+participant "useCase:\nSolicitarContratacaoUseCase" as UC <<Controller GRASP>>
+participant "servicoRepo:\nServicoRepository" as SRepo <<Outbound Port>>
+participant "servico:\nServico" as Serv <<Information Expert>>
+participant "slot:\nSlotDisponibilidade" as Slot <<Information Expert>>
+participant "contratacao:\nContratacao" as Cont <<Aggregate Root>>
+participant "contratacaoRepo:\nContratacaoRepository" as CRepo <<Outbound Port>>
+participant "notificador:\nNotificadorPort" as Notif <<Outbound Port>>
 
 User -> Ctrl : solicitar_contratacao(servico_id, slot_id, solicitante_id)
 activate Ctrl
@@ -23,6 +23,11 @@ deactivate SRepo
 
 UC -> Serv : validar_contratante(solicitante_id)
 activate Serv
+note right of Serv
+  **Information Expert (GRASP)**:
+  Valida RES01 (proibição de
+  auto-contratação) no Domínio.
+end note
 
 alt solicitante_id == servico.prestador_id (Erro de Negócio: RES01)
     Serv --> UC : lança AutoContratacaoError
@@ -39,6 +44,11 @@ else contratante válido
 
     UC -> Slot : reservar()
     activate Slot
+    note right of Slot
+      **Information Expert (GRASP)**:
+      Protege invariante de horário
+      exclusivo (RES02 / ASR-02).
+    end note
 
     alt slot.status != LIVRE (Erro de Negócio: RES02 / ASR-02)
         Slot --> UC : lança SlotIndisponivelError
@@ -62,8 +72,13 @@ else contratante válido
         CRepo --> UC : ok (contratação persistida)
         deactivate CRepo
 
-        UC -> Notif : notificar(prestador_id, "Nova Contratação", detalhes)
+        UC -> Notif : notificar(prestador_id, "Nova Contratação Confirmada - CampusHub", detalhes)
         activate Notif
+        note right of Notif
+          **Pure Fabrication / Protected Variations**:
+          Disparo isolado via NotificadorPort (ASR-01)
+          após persistência concluída com sucesso.
+        end note
         Notif --> UC : ok
         deactivate Notif
 
