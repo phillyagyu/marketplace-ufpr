@@ -1,8 +1,8 @@
 from datetime import datetime
 from enum import Enum
-from typing import Optional
+from typing import Optional, List
 
-from .excecoes import *
+from src.domain.excecoes import *
 
 class StatusSlot(Enum):
     LIVRE = "livre"
@@ -35,14 +35,17 @@ class SlotDisponibilidade:
         else:
             self.status = StatusSlot.LIVRE
 
+    # verifica se o horario esta disponivel para reserva
     def esta_livre(self) -> bool:
         return self.status == StatusSlot.LIVRE
 
+    # bloqueia o horario caso esteja livre, evitando overbooking
     def reservar(self) -> None:
         if not self.esta_livre():
             raise SlotIndisponivelError()
         self.status = StatusSlot.RESERVADO
 
+    # devolve o horario para o estado livre em caso de cancelamento
     def liberar(self) -> None:
         self.status = StatusSlot.LIVRE
 
@@ -60,7 +63,8 @@ class Servico:
             self.slots = slots
         else:
             self.slots = []
-            
+
+    # cria e adiciona um novo slot de horario na agenda do servico     
     def adicionar_slot(self, inicio: datetime, fim: datetime) -> SlotDisponibilidade:
         numero_slot = len(self.slots) + 1
         novo_id = f"slot-{numero_slot}"
@@ -75,7 +79,8 @@ class Servico:
                 return slot
         raise ErroDominio(f"Slot '{slot_id}' não encontrado no serviço '{self.id}'.")
 
-    def obter_slots_livres(self) -> list:
+    # retorna apenas os horarios que ainda estao com status livre
+    def obter_slots_livres(self) -> List[SlotDisponibilidade]:
         slots_livres = []
         for slot in self.slots:
             if slot.esta_livre():
@@ -86,9 +91,9 @@ class Servico:
         if solicitante_id == self.prestador_id:
             raise AutoContratacaoError()
 
-
+# representa a avaliacao do servico e garante nota valida (1 a 5) e comentario preenchido
 class Avaliacao:
-    def __init__(self, id: str, contratacao_id: str, nota: int, comentario: str, criado_em = None):
+    def __init__(self, id: str, contratacao_id: str, nota: int, comentario: str, criado_em=None):
         self.id = id
         self.contratacao_id = contratacao_id
         self.nota = nota
@@ -107,9 +112,9 @@ class Avaliacao:
         if self.comentario == "":
             raise NotaInvalidaError()
 
-
+# governa o ciclo de vida do contrato (confirmada, concluida, cancelada) e cria a avaliacao
 class Contratacao:
-    def __init__(self, id: str, servico_id: str, slot_id: str, solicitante_id: str, prestador_id: str, status=None, criado_em=None, avaliacao=None):
+    def __init__(self, id: str, servico_id: str, slot_id: str, solicitante_id: str, prestador_id: str, status=None, criado_em=None, avaliacao: Optional[Avaliacao]=None):
         self.id = id
         self.servico_id = servico_id
         self.slot_id = slot_id
