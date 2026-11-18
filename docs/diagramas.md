@@ -1,42 +1,68 @@
-# Justificativas da Modelagem UML — CampusHub (Tema 11)
+# 3. Modelagem UML e Consistência entre Modelos — CampusHub (Tema 11)
 
-Este documento detalha as decisões de design e arquitetura adotadas na modelagem UML do sistema CampusHub. O objetivo principal da modelagem foi garantir a consistência entre os artefatos e o alinhamento estrito com os Requisitos Arquiteturalmente Significativos (ASRs), utilizando os padrões GRASP e princípios SOLID.
-
----
-
-## 1. Diagrama de Componentes (Arquitetura Hexagonal / Ports & Adapters)
-
-O Diagrama de Componentes ilustra a separação física e lógica dos módulos do sistema, adotando o estilo arquitetural centrado no domínio (Hexagonal/Clean Architecture).
-
-* **Princípio da Inversão de Dependência (DIP - SOLID):** O diagrama evidencia que a camada `src/application` e `src/domain` (módulos de alto nível) não possuem setas de dependência apontando para tecnologias externas. Em vez disso, dependem de abstrações (interfaces em `src/ports`). As implementações reais, como `EmailNotificador` e `SqliteContratacaoRepository`, residem na camada de infraestrutura e apontam "para dentro", implementando essas interfaces.
-* **Substituibilidade de Integrações (ASR-01):** O padrão *Protected Variations* (Variações Protegidas) foi aplicado ao isolar o serviço de notificação. A troca futura de um disparo de e-mail por WhatsApp envolverá apenas a criação de um novo adaptador na infraestrutura, sem recompilar ou alterar o núcleo do sistema.
-* **Testabilidade (ASR-03):** O design em portas e adaptadores permite que, em tempo de teste, o `SolicitarContratacaoUseCase` receba injeções do `NotificadorFake` e do `InMemoryContratacaoRepository`. Isso viabiliza testes automatizados da lógica de negócio em milissegundos.
+Este documento detalha as decisões de design e arquitetura representadas nos quatro modelos UML obrigatórios do **CampusHub**, localizados no diretório [`docs/diagramas/`](./diagramas/). O objetivo central da modelagem foi assegurar total consistência entre a visão estrutural estática, a visão comportamental dinâmica, a organização de componentes e o código-fonte implementado, alinhando cada elemento aos Requisitos Arquiteturalmente Significativos (ASRs), padrões **GRASP** e princípios **SOLID**.
 
 ---
 
-## 2. Diagrama de Classes (Modelo de Domínio Rico)
+## 3.1 Diagrama de Classes — [`diagramas/classes.puml`](./diagramas/classes.puml)
 
-O Diagrama de Classes rejeita o antipadrão "Modelo Anêmico", encapsulando o estado e o comportamento dentro das entidades (*Rich Domain Model*).
+O Diagrama de Classes modela o **Modelo de Domínio Rico** (*Rich Domain Model*) e sua relação com as Portas de Saída (`ports`), Casos de Uso (`application`) e Adaptadores Secundários (`adapters.outbound`), rejeitando o antipadrão de Modelo Anêmico.
 
-* **Consistência Transacional (ASR-02) e *Information Expert* (GRASP):** A entidade `Servico` atua como Especialista na Informação para validar a regra **RES01** (auto-contratação), pois ela detém o `prestador_id`. Da mesma forma, o método `reservar()` pertence à entidade interna `SlotDisponibilidade`, garantindo que o status seja checado antes de qualquer mutação. O modelo recusa transições inválidas lançando subclasses de `ErroDominio`.
-* **Padrão *Creator* (GRASP):** A instanciação da entidade `Avaliacao` foi delegada ao método `registrar_avaliacao()` dentro da Raiz de Agregado `Contratacao`. Isso blinda a integridade do sistema (**RES03**), garantindo que uma avaliação nunca seja criada solta no sistema ou associada a um serviço que ainda não tenha o status `CONCLUIDA`.
-* **Alta Coesão:** As classes de domínio não contêm referências a SQL, JSON ou SMTP. Seu único motivo para mudar (SRP - Princípio da Responsabilidade Única) é a alteração de regras do negócio universitário.
-
----
-
-## 3. Diagrama de Sequência (Caso de Uso: Solicitar Contratação)
-
-O Diagrama de Sequência mostra o fluxo dinâmico e temporal da contratação de um serviço, evidenciando como a camada de Aplicação orquestra o Domínio e a Infraestrutura.
-
-* **Padrão *Controller* (GRASP) e SRP (SOLID):** O `SolicitarContratacaoUseCase` não detém lógica condicional de negócios (ex: `if slot.status == LIVRE`). Ele atua puramente como um coordenador que repassa mensagens. A lógica foi delegada para os *Information Experts* (`Servico` e `Slot`).
-* **Atomicidade (ASR-02):** O fluxo ilustra que o caso de uso recupera as instâncias, executa as validações de domínio em memória e, apenas em caso de sucesso absoluto, invoca o método `salvar()` do repositório. Se o `reservar()` falhar no meio do processo, o fluxo é interrompido por uma exceção, prevenindo gravações parciais no banco de dados e mitigando *overbooking*.
-* **Isolamento de Efeitos Colaterais:** A notificação externa (envio de e-mail/mensagem) só é disparada após a confirmação da transação no banco de dados (`salvar()`), garantindo que o usuário não seja notificado de uma transação que falhou no repositório.
+* **Consistência Transacional (ASR-02) e *Information Expert* (GRASP):**
+  * A entidade `Servico` atua como Especialista na Informação para validar a restrição **RES01** (proibição de auto-contratação) por meio do método `validar_contratante(solicitante_id: str)`, pois detém o atributo `prestador_id`.
+  * A entidade interna `SlotDisponibilidade` detém o atributo `status: StatusSlot` (`LIVRE` ou `RESERVADO`) e encapsula a proteção de invariante no método `reservar()`, lançando `SlotIndisponivelError` caso o horário já esteja ocupado (**RES02 / ASR-02**).
+* **Padrão *Creator* (GRASP):**
+  * A instanciação de `SlotDisponibilidade` é responsabilidade de `Servico.adicionar_slot(inicio, fim)`.
+  * A instanciação de `Avaliacao` é delegada ao método `Contratacao.registrar_avaliacao(nota, comentario)`. Isso blinda a integridade do domínio (**RES03**), garantindo que nenhuma avaliação seja criada órfã ou vinculada a uma contratação cujo estado não seja `CONCLUIDA`.
+* **Alta Coesão e Inversão de Dependência (SRP e DIP - SOLID):**
+  * As classes do pacote `domain` não possuem referências a SQL, rede ou frameworks externos.
+  * Os Casos de Uso (`SolicitarContratacaoUseCase`, `ConsultarServicosUseCase`, `ConcluirEAvaliarUseCase`) dependem exclusivamente das interfaces abstratas em `ports` (`ServicoRepository`, `ContratacaoRepository`, `NotificadorPort`), que são realizadas (`..|>`) pelos adaptadores concretos em `adapters.outbound`.
 
 ---
 
-## 4. Diagrama de Comunicação (Colaboração de Instâncias)
+## 3.2 Diagrama de Sequência — [`diagramas/sequencia.puml`](./diagramas/sequencia.puml)
 
-Complementar ao Diagrama de Sequência, o Diagrama de Comunicação reforça a topologia da rede de mensagens entre as instâncias envolvidas no Caso de Uso.
+O Diagrama de Sequência retrata o fluxo dinâmico temporal da fatia vertical principal (**RF04 — Solicitar Contratação de Serviço**), incluindo os fluxos alternativos de exceção de negócio (`alt/else`).
 
-* **Visão Espacial da Inversão de Controle:** O diagrama deixa visualmente claro que o Controlador (`UC`) é o nó central da colaboração, enviando mensagens radiadas tanto para as abstrações de saída (itens 1, 5 e 6: *Repositories* e *NotificadorPort*) quanto para o modelo de domínio central (itens 2, 3 e 4: *Servico*, *Slot* e *Contratacao*).
-* **Consistência de Nomenclatura:** Este diagrama prova a consistência entre a modelagem estática e dinâmica, pois as assinaturas das mensagens (`validar_contratante`, `reservar`, `salvar`) correspondem exatamente aos métodos definidos no Diagrama de Classes e às portas do Diagrama de Componentes.
+* **Padrão *Controller* (GRASP) e Responsabilidade Única (SRP - SOLID):**
+  * O `MarketplaceController` recebe a requisição de entrada e repassa ao controlador de caso de uso `SolicitarContratacaoUseCase.executar(servico_id, slot_id, solicitante_id)`.
+  * O Caso de Uso não contém condicionais de negócio (`if`), delegando as validações diretamente para `servico.validar_contratante(solicitante_id)` e `slot.reservar()`.
+* **Atomicidade e Tratamento Explícito de Erros (ASR-02):**
+  * Caso `solicitante_id == servico.prestador_id`, `Servico` lança `AutoContratacaoError` e interrompe o fluxo antes de qualquer mutação.
+  * Caso `slot.status != LIVRE`, `SlotDisponibilidade` lança `SlotIndisponivelError`, prevenindo *overbooking* e gravações parciais no banco de dados.
+* **Isolamento de Efeitos Colaterais (ASR-01):**
+  * O disparo de notificação externa via `notificador.notificar(...)` ocorre somente após a confirmação da persistência de `servico` e `contratacao` nos repositórios (`salvar()`), garantindo que o prestador nunca seja notificado sobre uma contratação não persistida.
+
+---
+
+## 3.3 Diagrama de Comunicação — [`diagramas/comunicacao.puml`](./diagramas/comunicacao.puml)
+
+Complementar ao Diagrama de Sequência, o Diagrama de Comunicação enfatiza a topologia estrutural e os vínculos de colaboração entre as instâncias que participam do Caso de Uso de contratação.
+
+* **Visão Espacial da Coordenação (Controller GRASP):**
+  * Evidencia que a instância `useCase : SolicitarContratacaoUseCase` atua como nó coordenador central, recebendo o estímulo `1.1: executar(...)` do `controller : MarketplaceController` e distribuindo mensagens numeradas hierarquicamente:
+    * **Para as Portas de Saída (`ports`):** `1.2: buscar_por_id(servico_id)`, `1.6: salvar(servico)`, `1.7: salvar(contratacao)` e `1.8: notificar(prestador_id, assunto, msg)`.
+    * **Para as Entidades de Domínio (`domain`):** `1.3: validar_contratante(solicitante_id)`, `1.4: buscar_slot(slot_id)`, `1.5: reservar()` e `1.5.1: <<create>>` em `Contratacao`.
+
+---
+
+## 3.4 Diagrama de Componentes — [`diagramas/componentes.puml`](./diagramas/componentes.puml)
+
+O Diagrama de Componentes apresenta a visão macroscópica do **Monolito Modular em Camadas com Ports & Adapters (Arquitetura Hexagonal Simplificada)**.
+
+* **Direção Estrita das Dependências (DIP - SOLID):**
+  * Todos os componentes convergem suas setas de dependência para o interior da arquitetura (`domain` e `ports`). O núcleo não conhece detalhes de `SQLite` nem de `SMTP`.
+* **Substituibilidade de Integrações (ASR-01) e *Protected Variations* (GRASP):**
+  * Os componentes `EmailNotificador` e `NotificadorFake` implementam a mesma porta `NotificadorPort`. A troca entre um adaptador real (ou futuro adaptador de WhatsApp) e o adaptador simulado exige apenas alterar a injeção de dependência no *Composition Root* (`main.py`).
+* **Testabilidade Isolada (ASR-03):**
+  * Demonstra como a `TestSuite (Pytest)` (adaptador primário) exercita diretamente os Casos de Uso injetando `InMemoryServicoRepository`, `InMemoryContratacaoRepository` e `NotificadorFake`, validando todas as regras de negócio em memória sem depender de banco de dados externo.
+
+---
+
+## 3.5 Verificação de Consistência entre Modelos e Código
+
+Em atendimento direto aos critérios da **Seção 3 do Edital**, os quatro diagramas e o código-fonte mantêm rastreabilidade e consistência estrita:
+
+1. **Consistência entre Diagrama de Sequência, Comunicação e Classes:** Todas as operações invocadas nos diagramas dinâmicos (`executar`, `buscar_por_id`, `validar_contratante`, `buscar_slot`, `reservar`, `salvar`, `notificar`) possuem a exata mesma assinatura, ordem de parâmetros e classe detentora definidas no Diagrama de Classes (`classes.puml`) e implementadas em `src/`.
+2. **Consistência entre Diagrama de Componentes e Organização Arquitetural:** Os pacotes modelados no Diagrama de Componentes (`domain`, `ports`, `application`, `adapters.inbound`, `adapters.outbound`) refletem fielmente a estrutura modular documentada em [`docs/arquitetura.md`](./arquitetura.md).
+3. **Coerência das Dependências com o Código:** Nenhuma entidade em `src/domain/` importa módulos de `application` ou `adapters`, e os casos de uso dependem exclusivamente de contratos abstratos (`abc.ABC`) em `src/ports/`.

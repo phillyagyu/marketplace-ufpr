@@ -21,8 +21,16 @@ Ctrl -down-> UC : 1.1: executar(servico_id, slot_id, solicitante_id)
 UC -left-> SRepo : 1.2: buscar_por_id(servico_id)\n1.6: salvar(servico)
 UC -down-> Serv : 1.3: validar_contratante(solicitante_id)\n1.4: buscar_slot(slot_id)
 UC -down-> Slot : 1.5: reservar()
-UC -right-> Cont : 1.5.1: <<create>>(dados_contratacao)
+UC -right-> Cont : 1.5.1: <<create>>(id, servico_id, slot_id, solicitante_id, prestador_id, CONFIRMADA)
 UC -right-> CRepo : 1.7: salvar(contratacao)
 UC -up-> Notif : 1.8: notificar(prestador_id, assunto, msg)
+
+note right of UC
+  **Controller (GRASP) & DIP (SOLID)**:
+  Coordena a colaboração radiando mensagens
+  para as Entidades de Domínio (1.3, 1.4, 1.5, 1.5.1)
+  e para as Portas de Saída abstratas (1.2, 1.6, 1.7, 1.8),
+  sem conter lógica especialista nem acoplamento técnico.
+end note
 
 @enduml
