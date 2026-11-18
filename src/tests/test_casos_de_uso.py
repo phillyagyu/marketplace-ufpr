@@ -2,11 +2,16 @@ from datetime import datetime, timedelta
 
 import pytest
 
-from src.adapters.outbound.in_memory_repositories import (
+from src.adapters.outbound.memoria_repositorios import (
     InMemoryContratacaoRepository,
     InMemoryServicoRepository,
 )
 from src.adapters.outbound.notificadores import NotificadorFake
+from src.adapters.outbound.sqlite_repositorios import (
+    SqliteContratacaoRepository,
+    SqliteServicoRepository,
+    criar_conexao_sqlite,
+)
 from src.application.casos_de_uso import (
     ConcluirEAvaliarUseCase,
     ConsultarServicosUseCase,
@@ -154,3 +159,43 @@ def test_concluir_e_avaliar_use_case():
 
     with pytest.raises(TransicaoEstadoInvalidaError):
         concluir_avaliar_uc.avaliar(contratacao.id, nota=4, comentario="Segunda avaliação")
+
+
+# Integracao com adaptadores SQLite (ASR-02 e ASR-03)
+def test_fluxo_completo_com_sqlite():
+    conn = criar_conexao_sqlite(":memory:")
+    servico_repo = SqliteServicoRepository(conn)
+    contratacao_repo = SqliteContratacaoRepository(conn)
+    notificador = NotificadorFake()
+
+    servico = criar_servico_exemplo()
+    slot = servico.slots[0]
+    servico_repo.salvar(servico)
+
+    solicitar_uc = SolicitarContratacaoUseCase(servico_repo, contratacao_repo, notificador)
+    contratacao = solicitar_uc.executar(
+        servico_id=servico.id,
+        slot_id=slot.id,
+        solicitante_id="solicitante-1",
+    )
+
+    # confirma persistencia do slot como RESERVADO no SQLite
+    servico_db = servico_repo.buscar_por_id(servico.id)
+    assert servico_db is not None
+    assert servico_db.buscar_slot(slot.id).status == StatusSlot.RESERVADO
+
+    # confirma filtro de consulta sobre o SQLite
+    consultar_uc = ConsultarServicosUseCase(servico_repo)
+    assert len(consultar_uc.executar(apenas_com_slots_livres=True)) == 0
+    assert len(consultar_uc.executar(apenas_com_slots_livres=False)) == 1
+
+    # conclui e avalia persistindo no SQLite
+    concluir_avaliar_uc = ConcluirEAvaliarUseCase(contratacao_repo, notificador)
+    concluir_avaliar_uc.concluir(contratacao.id)
+    concluir_avaliar_uc.avaliar(contratacao.id, nota=5, comentario="Ótimo atendimento!")
+
+    contratacao_db = contratacao_repo.buscar_por_id(contratacao.id)
+    assert contratacao_db is not None
+    assert contratacao_db.status == StatusContratacao.CONCLUIDA
+    assert contratacao_db.avaliacao is not None
+    assert contratacao_db.avaliacao.nota == 5

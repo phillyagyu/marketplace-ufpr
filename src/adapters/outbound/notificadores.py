@@ -1,12 +1,6 @@
-from abc import ABC
 from typing import Dict, List
 
-try:
-    from src.ports.interfaces import NotificadorPort
-except ModuleNotFoundError:
-    class NotificadorPort(ABC):  # type: ignore[no-redef]
-        def notificar(self, destinatario: str, assunto: str, mensagem: str) -> None:
-            pass
+from src.ports.interfaces import NotificadorPort
 
 
 class EmailNotificador(NotificadorPort):
