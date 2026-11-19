@@ -203,349 +203,695 @@ HTML_PAGINA = """<!DOCTYPE html>
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CampusHub UFPR — Marketplace de Serviços no Campus (Tema 11)</title>
+  <title>CampusHub UFPR — Marketplace de Serviços Acadêmicos</title>
   <style>
     :root {
-      --bg: #0f172a;
-      --panel: #1e293b;
-      --panel-alt: #334155;
-      --border: #475569;
-      --text: #f8fafc;
-      --muted: #94a3b8;
-      --primary: #3b82f6;
-      --primary-hover: #2563eb;
-      --success: #10b981;
-      --danger: #ef4444;
-      --warning: #f59e0b;
-      --purple: #a855f7;
+      --bg: #f6f8fc;
+      --surface: #ffffff;
+      --surface-soft: #f8fafc;
+      --border: #e2e8f0;
+      --border-soft: #edf2f7;
+      --text: #1e293b;
+      --text-muted: #64748b;
+
+      /* Paleta Pastel Suave */
+      --indigo-pastel: #e0e7ff;
+      --indigo-border: #c7d2fe;
+      --indigo-text: #4338ca;
+      --indigo-btn: #6366f1;
+      --indigo-btn-hover: #4f46e5;
+
+      --mint-pastel: #dcfce7;
+      --mint-border: #bbf7d0;
+      --mint-text: #15803d;
+      --mint-btn: #34d399;
+
+      --rose-pastel: #ffe4e6;
+      --rose-border: #fecdd3;
+      --rose-text: #be123c;
+
+      --amber-pastel: #fef3c7;
+      --amber-border: #fde68a;
+      --amber-text: #b45309;
+
+      --lavender-pastel: #f3e8ff;
+      --lavender-border: #e9d5ff;
+      --lavender-text: #6b21a8;
+
+      --sky-pastel: #e0f2fe;
+      --sky-border: #bae6fd;
+      --sky-text: #0369a1;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
-    body { background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 40px; }
-    header {
-      background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding-bottom: 48px;
+      line-height: 1.5;
+    }
+
+    /* Top Navbar de Aplicacao Real */
+    .navbar {
+      background: var(--surface);
       border-bottom: 1px solid var(--border);
-      padding: 18px 28px;
+      padding: 14px 32px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03);
+    }
+    .navbar-inner {
+      max-width: 1360px;
+      margin: 0 auto;
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
       gap: 16px;
     }
-    .brand h1 { font-size: 1.35rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
-    .badge-arch {
-      font-size: 0.72rem;
-      background: rgba(59, 130, 246, 0.2);
-      border: 1px solid #60a5fa;
-      color: #93c5fd;
-      padding: 3px 10px;
-      border-radius: 999px;
-      font-weight: 600;
-    }
-    .brand p { font-size: 0.85rem; color: var(--muted); margin-top: 4px; }
-    .user-bar {
+    .brand {
       display: flex;
       align-items: center;
       gap: 12px;
-      background: rgba(15, 23, 42, 0.75);
-      padding: 10px 16px;
-      border-radius: 10px;
+    }
+    .brand-logo {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #c7d2fe 0%, #e9d5ff 100%);
+      color: var(--indigo-text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.15rem;
+      border: 1px solid var(--indigo-border);
+    }
+    .brand-text h1 {
+      font-size: 1.22rem;
+      font-weight: 700;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .campus-tag {
+      font-size: 0.72rem;
+      background: var(--lavender-pastel);
+      color: var(--lavender-text);
+      border: 1px solid var(--lavender-border);
+      padding: 2px 10px;
+      border-radius: 999px;
+      font-weight: 600;
+    }
+    .brand-text p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* Seletor de Perfil na Navbar */
+    .profile-switcher {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--surface-soft);
+      padding: 6px 12px;
+      border-radius: 12px;
       border: 1px solid var(--border);
     }
-    .user-bar label { font-size: 0.82rem; color: var(--muted); font-weight: 600; }
+    .avatar-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--indigo-pastel);
+      color: var(--indigo-text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.82rem;
+    }
+    .profile-switcher label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      display: block;
+    }
     select, input, textarea {
-      background: var(--panel);
+      background: var(--surface);
       color: var(--text);
       border: 1px solid var(--border);
       padding: 8px 12px;
-      border-radius: 6px;
-      font-size: 0.88rem;
+      border-radius: 8px;
+      font-size: 0.86rem;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
     }
+    select:focus, input:focus, textarea:focus {
+      border-color: var(--indigo-btn);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+    }
+    .profile-select {
+      border: none;
+      background: transparent;
+      font-weight: 600;
+      color: var(--text);
+      padding: 2px 4px;
+      font-size: 0.88rem;
+      cursor: pointer;
+    }
+
+    /* Botoes Suaves */
     button {
       cursor: pointer;
       border: none;
-      border-radius: 6px;
+      border-radius: 8px;
       padding: 8px 14px;
-      font-size: 0.85rem;
+      font-size: 0.84rem;
       font-weight: 600;
-      transition: all 0.15s;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
     }
-    .btn-primary { background: var(--primary); color: white; }
-    .btn-primary:hover { background: var(--primary-hover); }
-    .btn-success { background: var(--success); color: #052e16; }
-    .btn-success:hover { filter: brightness(1.1); }
-    .btn-danger { background: rgba(239, 68, 68, 0.18); color: #fca5a5; border: 1px solid var(--danger); }
-    .btn-danger:hover { background: rgba(239, 68, 68, 0.3); }
-    .btn-warning { background: var(--warning); color: #451a03; }
-    .btn-outline { background: transparent; color: var(--muted); border: 1px solid var(--border); }
-    .btn-outline:hover { color: white; border-color: white; }
-
-    .container {
-      max-width: 1400px;
-      margin: 22px auto;
-      padding: 0 20px;
-      display: grid;
-      grid-template-columns: 1.35fr 1fr;
-      gap: 22px;
+    .btn-primary {
+      background: var(--indigo-btn);
+      color: #ffffff;
+      box-shadow: 0 2px 5px rgba(99, 102, 241, 0.22);
     }
-    @media (max-width: 1024px) { .container { grid-template-columns: 1fr; } }
+    .btn-primary:hover { background: var(--indigo-btn-hover); transform: translateY(-1px); }
 
+    .btn-mint {
+      background: var(--mint-pastel);
+      color: var(--mint-text);
+      border: 1px solid var(--mint-border);
+    }
+    .btn-mint:hover { background: #bbf7d0; transform: translateY(-1px); }
+
+    .btn-rose-soft {
+      background: var(--rose-pastel);
+      color: var(--rose-text);
+      border: 1px solid var(--rose-border);
+    }
+    .btn-rose-soft:hover { background: #fecdd3; }
+
+    .btn-amber-soft {
+      background: var(--amber-pastel);
+      color: var(--amber-text);
+      border: 1px solid var(--amber-border);
+    }
+    .btn-amber-soft:hover { background: #fde68a; }
+
+    .btn-ghost {
+      background: var(--surface);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover { background: var(--surface-soft); color: var(--text); }
+
+    /* Hero Banner / Barra de Busca e Filtros */
+    .hero-wrap {
+      max-width: 1360px;
+      margin: 22px auto 0;
+      padding: 0 24px;
+    }
+    .hero-banner {
+      background: linear-gradient(120deg, #eef2ff 0%, #fdf4ff 50%, #f0fdf4 100%);
+      border: 1px solid var(--indigo-border);
+      border-radius: 16px;
+      padding: 20px 26px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .hero-left h2 {
+      font-size: 1.25rem;
+      color: #1e1b4b;
+      margin-bottom: 4px;
+    }
+    .hero-left p {
+      font-size: 0.88rem;
+      color: #475569;
+    }
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
+    .cat-pill {
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.85);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      cursor: pointer;
+    }
+    .cat-pill.active {
+      background: var(--indigo-btn);
+      color: white;
+      border-color: var(--indigo-btn);
+    }
+
+    /* Alertas / Notificacoes Flutuantes */
     .alert-box {
-      max-width: 1400px;
-      margin: 16px auto 0;
-      padding: 0 20px;
+      max-width: 1360px;
+      margin: 14px auto 0;
+      padding: 0 24px;
     }
     .toast {
-      padding: 14px 18px;
-      border-radius: 10px;
+      padding: 14px 20px;
+      border-radius: 12px;
       margin-bottom: 10px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 0.92rem;
-      animation: fadeIn 0.2s ease;
+      gap: 14px;
+      font-size: 0.9rem;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+      animation: slideDown 0.22s ease;
     }
     .toast-error {
-      background: rgba(127, 29, 29, 0.85);
-      border: 2px solid var(--danger);
-      color: #fecaca;
+      background: #fff1f2;
+      border: 1px solid #fda4af;
+      border-left: 5px solid #e11d48;
+      color: #881337;
     }
     .toast-success {
-      background: rgba(6, 78, 59, 0.85);
-      border: 2px solid var(--success);
-      color: #a7f3d0;
+      background: #f0fdf4;
+      border: 1px solid #86efac;
+      border-left: 5px solid #16a34a;
+      color: #14532d;
     }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-    .card-panel {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 22px;
+    /* Layout Principal */
+    .main-grid {
+      max-width: 1360px;
+      margin: 22px auto 0;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: 1.45fr 1fr;
+      gap: 24px;
     }
-    .panel-header {
+    @media (max-width: 1024px) {
+      .main-grid { grid-template-columns: 1fr; }
+    }
+
+    .section-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 22px;
+      margin-bottom: 22px;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.02);
+    }
+    .section-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 16px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid var(--border);
       flex-wrap: wrap;
       gap: 10px;
+      margin-bottom: 18px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-soft);
     }
-    .panel-header h2 { font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
-    .tag-usecase {
-      font-size: 0.72rem;
-      font-family: monospace;
-      background: rgba(168, 85, 247, 0.2);
-      color: #d8b4fe;
-      border: 1px solid var(--purple);
-      padding: 2px 8px;
-      border-radius: 4px;
+    .section-title {
+      font-size: 1.06rem;
+      font-weight: 700;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .count-badge {
+      background: var(--indigo-pastel);
+      color: var(--indigo-text);
+      font-size: 0.76rem;
+      padding: 2px 9px;
+      border-radius: 999px;
+      font-weight: 700;
     }
 
+    /* Cards de Servico do Marketplace */
     .service-card {
-      background: rgba(15, 23, 42, 0.65);
+      background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 16px;
-      margin-bottom: 14px;
+      border-radius: 14px;
+      padding: 18px 20px;
+      margin-bottom: 16px;
+      transition: box-shadow 0.18s ease, border-color 0.18s ease;
     }
-    .service-top {
+    .service-card:hover {
+      border-color: var(--indigo-border);
+      box-shadow: 0 6px 18px rgba(99, 102, 241, 0.06);
+    }
+    .service-header {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
       gap: 12px;
       margin-bottom: 8px;
     }
-    .service-title { font-size: 1.02rem; font-weight: 700; color: #60a5fa; }
-    .service-price {
-      font-size: 1rem;
+    .cat-tag {
+      display: inline-block;
+      font-size: 0.72rem;
       font-weight: 700;
-      color: var(--success);
-      background: rgba(16, 185, 129, 0.12);
-      padding: 4px 10px;
-      border-radius: 6px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: var(--sky-pastel);
+      color: var(--sky-text);
+      border: 1px solid var(--sky-border);
+      margin-bottom: 6px;
+    }
+    .service-title {
+      font-size: 1.08rem;
+      font-weight: 700;
+      color: #1e293b;
+    }
+    .price-badge {
+      background: var(--mint-pastel);
+      color: var(--mint-text);
+      border: 1px solid var(--mint-border);
+      padding: 6px 12px;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 800;
       white-space: nowrap;
     }
-    .service-meta { font-size: 0.82rem; color: var(--muted); margin-bottom: 10px; }
-    .slots-grid {
+    .provider-row {
       display: flex;
-      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.83rem;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+    .provider-dot {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--lavender-pastel);
+      color: var(--lavender-text);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.72rem;
+    }
+    .own-badge {
+      background: var(--amber-pastel);
+      color: var(--amber-text);
+      border: 1px solid var(--amber-border);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 1px 8px;
+      border-radius: 999px;
+    }
+    .service-desc {
+      font-size: 0.88rem;
+      color: #475569;
+      margin-bottom: 14px;
+    }
+
+    /* Slots de Horario */
+    .slots-box {
+      background: var(--surface-soft);
+      border: 1px solid var(--border-soft);
+      border-radius: 12px;
+      padding: 12px;
+    }
+    .slots-label {
+      font-size: 0.76rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .slot-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 12px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .slot-row:last-child { margin-bottom: 0; }
+    .slot-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .status-badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 999px;
+      text-transform: capitalize;
+    }
+    .badge-livre {
+      background: var(--mint-pastel);
+      color: var(--mint-text);
+      border: 1px solid var(--mint-border);
+    }
+    .badge-reservado {
+      background: var(--rose-pastel);
+      color: var(--rose-text);
+      border: 1px solid var(--rose-border);
+    }
+    .badge-confirmada {
+      background: var(--sky-pastel);
+      color: var(--sky-text);
+      border: 1px solid var(--sky-border);
+    }
+    .badge-concluida {
+      background: var(--mint-pastel);
+      color: var(--mint-text);
+      border: 1px solid var(--mint-border);
+    }
+
+    /* Contratacoes e Avaliacoes */
+    .booking-card {
+      background: var(--surface-soft);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+    .booking-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .booking-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+    .booking-meta {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+    .booking-actions {
+      display: flex;
+      flex-wrap: wrap;
       gap: 8px;
       margin-top: 12px;
       padding-top: 10px;
       border-top: 1px dashed var(--border);
     }
-    .slot-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: var(--panel);
-      padding: 8px 12px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-    .status-pill {
-      font-size: 0.73rem;
-      font-weight: 700;
-      padding: 2px 8px;
-      border-radius: 999px;
-      text-transform: uppercase;
-    }
-    .pill-livre { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid var(--success); }
-    .pill-reservado { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid var(--danger); }
-    .pill-confirmada { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid var(--primary); }
-    .pill-concluida { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid var(--success); }
-
-    .contratacao-item {
-      background: rgba(15, 23, 42, 0.65);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 14px;
-      margin-bottom: 12px;
-    }
-    .contratacao-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 12px;
-      padding-top: 10px;
-      border-top: 1px solid var(--border);
-    }
-    .notif-item {
-      background: rgba(15, 23, 42, 0.8);
-      border-left: 4px solid var(--warning);
+    .review-box {
+      margin-top: 10px;
+      background: var(--amber-pastel);
+      border: 1px solid var(--amber-border);
+      color: #78350f;
       padding: 10px 12px;
-      border-radius: 6px;
+      border-radius: 10px;
+      font-size: 0.84rem;
+    }
+    .eval-drawer {
+      margin-top: 10px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 12px;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    /* Caixa de E-mails / Notificacoes */
+    .email-card {
+      background: var(--surface-soft);
+      border: 1px solid var(--border);
+      border-left: 4px solid #818cf8;
+      border-radius: 10px;
+      padding: 12px 14px;
       margin-bottom: 10px;
       font-size: 0.83rem;
     }
-    .guide-bar {
-      max-width: 1400px;
-      margin: 18px auto 0;
-      padding: 0 20px;
-    }
-    .guide-inner {
-      background: rgba(30, 58, 138, 0.35);
-      border: 1px solid #3b82f6;
-      border-radius: 10px;
-      padding: 12px 18px;
-      font-size: 0.85rem;
+    .email-header {
       display: flex;
-      flex-wrap: wrap;
-      gap: 16px;
-      align-items: center;
       justify-content: space-between;
+      color: var(--indigo-text);
+      font-weight: 700;
+      margin-bottom: 4px;
+      font-size: 0.78rem;
     }
-    .eval-form {
-      margin-top: 10px;
-      background: var(--panel);
-      padding: 10px;
-      border-radius: 8px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      align-items: center;
+    .empty-state {
+      text-align: center;
+      padding: 24px 12px;
+      color: var(--text-muted);
+      font-size: 0.88rem;
     }
   </style>
 </head>
 <body>
 
-  <header>
-    <div class="brand">
-      <h1>
-        CampusHub UFPR
-        <span class="badge-arch">Monolito Modular + Ports &amp; Adapters (Hexagonal)</span>
-      </h1>
-      <p>Tema 11 — Marketplace de Serviços no Campus | Persistência: SQLite (campushub.db) | Porta Externa: NotificadorPort</p>
-    </div>
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <div class="brand">
+        <div class="brand-logo">CH</div>
+        <div class="brand-text">
+          <h1>
+            CampusHub UFPR
+            <span class="campus-tag">Comunidade Acadêmica</span>
+          </h1>
+          <p>Marketplace de mentorias, revisões e serviços especializados dentro do campus</p>
+        </div>
+      </div>
 
-    <div class="user-bar">
-      <label for="usuarioAtivo">Ator Logado na Sessão:</label>
-      <select id="usuarioAtivo" onchange="atualizarDicaAtor()"></select>
-      <button class="btn-outline" onclick="resetarBanco()" title="Restaura os dados originais da demonstração">
-        Resetar Demo (SQLite)
-      </button>
-    </div>
-  </header>
+      <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+        <div class="profile-switcher">
+          <div class="avatar-circle" id="avatarIniciais">LM</div>
+          <div>
+            <label for="usuarioAtivo">Acessando como:</label>
+            <select id="usuarioAtivo" class="profile-select" onchange="trocarUsuario()"></select>
+          </div>
+        </div>
 
-  <div class="guide-bar">
-    <div class="guide-inner">
-      <div id="dicaRoteiro">
-        <strong>Roteiro Rápido para a Defesa:</strong>
-        1) Com <b>Lucas</b> selecionado, contrate um horário LIVRE.
-        2) Mude para <b>Bruna</b> e tente contratar o mesmo horário (testa <code>SlotIndisponivelError - ASR-02</code>).
-        3) Mude para <b>Ana Clara</b> e tente contratar o próprio serviço dela (testa <code>AutoContratacaoError - RES01</code>).
-        4) Conclua e avalie a contratação!
+        <button class="btn-ghost" onclick="resetarBanco()" title="Restaura os serviços e horários iniciais">
+          Restaurar Dados Iniciais
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO & FILTROS -->
+  <div class="hero-wrap">
+    <div class="hero-banner">
+      <div class="hero-left">
+        <h2>Encontre ou ofereça apoio acadêmico na UFPR</h2>
+        <p>Agende horários livres com estudantes e docentes, acompanhe suas solicitações e avalie os atendimentos.</p>
+      </div>
+
+      <div class="filter-bar">
+        <input type="text" id="buscaTexto" placeholder="Buscar por título ou área..." oninput="renderizarServicos()" style="min-width: 220px;" />
+        <label style="font-size: 0.84rem; color: #334155; font-weight: 600; display: flex; align-items: center; gap: 6px; cursor: pointer; background: rgba(255,255,255,0.8); padding: 7px 12px; border-radius: 8px; border: 1px solid var(--border);">
+          <input type="checkbox" id="filtroSlotsLivres" checked onchange="carregarEstado()" />
+          Somente com horários livres
+        </label>
       </div>
     </div>
   </div>
 
+  <!-- TOAST ALERTS -->
   <div class="alert-box" id="alertContainer"></div>
 
-  <div class="container">
-    <!-- COLUNA ESQUERDA: CATALOGO E SLOTS -->
+  <!-- CONTEUDO PRINCIPAL -->
+  <div class="main-grid">
+    <!-- COLUNA ESQUERDA: SERVICOS E PUBLICACAO -->
     <div>
-      <div class="card-panel">
-        <div class="panel-header">
-          <div>
-            <h2>Catálogo de Serviços e Agenda de Slots</h2>
-            <span class="tag-usecase">ConsultarServicosUseCase + SolicitarContratacaoUseCase</span>
+      <div class="section-card">
+        <div class="section-header">
+          <div class="section-title">
+            Serviços Disponíveis no Campus
+            <span class="count-badge" id="contadorServicos">0</span>
           </div>
-          <label style="font-size: 0.84rem; display: flex; align-items: center; gap: 6px; cursor: pointer;">
-            <input type="checkbox" id="filtroSlotsLivres" checked onchange="carregarEstado()" />
-            Apenas serviços com slots livres
-          </label>
+          <div style="display: flex; gap: 6px; flex-wrap: wrap;" id="filtrosCategoria">
+            <span class="cat-pill active" onclick="selecionarCategoria('TODAS', this)">Todas</span>
+            <span class="cat-pill" onclick="selecionarCategoria('Revisão Acadêmica', this)">Revisão Acadêmica</span>
+            <span class="cat-pill" onclick="selecionarCategoria('Mentoria', this)">Mentoria</span>
+            <span class="cat-pill" onclick="selecionarCategoria('Pesquisa & Dados', this)">Pesquisa &amp; Dados</span>
+          </div>
         </div>
 
         <div id="listaServicos">Carregando serviços...</div>
       </div>
 
-      <!-- CADASTRAR NOVO SERVICO / SLOT (RF01 / RF02) -->
-      <div class="card-panel">
-        <div class="panel-header">
-          <h2>Cadastrar Nova Oferta de Serviço com Slot (RF01 / RF02)</h2>
-          <span class="tag-usecase">Servico.adicionar_slot() [Creator GRASP]</span>
+      <!-- PUBLICAR NOVA OFERTA -->
+      <div class="section-card">
+        <div class="section-header">
+          <div class="section-title">Oferecer um Novo Serviço no Campus</div>
+          <span style="font-size: 0.78rem; color: var(--text-muted);">Publica um serviço vinculado ao seu perfil atual</span>
         </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-          <input type="text" id="novoTitulo" placeholder="Título do serviço (ex: Aula de Cálculo II)" />
-          <input type="text" id="novaCategoria" placeholder="Categoria (ex: Mentoria, Revisão, Lab)" />
-          <input type="text" id="novaDescricao" placeholder="Descrição do serviço oferecido" style="grid-column: span 2;" />
-          <input type="number" id="novoValor" placeholder="Valor (R$)" value="50" />
-          <button class="btn-primary" onclick="criarServico()">+ Publicar Oferta como Usuário Logado</button>
+        <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 10px;">
+          <input type="text" id="novoTitulo" placeholder="Título do serviço (ex: Monitoria de Cálculo II)" />
+          <input type="text" id="novaCategoria" placeholder="Categoria (ex: Mentoria, Revisão)" />
+          <input type="text" id="novaDescricao" placeholder="Descreva como funciona o atendimento..." style="grid-column: span 2;" />
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">Valor (R$):</span>
+            <input type="number" id="novoValor" value="50" style="width: 110px;" />
+          </div>
+          <button class="btn-primary" onclick="criarServico()">Publicar Oferta com Horário Livre</button>
         </div>
       </div>
     </div>
 
-    <!-- COLUNA DIREITA: CONTRATACOES, AVALIACOES E LOG DE NOTIFICACOES -->
+    <!-- COLUNA DIREITA: MINHAS CONTRATACOES E E-MAILS -->
     <div>
-      <div class="card-panel">
-        <div class="panel-header">
-          <div>
-            <h2>Contratações Persistidas no SQLite &amp; Avaliações</h2>
-            <span class="tag-usecase">ConcluirEAvaliarUseCase [RF06 / RF07 / RES03]</span>
+      <div class="section-card">
+        <div class="section-header">
+          <div class="section-title">
+            Contratações &amp; Avaliações
+            <span class="count-badge" id="contadorContratacoes">0</span>
           </div>
+          <span style="font-size: 0.76rem; color: var(--text-muted);">Salvo em SQLite</span>
         </div>
-        <div id="listaContratacoes">Nenhuma contratação registrada ainda.</div>
+        <div id="listaContratacoes"></div>
       </div>
 
-      <div class="card-panel">
-        <div class="panel-header">
-          <div>
-            <h2>Monitor da Dependência Externa (NotificadorPort)</h2>
-            <span class="tag-usecase">EmailNotificador / NotificadorFake [ASR-01 / Seção 8]</span>
+      <div class="section-card">
+        <div class="section-header">
+          <div class="section-title">
+            Notificações Enviadas (@ufpr.br)
+            <span class="count-badge" id="contadorNotificacoes">0</span>
           </div>
+          <span style="font-size: 0.76rem; color: var(--text-muted);">Via NotificadorPort</span>
         </div>
-        <div id="listaNotificacoes">Nenhuma notificação disparada ainda.</div>
+        <div id="listaNotificacoes"></div>
       </div>
     </div>
   </div>
 
   <script>
     let estadoAtual = { membros: [], servicos: [], contratacoes: [], notificacoes: [] };
+    let categoriaSelecionada = 'TODAS';
 
     function mostrarAlerta(tipo, titulo, detalhe) {
       const container = document.getElementById('alertContainer');
@@ -553,20 +899,38 @@ HTML_PAGINA = """<!DOCTYPE html>
       div.className = 'toast ' + (tipo === 'erro' ? 'toast-error' : 'toast-success');
       div.innerHTML = `
         <div>
-          <strong>${titulo}</strong><br/>
-          <span>${detalhe}</span>
+          <strong>${titulo}</strong>
+          <div style="font-size: 0.85rem; margin-top: 2px;">${detalhe}</div>
         </div>
-        <button class="btn-outline" style="color:white;border-color:rgba(255,255,255,0.4)" onclick="this.parentElement.remove()">Fechar</button>
+        <button class="btn-ghost" style="padding: 4px 10px; font-size: 0.78rem;" onclick="this.parentElement.remove()">Fechar</button>
       `;
       container.prepend(div);
-      setTimeout(() => { if (div.parentElement) div.remove(); }, 9000);
+      setTimeout(() => { if (div.parentElement) div.remove(); }, 8000);
     }
 
     function obterUsuarioLogado() {
       return document.getElementById('usuarioAtivo').value;
     }
 
-    function atualizarDicaAtor() {
+    function iniciaisNome(nome) {
+      const partes = nome.split(' ');
+      if (partes.length >= 2) return (partes[0][0] + partes[1][0]).toUpperCase();
+      return nome.substring(0, 2).toUpperCase();
+    }
+
+    function trocarUsuario() {
+      const uid = obterUsuarioLogado();
+      const membro = estadoAtual.membros.find(m => m.id === uid);
+      if (membro) {
+        document.getElementById('avatarIniciais').textContent = iniciaisNome(membro.nome);
+      }
+      renderizarServicos();
+    }
+
+    function selecionarCategoria(cat, el) {
+      categoriaSelecionada = cat;
+      document.querySelectorAll('#filtrosCategoria .cat-pill').forEach(p => p.classList.remove('active'));
+      el.classList.add('active');
       renderizarServicos();
     }
 
@@ -581,13 +945,13 @@ HTML_PAGINA = """<!DOCTYPE html>
         estadoAtual.membros.forEach(m => {
           const opt = document.createElement('option');
           opt.value = m.id;
-          opt.textContent = `${m.nome} [${m.registro_academico}]`;
+          opt.textContent = `${m.nome} (${m.registro_academico})`;
           select.appendChild(opt);
         });
         if (valorAnterior) select.value = valorAnterior;
       }
 
-      renderizarServicos();
+      trocarUsuario();
       renderizarContratacoes();
       renderizarNotificacoes();
     }
@@ -595,31 +959,39 @@ HTML_PAGINA = """<!DOCTYPE html>
     function renderizarServicos() {
       const container = document.getElementById('listaServicos');
       const usuarioLogado = obterUsuarioLogado();
+      const termo = (document.getElementById('buscaTexto').value || '').toLowerCase().trim();
 
-      if (estadoAtual.servicos.length === 0) {
-        container.innerHTML = '<p style="color:var(--muted)">Nenhum serviço disponível para este filtro.</p>';
+      const filtrados = estadoAtual.servicos.filter(s => {
+        const bateCategoria = (categoriaSelecionada === 'TODAS') || (s.categoria === categoriaSelecionada);
+        const bateTexto = !termo || s.titulo.toLowerCase().includes(termo) || s.descricao.toLowerCase().includes(termo) || s.categoria.toLowerCase().includes(termo);
+        return bateCategoria && bateTexto;
+      });
+
+      document.getElementById('contadorServicos').textContent = filtrados.length;
+
+      if (filtrados.length === 0) {
+        container.innerHTML = '<div class="empty-state">Nenhum serviço encontrado para os filtros selecionados.</div>';
         return;
       }
 
-      container.innerHTML = estadoAtual.servicos.map(s => {
+      container.innerHTML = filtrados.map(s => {
         const ehProprioPrestador = (s.prestador_id === usuarioLogado);
         const slotsHtml = s.slots.map(slot => {
           const livre = slot.status === 'livre';
-          let botaoTexto = livre ? 'Contratar Horário (RF04)' : 'Tentar Contratar (Testar Anti-Overbooking RES02)';
-          if (ehProprioPrestador && livre) {
-            botaoTexto = 'Tentar Auto-Contratação (Testar Bloqueio RES01)';
-          }
-          const btnClass = (livre && !ehProprioPrestador) ? 'btn-success' : 'btn-danger';
+          const btnClass = livre ? 'btn-mint' : 'btn-rose-soft';
+          const btnTexto = livre ? 'Agendar Horário' : 'Horário Reservado';
 
           return `
-            <div class="slot-item">
-              <div>
-                <span class="status-pill ${livre ? 'pill-livre' : 'pill-reservado'}">${slot.status}</span>
-                <strong style="margin-left:8px; font-size:0.88rem;">${slot.inicio} às ${slot.fim}</strong>
-                <span style="color:var(--muted); font-size:0.78rem; margin-left:6px;">(${slot.id})</span>
+            <div class="slot-row">
+              <div class="slot-info">
+                <span class="status-badge ${livre ? 'badge-livre' : 'badge-reservado'}">
+                  ${livre ? 'Disponível' : 'Reservado'}
+                </span>
+                <strong style="font-size: 0.87rem; color: #1e293b;">${slot.inicio} às ${slot.fim}</strong>
+                <span style="color: var(--text-muted); font-size: 0.76rem;">(${slot.id})</span>
               </div>
               <button class="${btnClass}" onclick="solicitarContratacao('${s.id}', '${slot.id}')">
-                ${botaoTexto}
+                ${btnTexto}
               </button>
             </div>
           `;
@@ -627,18 +999,26 @@ HTML_PAGINA = """<!DOCTYPE html>
 
         return `
           <div class="service-card">
-            <div class="service-top">
+            <div class="service-header">
               <div>
+                <span class="cat-tag">${s.categoria}</span>
                 <div class="service-title">${s.titulo}</div>
-                <div class="service-meta">
-                  Categoria: <b>${s.categoria}</b> | Prestador: <b>${s.prestador_nome}</b>
-                  ${ehProprioPrestador ? '<span style="color:#fbbf24; font-weight:700;"> (Você é o prestador)</span>' : ''}
-                </div>
               </div>
-              <div class="service-price">R$ ${s.valor.toFixed(2)}</div>
+              <div class="price-badge">R$ ${s.valor.toFixed(2)}</div>
             </div>
-            <p style="font-size:0.86rem; color:#cbd5e1;">${s.descricao}</p>
-            <div class="slots-grid">${slotsHtml}</div>
+
+            <div class="provider-row">
+              <span class="provider-dot">${iniciaisNome(s.prestador_nome)}</span>
+              <span>Oferecido por <strong>${s.prestador_nome}</strong></span>
+              ${ehProprioPrestador ? '<span class="own-badge">Seu anúncio</span>' : ''}
+            </div>
+
+            <p class="service-desc">${s.descricao}</p>
+
+            <div class="slots-box">
+              <div class="slots-label">Horários na Agenda</div>
+              ${slotsHtml}
+            </div>
           </div>
         `;
       }).join('');
@@ -646,53 +1026,61 @@ HTML_PAGINA = """<!DOCTYPE html>
 
     function renderizarContratacoes() {
       const container = document.getElementById('listaContratacoes');
+      document.getElementById('contadorContratacoes').textContent = estadoAtual.contratacoes.length;
+
       if (estadoAtual.contratacoes.length === 0) {
-        container.innerHTML = '<p style="color:var(--muted); font-size:0.88rem;">Nenhuma contratação realizada ainda. Clique em "Contratar Horário" em um slot ao lado!</p>';
+        container.innerHTML = '<div class="empty-state">Nenhuma contratação realizada ainda.<br/>Escolha um horário disponível ao lado para agendar!</div>';
         return;
       }
 
       container.innerHTML = estadoAtual.contratacoes.map(c => {
         const confirmada = c.status === 'confirmada';
         const avalHtml = c.avaliacao
-          ? `<div style="margin-top:10px; background:rgba(16,185,129,0.12); border:1px solid var(--success); padding:8px 12px; border-radius:6px; font-size:0.84rem;">
-               <strong>Avaliação Registrada (${c.avaliacao.id}):</strong>
-               <span style="color:#fbbf24; font-weight:700;">${'★'.repeat(c.avaliacao.nota)}${'☆'.repeat(5 - c.avaliacao.nota)} (${c.avaliacao.nota}/5)</span>
-               — <em>"${c.avaliacao.comentario}"</em>
+          ? `<div class="review-box">
+               <div style="font-weight: 700; margin-bottom: 2px;">
+                 Avaliação do Solicitante: ${'★'.repeat(c.avaliacao.nota)}${'☆'.repeat(5 - c.avaliacao.nota)} (${c.avaliacao.nota}/5)
+               </div>
+               <div>"${c.avaliacao.comentario}"</div>
              </div>`
           : '';
 
         return `
-          <div class="contratacao-item">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-              <strong>Contrato <code>${c.id}</code> — ${c.servico_titulo}</strong>
-              <span class="status-pill ${confirmada ? 'pill-confirmada' : 'pill-concluida'}">${c.status}</span>
+          <div class="booking-card">
+            <div class="booking-top">
+              <div class="booking-title">${c.servico_titulo}</div>
+              <span class="status-badge ${confirmada ? 'badge-confirmada' : 'badge-concluida'}">
+                ${confirmada ? 'Confirmada' : 'Concluída'}
+              </span>
             </div>
-            <div style="font-size:0.82rem; color:var(--muted);">
-              Horário: <b>${c.horario}</b> (${c.slot_id})<br/>
-              Solicitante: <b>${c.solicitante_nome}</b> | Prestador: <b>${c.prestador_nome}</b>
+            <div class="booking-meta">
+              <div><strong>Horário:</strong> ${c.horario}</div>
+              <div><strong>Solicitante:</strong> ${c.solicitante_nome}</div>
+              <div><strong>Prestador:</strong> ${c.prestador_nome}</div>
+              <div style="font-size: 0.75rem; margin-top: 2px;">Código: <code>${c.id}</code></div>
             </div>
             ${avalHtml}
-            <div class="contratacao-actions">
-              ${confirmada
-                ? `<button class="btn-primary" onclick="concluirServico('${c.id}')">1. Concluir Serviço (RF06)</button>`
-                : `<button class="btn-outline" onclick="concluirServico('${c.id}')">Tentar Concluir Novamente (Testar Erro)</button>`
-              }
-              <button class="btn-warning" onclick="toggleFormAvaliacao('${c.id}')">
-                ${confirmada ? 'Tentar Avaliar Antes de Concluir (Testar Bloqueio RES03)' : '2. Registrar Avaliação (RF07)'}
+            <div class="booking-actions">
+              <button class="${confirmada ? 'btn-primary' : 'btn-ghost'}" onclick="concluirServico('${c.id}')">
+                ${confirmada ? 'Marcar como Concluído' : 'Concluído'}
+              </button>
+              <button class="btn-amber-soft" onclick="toggleFormAvaliacao('${c.id}')">
+                Avaliar Atendimento
               </button>
             </div>
-            <div class="eval-form" id="form-aval-${c.id}" style="display:none;">
-              <label style="font-size:0.8rem;">Nota:</label>
-              <select id="nota-${c.id}">
-                <option value="5">5 ★ (Excelente)</option>
-                <option value="4">4 ★ (Muito Bom)</option>
-                <option value="3">3 ★ (Regular)</option>
-                <option value="2">2 ★ (Ruim)</option>
-                <option value="1">1 ★ (Péssimo)</option>
-                <option value="6">6 ★ (Nota Inválida > 5 - Testar NotaInvalidaError)</option>
-              </select>
-              <input type="text" id="comentario-${c.id}" placeholder="Comentário sobre o serviço..." value="Atendimento excelente e muito pontual!" style="flex:1;" />
-              <button class="btn-success" onclick="avaliarServico('${c.id}')">Enviar Avaliação</button>
+            <div class="eval-drawer" id="form-aval-${c.id}" style="display:none;">
+              <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                <label style="font-size: 0.8rem; font-weight: 600;">Nota:</label>
+                <select id="nota-${c.id}" style="flex: 1;">
+                  <option value="5">★★★★★ (5 - Excelente)</option>
+                  <option value="4">★★★★☆ (4 - Muito Bom)</option>
+                  <option value="3">★★★☆☆ (3 - Regular)</option>
+                  <option value="2">★★☆☆☆ (2 - Insatisfatório)</option>
+                  <option value="1">★☆☆☆☆ (1 - Ruim)</option>
+                  <option value="6">Nota 6 (Testar Validação de Nota Inválida)</option>
+                </select>
+              </div>
+              <input type="text" id="comentario-${c.id}" placeholder="Escreva seu comentário sobre o serviço..." value="Excelente atendimento, muito didático e pontual!" />
+              <button class="btn-primary" onclick="avaliarServico('${c.id}')">Confirmar Avaliação</button>
             </div>
           </div>
         `;
@@ -701,19 +1089,21 @@ HTML_PAGINA = """<!DOCTYPE html>
 
     function renderizarNotificacoes() {
       const container = document.getElementById('listaNotificacoes');
+      document.getElementById('contadorNotificacoes').textContent = estadoAtual.notificacoes.length;
+
       if (estadoAtual.notificacoes.length === 0) {
-        container.innerHTML = '<p style="color:var(--muted); font-size:0.88rem;">Nenhuma notificação externa disparada ainda.</p>';
+        container.innerHTML = '<div class="empty-state">Nenhum alerta institucional enviado ainda.</div>';
         return;
       }
 
       container.innerHTML = estadoAtual.notificacoes.slice().reverse().map(n => `
-        <div class="notif-item">
-          <div style="display:flex; justify-content:space-between; color:#fbbf24; font-weight:700; margin-bottom:4px;">
-            <span>[${n.canal}] Para: ${n.destinatario}</span>
-            <span>${n.horario}</span>
+        <div class="email-card">
+          <div class="email-header">
+            <span>Para: ${n.destinatario}</span>
+            <span>${n.horario} • ${n.canal}</span>
           </div>
-          <div><strong>Assunto:</strong> ${n.assunto}</div>
-          <div style="color:#cbd5e1; margin-top:2px;">${n.mensagem}</div>
+          <div style="font-weight: 600; color: #1e293b; margin-bottom: 2px;">${n.assunto}</div>
+          <div style="color: var(--text-muted);">${n.mensagem}</div>
         </div>
       `).join('');
     }
@@ -732,9 +1122,9 @@ HTML_PAGINA = """<!DOCTYPE html>
       });
       const dados = await resp.json();
       if (!resp.ok) {
-        mostrarAlerta('erro', `Regra de Negócio Protegida pelo Domínio (${dados.erro_tipo})`, dados.mensagem);
+        mostrarAlerta('erro', `Não foi possível agendar (${dados.erro_tipo})`, dados.mensagem);
       } else {
-        mostrarAlerta('sucesso', `Contratação Confirmada e Persistida no SQLite (${dados.contratacao_id})`, dados.mensagem);
+        mostrarAlerta('sucesso', `Agendamento Confirmado (${dados.contratacao_id})`, dados.mensagem);
       }
       await carregarEstado();
     }
@@ -747,9 +1137,9 @@ HTML_PAGINA = """<!DOCTYPE html>
       });
       const dados = await resp.json();
       if (!resp.ok) {
-        mostrarAlerta('erro', `Transição Inválida Bloqueada (${dados.erro_tipo})`, dados.mensagem);
+        mostrarAlerta('erro', `Operação não permitida (${dados.erro_tipo})`, dados.mensagem);
       } else {
-        mostrarAlerta('sucesso', 'Serviço Concluído com Sucesso (RF06)', dados.mensagem);
+        mostrarAlerta('sucesso', 'Serviço Concluído', dados.mensagem);
       }
       await carregarEstado();
     }
@@ -764,9 +1154,9 @@ HTML_PAGINA = """<!DOCTYPE html>
       });
       const dados = await resp.json();
       if (!resp.ok) {
-        mostrarAlerta('erro', `Invariante de Avaliação Protegida (${dados.erro_tipo})`, dados.mensagem);
+        mostrarAlerta('erro', `Avaliação recusada (${dados.erro_tipo})`, dados.mensagem);
       } else {
-        mostrarAlerta('sucesso', 'Avaliação Registrada com Sucesso (RF07 / Creator GRASP)', dados.mensagem);
+        mostrarAlerta('sucesso', 'Avaliação Registrada com Sucesso!', dados.mensagem);
       }
       await carregarEstado();
     }
@@ -779,7 +1169,7 @@ HTML_PAGINA = """<!DOCTYPE html>
       const prestador_id = obterUsuarioLogado();
 
       if (!titulo || !categoria) {
-        mostrarAlerta('erro', 'Campos Obrigatórios', 'Informe ao menos o título e a categoria da oferta.');
+        mostrarAlerta('erro', 'Campos obrigatórios', 'Preencha o título e a categoria para publicar sua oferta.');
         return;
       }
 
@@ -793,14 +1183,14 @@ HTML_PAGINA = """<!DOCTYPE html>
         document.getElementById('novoTitulo').value = '';
         document.getElementById('novaCategoria').value = '';
         document.getElementById('novaDescricao').value = '';
-        mostrarAlerta('sucesso', 'Nova Oferta Publicada no SQLite (RF01 / RF02)', dados.mensagem);
+        mostrarAlerta('sucesso', 'Oferta Publicada no CampusHub!', dados.mensagem);
         await carregarEstado();
       }
     }
 
     async function resetarBanco() {
       await fetch('/api/resetar', { method: 'POST' });
-      mostrarAlerta('sucesso', 'Banco SQLite Restaurado', 'Os serviços e slots iniciais da demonstração foram recarregados.');
+      mostrarAlerta('sucesso', 'Dados Iniciais Restaurados', 'A agenda e os serviços foram reiniciados com sucesso.');
       await carregarEstado();
     }
 
