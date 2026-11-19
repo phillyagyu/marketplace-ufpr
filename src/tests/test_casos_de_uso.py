@@ -9,6 +9,7 @@ except ModuleNotFoundError:
 
     pytest = _PytestFallback()  # type: ignore[assignment]
 
+from src.adapters.inbound.cli_controller import MarketplaceController
 from src.adapters.outbound.memoria_repositorios import (
     InMemoryContratacaoRepository,
     InMemoryServicoRepository,
@@ -208,6 +209,40 @@ def test_fluxo_completo_com_sqlite():
     assert contratacao_db.avaliacao.nota == 5
 
 
+# MarketplaceController (Inbound Adapter / Controller GRASP)
+def test_marketplace_controller_inbound():
+    servico_repo = InMemoryServicoRepository()
+    contratacao_repo = InMemoryContratacaoRepository()
+    notificador = NotificadorFake()
+
+    servico = criar_servico_exemplo()
+    slot_id = servico.slots[0].id
+    servico_repo.salvar(servico)
+
+    controller = MarketplaceController(
+        solicitar_uc=SolicitarContratacaoUseCase(servico_repo, contratacao_repo, notificador),
+        consultar_uc=ConsultarServicosUseCase(servico_repo),
+        concluir_avaliar_uc=ConcluirEAvaliarUseCase(contratacao_repo, notificador),
+    )
+
+    assert len(controller.listar_servicos_disponiveis()) == 1
+
+    # auto-contratacao tratada graciosamente pelo controller (retorna None)
+    assert controller.solicitar_contratacao(servico.id, slot_id, servico.prestador_id) is None
+
+    # contratacao valida via controller
+    contratacao = controller.solicitar_contratacao(servico.id, slot_id, "solicitante-1")
+    assert contratacao is not None
+
+    # overbooking tratado graciosamente pelo controller (retorna None)
+    assert controller.solicitar_contratacao(servico.id, slot_id, "solicitante-2") is None
+
+    # conclusao e avaliacao via controller
+    assert controller.concluir_servico(contratacao.id) is not None
+    avaliacao = controller.avaliar_servico(contratacao.id, 5, "Excelente mentoria!")
+    assert avaliacao is not None and avaliacao.nota == 5
+
+
 if __name__ == "__main__":
     test_solicitar_contratacao_use_case()
     print("[OK] test_solicitar_contratacao_use_case")
@@ -217,5 +252,7 @@ if __name__ == "__main__":
     print("[OK] test_concluir_e_avaliar_use_case")
     test_fluxo_completo_com_sqlite()
     print("[OK] test_fluxo_completo_com_sqlite")
+    test_marketplace_controller_inbound()
+    print("[OK] test_marketplace_controller_inbound")
     print("\nTodos os testes passaram com sucesso!")
 

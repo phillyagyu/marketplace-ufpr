@@ -1,1 +1,21 @@
-# Pacote de adaptadores (Inbound e Outbound) da Arquitetura Hexagonal
+from .inbound import MarketplaceController
+from .outbound import (
+    EmailNotificador,
+    InMemoryContratacaoRepository,
+    InMemoryServicoRepository,
+    NotificadorFake,
+    SqliteContratacaoRepository,
+    SqliteServicoRepository,
+    criar_conexao_sqlite,
+)
+
+__all__ = [
+    "MarketplaceController",
+    "EmailNotificador",
+    "NotificadorFake",
+    "InMemoryServicoRepository",
+    "InMemoryContratacaoRepository",
+    "SqliteServicoRepository",
+    "SqliteContratacaoRepository",
+    "criar_conexao_sqlite",
+]
