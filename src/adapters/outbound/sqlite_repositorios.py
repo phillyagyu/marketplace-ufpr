@@ -1,5 +1,4 @@
 import sqlite3
-from abc import ABC
 from datetime import datetime
 from typing import List, Optional, Union
 
@@ -11,15 +10,7 @@ from src.domain.entidades import (
     StatusContratacao,
     StatusSlot,
 )
-
-try:
-    from src.ports.interfaces import ContratacaoRepository, ServicoRepository
-except ModuleNotFoundError:
-    class ServicoRepository(ABC):  # type: ignore[no-redef]
-        pass
-
-    class ContratacaoRepository(ABC):  # type: ignore[no-redef]
-        pass
+from src.ports.interfaces import ContratacaoRepository, ServicoRepository
 
 
 def criar_conexao_sqlite(destino: Union[sqlite3.Connection, str] = ":memory:") -> sqlite3.Connection:
@@ -146,8 +137,7 @@ class SqliteServicoRepository(ServicoRepository):
             "SELECT id, prestador_id, titulo, descricao, categoria, valor FROM servicos ORDER BY id;"
         )
         rows = cursor.fetchall()
-        servicos = [self._reconstruir_servico(row) for row in rows]
-        return [s for s in servicos if len(s.obter_slots_livres()) > 0]
+        return [self._reconstruir_servico(row) for row in rows]
 
     def _reconstruir_servico(self, row: sqlite3.Row) -> Servico:
         cursor_slots = self.conn.execute(

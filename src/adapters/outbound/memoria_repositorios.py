@@ -19,12 +19,7 @@ class InMemoryServicoRepository(ServicoRepository):
             return None
 
     def listar_disponiveis(self) -> List[Servico]:
-        disponiveis = []
-        for servico in self.servicos.values():
-            slots_livres = servico.obter_slots_livres()
-            if len(slots_livres) > 0:
-                disponiveis.append(servico)
-        return disponiveis
+        return list(self.servicos.values())
 
 
 # repositorio em memoria para guardar e buscar contratacoes
