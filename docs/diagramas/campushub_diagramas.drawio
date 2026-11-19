@@ -1,0 +1,576 @@
+<mxfile host="65bd71144e">
+    <diagram id="comunicacao-uml" name="1. Diagrama de Comunicação">
+        <mxGraphModel dx="1586" dy="1135" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1550" pageHeight="980" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1;" value="Diagrama de Comunicação UML — Caso de Uso: Solicitar Contratação (CampusHub)" vertex="1">
+                    <mxGeometry height="30" width="800" x="375" y="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="actor" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontStyle=1;" value="Solicitante" vertex="1">
+                    <mxGeometry height="55" width="30" x="760" y="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="actor_anchor" parent="1" style="shape=waypoint;sketch=0;size=1;pointerEvents=1;points=[];fillColor=none;resizable=0;rotatable=0;perimeter=centerPerimeter;snapToPoint=1;strokeColor=none;" value="" vertex="1">
+                    <mxGeometry height="1" width="1" x="775" y="135" as="geometry"/>
+                </mxCell>
+                <mxCell id="ctrl" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;" value="&lt;u&gt;controller : MarketplaceController&lt;/u&gt;&lt;br&gt;&amp;lt;&amp;lt;Inbound Adapter&amp;gt;&amp;gt;" vertex="1">
+                    <mxGeometry height="55" width="280" x="635" y="215" as="geometry"/>
+                </mxCell>
+                <mxCell id="uc" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;fontSize=13;" value="&lt;u&gt;useCase : SolicitarContratacaoUseCase&lt;/u&gt;&lt;br&gt;&lt;b&gt;&amp;lt;&amp;lt;Controller GRASP&amp;gt;&amp;gt;&lt;/b&gt;" vertex="1">
+                    <mxGeometry height="75" width="320" x="615" y="395" as="geometry"/>
+                </mxCell>
+                <mxCell id="srepo" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;" value="&lt;u&gt;servicoRepo : ServicoRepository&lt;/u&gt;&lt;br&gt;&amp;lt;&amp;lt;Outbound Port&amp;gt;&amp;gt;" vertex="1">
+                    <mxGeometry height="60" width="270" x="60" y="280" as="geometry"/>
+                </mxCell>
+                <mxCell id="crepo" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;" value="&lt;u&gt;contratacaoRepo : ContratacaoRepository&lt;/u&gt;&lt;br&gt;&amp;lt;&amp;lt;Outbound Port&amp;gt;&amp;gt;" vertex="1">
+                    <mxGeometry height="60" width="270" x="60" y="520" as="geometry"/>
+                </mxCell>
+                <mxCell id="notif" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;" value="&lt;u&gt;notificador : NotificadorPort&lt;/u&gt;&lt;br&gt;&amp;lt;&amp;lt;Outbound Port&amp;gt;&amp;gt;" vertex="1">
+                    <mxGeometry height="60" width="270" x="1220" y="402" as="geometry"/>
+                </mxCell>
+                <mxCell id="serv" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;" value="&lt;u&gt;servico : Servico&lt;/u&gt;&lt;br&gt;&amp;lt;&amp;lt;Information Expert&amp;gt;&amp;gt;" vertex="1">
+                    <mxGeometry height="60" width="260" x="150" y="720" as="geometry"/>
+                </mxCell>
+                <mxCell id="slot" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;" value="&lt;u&gt;slot : SlotDisponibilidade&lt;/u&gt;&lt;br&gt;&amp;lt;&amp;lt;Information Expert&amp;gt;&amp;gt;" vertex="1">
+                    <mxGeometry height="60" width="260" x="645" y="720" as="geometry"/>
+                </mxCell>
+                <mxCell id="cont" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;" value="&lt;u&gt;contratacao : Contratacao&lt;/u&gt;&lt;br&gt;&amp;lt;&amp;lt;Raiz de Agregado&amp;gt;&amp;gt;" vertex="1">
+                    <mxGeometry height="60" width="260" x="1140" y="720" as="geometry"/>
+                </mxCell>
+                <mxCell id="note" parent="1" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#ffffc0;strokeColor=#c0c080;align=left;spacingLeft=10;spacingRight=10;fontSize=11;" value="&lt;b&gt;Controller (GRASP) &amp;amp; DIP (SOLID):&lt;/b&gt;&lt;br&gt;O Caso de Uso coordena a colaboração radiando mensagens para as Entidades de Domínio (1.3, 1.4, 1.5, 1.5.1) e para as Portas de Saída abstratas (1.2, 1.6, 1.7, 1.8), sem conter lógica especialista nem acoplamento técnico." vertex="1">
+                    <mxGeometry height="115" width="390" x="1080" y="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="m1" edge="1" parent="1" source="actor_anchor" style="endArrow=open;endFill=0;html=1;strokeWidth=1.5;fontSize=11;labelBackgroundColor=#ffffff;entryX=0.5;entryY=0;" target="ctrl" value="1: solicitar_contratacao(servico_id, slot_id, solicitante_id) &amp;#8595;">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="m1_1" edge="1" parent="1" source="ctrl" style="endArrow=open;endFill=0;html=1;strokeWidth=1.5;fontSize=11;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="uc" value="1.1: executar(servico_id, slot_id, solicitante_id) &amp;#8595;">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="m1_2" edge="1" parent="1" source="uc" style="endArrow=open;endFill=0;html=1;strokeWidth=1.5;fontSize=11;labelBackgroundColor=#ffffff;edgeStyle=orthogonalEdgeStyle;exitX=0;exitY=0.2;entryX=1;entryY=0.5;" target="srepo" value="&amp;#8592; 1.2: buscar_por_id(servico_id)&lt;br&gt;&amp;#8592; 1.6: salvar(servico)">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="570" y="410"/>
+                            <mxPoint x="570" y="310"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="m1_7" edge="1" parent="1" source="uc" style="endArrow=open;endFill=0;html=1;strokeWidth=1.5;fontSize=11;labelBackgroundColor=#ffffff;edgeStyle=orthogonalEdgeStyle;exitX=0;exitY=0.8;entryX=1;entryY=0.5;" target="crepo" value="&amp;#8592; 1.7: salvar(contratacao)">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="570" y="455"/>
+                            <mxPoint x="570" y="550"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="m1_3" edge="1" parent="1" source="uc" style="endArrow=open;endFill=0;html=1;strokeWidth=1.5;fontSize=11;labelBackgroundColor=#ffffff;edgeStyle=orthogonalEdgeStyle;exitX=0.2;exitY=1;entryX=0.5;entryY=0;" target="serv" value="1.3: validar_contratante(solicitante_id) &amp;#8595;&lt;br&gt;1.4: buscar_slot(slot_id) &amp;#8595;">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="679" y="610"/>
+                            <mxPoint x="280" y="610"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="m1_5" edge="1" parent="1" source="uc" style="endArrow=open;endFill=0;html=1;strokeWidth=1.5;fontSize=11;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="slot" value="1.5: reservar() &amp;#8595;">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="m1_5_1" edge="1" parent="1" source="uc" style="endArrow=open;endFill=0;html=1;strokeWidth=1.5;dashed=1;fontSize=11;labelBackgroundColor=#ffffff;edgeStyle=orthogonalEdgeStyle;exitX=0.8;exitY=1;entryX=0.5;entryY=0;" target="cont" value="1.5.1: &amp;lt;&amp;lt;create&amp;gt;&amp;gt;(id, servico_id, slot_id, solicitante_id, prestador_id, CONFIRMADA) &amp;#8595;">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="871" y="610"/>
+                            <mxPoint x="1270" y="610"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="m1_8" edge="1" parent="1" source="uc" style="endArrow=open;endFill=0;html=1;strokeWidth=1.5;fontSize=11;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="notif" value="1.8: notificar(prestador_id, assunto, msg) &amp;#8594;">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="note_link" edge="1" parent="1" source="note" style="endArrow=none;dashed=1;html=1;strokeColor=#999999;exitX=0;exitY=1;entryX=1;entryY=0;" target="uc">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="componentes-uml" name="2. Diagrama de Componentes">
+        <mxGraphModel dx="1586" dy="1135" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1620" pageHeight="1100" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1;" value="Diagrama de Componentes UML — CampusHub (Monolito Modular + Camadas + Ports &amp; Adapters)" vertex="1">
+                    <mxGeometry height="30" width="1000" x="310" y="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="sys_box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fafafa;strokeColor=#666666;verticalAlign=top;spacingTop=8;fontSize=13;fontStyle=1;" value="CampusHub — Monolito Modular (Processo Único Python)" vertex="1">
+                    <mxGeometry height="830" width="1540" x="40" y="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="pkg_in" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;verticalAlign=top;spacingTop=6;fontSize=12;fontStyle=1;" value="src/adapters/inbound (Camada de Apresentação / Adaptadores Primários)" vertex="1">
+                    <mxGeometry height="100" width="1470" x="75" y="95" as="geometry"/>
+                </mxCell>
+                <mxCell id="c_cli" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;fontSize=12;" value="&amp;lt;&amp;lt;component&amp;gt;&amp;gt;&lt;br&gt;&lt;b&gt;MarketplaceController (CLI / DemoRunner)&lt;/b&gt;" vertex="1">
+                    <mxGeometry height="50" width="360" x="210" y="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="c_tests" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;fontSize=12;" value="&amp;lt;&amp;lt;component&amp;gt;&amp;gt;&lt;br&gt;&lt;b&gt;TestSuite (Pytest / Unittest)&lt;/b&gt;" vertex="1">
+                    <mxGeometry height="50" width="360" x="1030" y="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="pkg_app" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;verticalAlign=top;spacingTop=6;fontSize=12;fontStyle=1;" value="src/application (Camada de Aplicação / Casos de Uso)" vertex="1">
+                    <mxGeometry height="105" width="1470" x="75" y="255" as="geometry"/>
+                </mxCell>
+                <mxCell id="uc_cont" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;fontSize=12;" value="&amp;lt;&amp;lt;component&amp;gt;&amp;gt;&lt;br&gt;&lt;b&gt;SolicitarContratacaoUseCase&lt;/b&gt;" vertex="1">
+                    <mxGeometry height="52" width="320" x="150" y="292" as="geometry"/>
+                </mxCell>
+                <mxCell id="uc_cons" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;fontSize=12;" value="&amp;lt;&amp;lt;component&amp;gt;&amp;gt;&lt;br&gt;&lt;b&gt;ConsultarServicosUseCase&lt;/b&gt;" vertex="1">
+                    <mxGeometry height="52" width="320" x="640" y="292" as="geometry"/>
+                </mxCell>
+                <mxCell id="uc_aval" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;fontSize=12;" value="&amp;lt;&amp;lt;component&amp;gt;&amp;gt;&lt;br&gt;&lt;b&gt;ConcluirEAvaliarUseCase&lt;/b&gt;" vertex="1">
+                    <mxGeometry height="52" width="320" x="1130" y="292" as="geometry"/>
+                </mxCell>
+                <mxCell id="pkg_dom" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;verticalAlign=top;spacingTop=6;fontSize=12;fontStyle=1;" value="src/domain (Núcleo de Domínio Rico — Zero Dependências Externas)" vertex="1">
+                    <mxGeometry height="185" width="430" x="75" y="450" as="geometry"/>
+                </mxCell>
+                <mxCell id="c_dom" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9673a6;align=left;spacingLeft=15;fontSize=11;" value="&amp;lt;&amp;lt;component&amp;gt;&amp;gt;&lt;br&gt;&lt;b&gt;Modelo de Domínio Rico&lt;/b&gt;&lt;br&gt;• MembroComunidade&lt;br&gt;• Servico (Raiz de Agregado)&lt;br&gt;• SlotDisponibilidade (Entidade Interna)&lt;br&gt;• Contratacao (Raiz de Agregado)&lt;br&gt;• Avaliacao (Objeto de Valor)&lt;br&gt;• ErroDominio e Exceções de Negócio" vertex="1">
+                    <mxGeometry height="132" width="370" x="105" y="488" as="geometry"/>
+                </mxCell>
+                <mxCell id="pkg_ports" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;verticalAlign=top;spacingTop=6;fontSize=12;fontStyle=1;" value="src/ports (Portas de Saída / Contratos Abstratos ABC)" vertex="1">
+                    <mxGeometry height="185" width="990" x="555" y="450" as="geometry"/>
+                </mxCell>
+                <mxCell id="p_srepo" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;fontSize=11;" value="&amp;lt;&amp;lt;interface&amp;gt;&amp;gt;&lt;br&gt;&lt;b&gt;ServicoRepository&lt;/b&gt;&lt;hr&gt;+ salvar(servico)&lt;br&gt;+ buscar_por_id(id)&lt;br&gt;+ listar_disponiveis()" vertex="1">
+                    <mxGeometry height="115" width="290" x="580" y="495" as="geometry"/>
+                </mxCell>
+                <mxCell id="p_crepo" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;fontSize=11;" value="&amp;lt;&amp;lt;interface&amp;gt;&amp;gt;&lt;br&gt;&lt;b&gt;ContratacaoRepository&lt;/b&gt;&lt;hr&gt;+ salvar(contratacao)&lt;br&gt;+ buscar_por_id(id)&lt;br&gt;+ listar_por_usuario(uid)" vertex="1">
+                    <mxGeometry height="115" width="290" x="905" y="495" as="geometry"/>
+                </mxCell>
+                <mxCell id="p_notif" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;fontSize=11;" value="&amp;lt;&amp;lt;interface&amp;gt;&amp;gt;&lt;br&gt;&lt;b&gt;NotificadorPort&lt;/b&gt;&lt;hr&gt;+ notificar(dest, assunto, msg)" vertex="1">
+                    <mxGeometry height="115" width="290" x="1230" y="495" as="geometry"/>
+                </mxCell>
+                <mxCell id="pkg_out" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;verticalAlign=top;spacingTop=6;fontSize=12;fontStyle=1;" value="src/adapters/outbound (Infraestrutura / Adaptadores Secundários — Inversão de Dependência DIP)" vertex="1">
+                    <mxGeometry height="155" width="1470" x="75" y="705" as="geometry"/>
+                </mxCell>
+                <mxCell id="note_dip" parent="1" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#ffffc0;strokeColor=#c0c080;align=left;spacingLeft=10;spacingRight=10;fontSize=11;" value="&lt;b&gt;Indirection &amp;amp; Protected Variations (GRASP) / DIP (SOLID):&lt;/b&gt;&lt;br&gt;As setas pontilhadas (&amp;lt;&amp;lt;implements&amp;gt;&amp;gt;) apontam &lt;b&gt;de baixo para cima&lt;/b&gt; (da Infraestrutura para as Portas).&lt;br&gt;Substituir banco ou notificador (ASR-01 / ASR-03) não altera nenhuma linha de &lt;i&gt;application&lt;/i&gt; ou &lt;i&gt;domain&lt;/i&gt;." vertex="1">
+                    <mxGeometry height="100" width="450" x="100" y="745" as="geometry"/>
+                </mxCell>
+                <mxCell id="ad_sql_s" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#b85450;fontSize=10;" value="&amp;lt;&amp;lt;component&amp;gt;&amp;gt;&lt;br&gt;&lt;b&gt;SqliteServico&lt;br&gt;Repository&lt;/b&gt;" vertex="1">
+                    <mxGeometry height="65" width="140" x="580" y="755" as="geometry"/>
+                </mxCell>
+                <mxCell id="ad_mem_s" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#b85450;fontSize=10;" value="&amp;lt;&amp;lt;component&amp;gt;&amp;gt;&lt;br&gt;&lt;b&gt;InMemoryServico&lt;br&gt;Repository&lt;/b&gt;" vertex="1">
+                    <mxGeometry height="65" width="140" x="730" y="755" as="geometry"/>
+                </mxCell>
+                <mxCell id="ad_sql_c" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#b85450;fontSize=10;" value="&amp;lt;&amp;lt;component&amp;gt;&amp;gt;&lt;br&gt;&lt;b&gt;SqliteContratacao&lt;br&gt;Repository&lt;/b&gt;" vertex="1">
+                    <mxGeometry height="65" width="140" x="905" y="755" as="geometry"/>
+                </mxCell>
+                <mxCell id="ad_mem_c" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#b85450;fontSize=10;" value="&amp;lt;&amp;lt;component&amp;gt;&amp;gt;&lt;br&gt;&lt;b&gt;InMemoryContratacao&lt;br&gt;Repository&lt;/b&gt;" vertex="1">
+                    <mxGeometry height="65" width="140" x="1055" y="755" as="geometry"/>
+                </mxCell>
+                <mxCell id="ad_email" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#b85450;fontSize=10;" value="&amp;lt;&amp;lt;component&amp;gt;&amp;gt;&lt;br&gt;&lt;b&gt;EmailNotificador&lt;/b&gt;" vertex="1">
+                    <mxGeometry height="65" width="140" x="1230" y="755" as="geometry"/>
+                </mxCell>
+                <mxCell id="ad_fake" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#b85450;fontSize=10;" value="&amp;lt;&amp;lt;component&amp;gt;&amp;gt;&lt;br&gt;&lt;b&gt;NotificadorFake&lt;br&gt;(Spy)&lt;/b&gt;" vertex="1">
+                    <mxGeometry height="65" width="140" x="1380" y="755" as="geometry"/>
+                </mxCell>
+                <mxCell id="ext_db" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=12;fillColor=#f5f5f5;strokeColor=#666666;fontSize=12;" value="&lt;b&gt;SQLite Database&lt;/b&gt;&lt;br&gt;(campushub.db / :memory:)" vertex="1">
+                    <mxGeometry height="80" width="230" x="700" y="945" as="geometry"/>
+                </mxCell>
+                <mxCell id="ext_smtp" parent="1" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=12;" value="&lt;b&gt;Servidor SMTP Institucional&lt;/b&gt;&lt;br&gt;(smtp.ufpr.br / API Externa)" vertex="1">
+                    <mxGeometry height="90" width="250" x="1175" y="940" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_in1" edge="1" parent="1" source="c_cli" style="endArrow=open;endFill=0;html=1;strokeWidth=1.5;labelBackgroundColor=#ffffff;edgeStyle=orthogonalEdgeStyle;exitX=0.25;exitY=1;entryX=0.5;entryY=0;" target="uc_cont" value="invoca">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="300" y="220"/>
+                            <mxPoint x="310" y="220"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e_in2" edge="1" parent="1" source="c_cli" style="endArrow=open;endFill=0;html=1;strokeWidth=1.5;labelBackgroundColor=#ffffff;edgeStyle=orthogonalEdgeStyle;exitX=0.75;exitY=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="uc_cons" value="invoca">
+                    <mxGeometry relative="1" x="-0.2282" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="480" y="220"/>
+                            <mxPoint x="600" y="220"/>
+                            <mxPoint x="600" y="318"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e_t1" edge="1" parent="1" style="endArrow=open;endFill=0;html=1;strokeWidth=1.5;dashed=1;labelBackgroundColor=#ffffff;edgeStyle=orthogonalEdgeStyle;exitX=0.25;exitY=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="uc_cons" value="testa">
+                    <mxGeometry relative="1" x="0.2349" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1130" y="230"/>
+                            <mxPoint x="1020" y="230"/>
+                            <mxPoint x="1020" y="318"/>
+                        </Array>
+                        <mxPoint x="1130" y="190" as="sourcePoint"/>
+                        <mxPoint x="970" y="328" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e_t2" edge="1" parent="1" source="c_tests" style="endArrow=open;endFill=0;html=1;strokeWidth=1.5;dashed=1;labelBackgroundColor=#ffffff;edgeStyle=orthogonalEdgeStyle;exitX=0.75;exitY=1;entryX=0.5;entryY=0;" target="uc_aval" value="testa">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1300" y="220"/>
+                            <mxPoint x="1290" y="220"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e_app_dom" edge="1" parent="1" source="uc_cont" style="endArrow=open;endFill=0;html=1;strokeWidth=1.5;labelBackgroundColor=#ffffff;edgeStyle=orthogonalEdgeStyle;exitX=0.35;exitY=1;entryX=0.42;entryY=0;" target="c_dom" value="orquestra entidades">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_app_p1" edge="1" parent="1" source="uc_cont" style="endArrow=open;endFill=0;html=1;strokeWidth=1.5;labelBackgroundColor=#ffffff;edgeStyle=orthogonalEdgeStyle;exitX=0.7;exitY=1;entryX=0.25;entryY=0;" target="p_srepo" value="usa porta">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="374" y="415"/>
+                            <mxPoint x="652" y="415"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e_app_p1b" edge="1" parent="1" source="uc_cont" style="endArrow=open;endFill=0;html=1;strokeWidth=1.5;labelBackgroundColor=#ffffff;edgeStyle=orthogonalEdgeStyle;exitX=0.9;exitY=1;entryX=0.25;entryY=0;" target="p_crepo" value="usa portas">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="438" y="390"/>
+                            <mxPoint x="977" y="390"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e_app_p2" edge="1" parent="1" source="uc_cons" style="endArrow=open;endFill=0;html=1;strokeWidth=1.5;labelBackgroundColor=#ffffff;edgeStyle=orthogonalEdgeStyle;exitX=0.5;exitY=1;entryX=0.75;entryY=0;" target="p_srepo" value="usa porta">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="800" y="415"/>
+                            <mxPoint x="797" y="415"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e_app_p3" edge="1" parent="1" source="uc_aval" style="endArrow=open;endFill=0;html=1;strokeWidth=1.5;labelBackgroundColor=#ffffff;edgeStyle=orthogonalEdgeStyle;exitX=0.25;exitY=1;entryX=0.75;entryY=0;" target="p_crepo" value="usa porta">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1210" y="415"/>
+                            <mxPoint x="1122" y="415"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e_app_p4" edge="1" parent="1" source="uc_aval" style="endArrow=open;endFill=0;html=1;strokeWidth=1.5;labelBackgroundColor=#ffffff;edgeStyle=orthogonalEdgeStyle;exitX=0.75;exitY=1;entryX=0.5;entryY=0;" target="p_notif" value="usa porta">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1370" y="415"/>
+                            <mxPoint x="1375" y="415"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e_p_dom" edge="1" parent="1" source="p_srepo" style="endArrow=open;endFill=0;html=1;dashed=1;strokeWidth=1.5;labelBackgroundColor=#ffffff;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" target="c_dom" value="tipos">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_dip1" edge="1" parent="1" source="ad_sql_s" style="endArrow=block;endFill=0;endSize=10;html=1;dashed=1;strokeWidth=1.5;labelBackgroundColor=#ffffff;exitX=0.5;exitY=0;entryX=0.24;entryY=1;" target="p_srepo" value="&amp;lt;&amp;lt;implements&amp;gt;&amp;gt;">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_dip2" edge="1" parent="1" source="ad_mem_s" style="endArrow=block;endFill=0;endSize=10;html=1;dashed=1;strokeWidth=1.5;exitX=0.5;exitY=0;entryX=0.76;entryY=1;" target="p_srepo">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_dip3" edge="1" parent="1" source="ad_sql_c" style="endArrow=block;endFill=0;endSize=10;html=1;dashed=1;strokeWidth=1.5;labelBackgroundColor=#ffffff;exitX=0.5;exitY=0;entryX=0.24;entryY=1;" target="p_crepo" value="&amp;lt;&amp;lt;implements&amp;gt;&amp;gt;">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_dip4" edge="1" parent="1" source="ad_mem_c" style="endArrow=block;endFill=0;endSize=10;html=1;dashed=1;strokeWidth=1.5;exitX=0.5;exitY=0;entryX=0.76;entryY=1;" target="p_crepo">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_dip5" edge="1" parent="1" source="ad_email" style="endArrow=block;endFill=0;endSize=10;html=1;dashed=1;strokeWidth=1.5;labelBackgroundColor=#ffffff;exitX=0.5;exitY=0;entryX=0.24;entryY=1;" target="p_notif" value="&amp;lt;&amp;lt;implements&amp;gt;&amp;gt;">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_dip6" edge="1" parent="1" source="ad_fake" style="endArrow=block;endFill=0;endSize=10;html=1;dashed=1;strokeWidth=1.5;exitX=0.5;exitY=0;entryX=0.76;entryY=1;" target="p_notif">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_ext1" edge="1" parent="1" source="ad_sql_s" style="endArrow=open;endFill=0;html=1;strokeWidth=1.5;labelBackgroundColor=#ffffff;edgeStyle=orthogonalEdgeStyle;exitX=0.5;exitY=1;entryX=0.25;entryY=0;" target="ext_db" value="SQL (sqlite3)">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="650" y="905"/>
+                            <mxPoint x="757" y="905"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e_ext2" edge="1" parent="1" source="ad_sql_c" style="endArrow=open;endFill=0;html=1;strokeWidth=1.5;labelBackgroundColor=#ffffff;edgeStyle=orthogonalEdgeStyle;exitX=0.5;exitY=1;entryX=0.75;entryY=0;" target="ext_db" value="SQL (sqlite3)">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="975" y="905"/>
+                            <mxPoint x="872" y="905"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e_ext3" edge="1" parent="1" source="ad_email" style="endArrow=open;endFill=0;html=1;strokeWidth=1.5;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="ext_smtp" value="SMTP">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="sequencia-uml" name="3. Diagrama de Sequência">
+        <mxGraphModel dx="1762" dy="1261" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1820" pageHeight="1100" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="ll_user" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;participant=umlActor;size=50;fontStyle=1;" value="Solicitante" vertex="1">
+                    <mxGeometry height="930" width="30" x="80" y="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1;" value="Diagrama de Sequência UML — Caso de Uso: Solicitar Contratação de Serviço (RF04 / ASR-01 / ASR-02)" vertex="1">
+                    <mxGeometry height="30" width="1050" x="380" y="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="ll_ctrl" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#dae8fc;strokeColor=#6c8ebf;size=50;" value="&lt;u&gt;controller:&lt;br&gt;MarketplaceController&lt;/u&gt;" vertex="1">
+                    <mxGeometry height="930" width="160" x="250" y="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="ll_uc" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#d5e8d4;strokeColor=#82b366;size=50;fontStyle=1;" value="&lt;u&gt;useCase:&lt;br&gt;SolicitarContratacaoUseCase&lt;/u&gt;" vertex="1">
+                    <mxGeometry height="930" width="190" x="450" y="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="ll_srepo" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#fff2cc;strokeColor=#d6b656;size=50;" value="&lt;u&gt;servicoRepo:&lt;br&gt;ServicoRepository&lt;/u&gt;" vertex="1">
+                    <mxGeometry height="930" width="150" x="670" y="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="ll_serv" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#e1d5e7;strokeColor=#9673a6;size=50;" value="&lt;u&gt;servico:&lt;br&gt;Servico&lt;/u&gt;" vertex="1">
+                    <mxGeometry height="930" width="140" x="850" y="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="ll_slot" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#e1d5e7;strokeColor=#9673a6;size=50;" value="&lt;u&gt;slot:&lt;br&gt;SlotDisponibilidade&lt;/u&gt;" vertex="1">
+                    <mxGeometry height="930" width="150" x="1020" y="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="ll_cont" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#e1d5e7;strokeColor=#9673a6;size=50;" value="&lt;u&gt;contratacao:&lt;br&gt;Contratacao&lt;/u&gt;" vertex="1">
+                    <mxGeometry height="930" width="140" x="1200" y="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="ll_crepo" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#fff2cc;strokeColor=#d6b656;size=50;" value="&lt;u&gt;contratacaoRepo:&lt;br&gt;ContratacaoRepository&lt;/u&gt;" vertex="1">
+                    <mxGeometry height="930" width="160" x="1370" y="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="ll_notif" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#fff2cc;strokeColor=#d6b656;size=50;" value="&lt;u&gt;notificador:&lt;br&gt;NotificadorPort&lt;/u&gt;" vertex="1">
+                    <mxGeometry height="930" width="150" x="1560" y="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="alt1" parent="1" style="shape=umlFrame;whiteSpace=wrap;html=1;width=410;height=25;fillColor=none;strokeColor=#9673a6;fontStyle=1;align=left;spacingLeft=5;" value="alt [solicitante_id == servico.prestador_id (Erro de Negócio: RES01)]" vertex="1">
+                    <mxGeometry height="680" width="1700" x="40" y="310" as="geometry"/>
+                </mxCell>
+                <mxCell id="alt1_line" parent="1" style="line;strokeWidth=1;dashed=1;html=1;strokeColor=#9673a6;" value="" vertex="1">
+                    <mxGeometry height="10" width="1700" x="40" y="420" as="geometry"/>
+                </mxCell>
+                <mxCell id="alt1_lbl" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontStyle=1;fontSize=11;fontColor=#333333;" value="[else: contratante válido]" vertex="1">
+                    <mxGeometry height="20" width="200" x="50" y="426" as="geometry"/>
+                </mxCell>
+                <mxCell id="alt2" parent="1" style="shape=umlFrame;whiteSpace=wrap;html=1;width=380;height=25;fillColor=none;strokeColor=#b85450;fontStyle=1;align=left;spacingLeft=5;" value="alt [slot.status != LIVRE (Erro de Negócio: RES02 / ASR-02)]" vertex="1">
+                    <mxGeometry height="435" width="1660" x="60" y="535" as="geometry"/>
+                </mxCell>
+                <mxCell id="alt2_line" parent="1" style="line;strokeWidth=1;dashed=1;html=1;strokeColor=#b85450;" value="" vertex="1">
+                    <mxGeometry height="10" width="1660" x="60" y="645" as="geometry"/>
+                </mxCell>
+                <mxCell id="alt2_lbl" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontStyle=1;fontSize=11;fontColor=#333333;" value="[else: slot está LIVRE]" vertex="1">
+                    <mxGeometry height="20" width="200" x="70" y="651" as="geometry"/>
+                </mxCell>
+                <mxCell id="s1" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;strokeWidth=1.5;labelBackgroundColor=#ffffff;" value="1: solicitar_contratacao(servico_id, slot_id, solicitante_id)">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="95" y="145" as="sourcePoint"/>
+                        <mxPoint x="330" y="145" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="s2" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;strokeWidth=1.5;labelBackgroundColor=#ffffff;" value="2: executar(servico_id, slot_id, solicitante_id)">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="330" y="180" as="sourcePoint"/>
+                        <mxPoint x="545" y="180" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="s3" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;strokeWidth=1.5;labelBackgroundColor=#ffffff;" value="3: buscar_por_id(servico_id)">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="545" y="215" as="sourcePoint"/>
+                        <mxPoint x="745" y="215" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="s4" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;strokeWidth=1.5;labelBackgroundColor=#ffffff;" value="4: retorna servico">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="745" y="245" as="sourcePoint"/>
+                        <mxPoint x="545" y="245" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="s5" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;strokeWidth=1.5;labelBackgroundColor=#ffffff;" value="5: validar_contratante(solicitante_id) [Information Expert]">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="545" y="285" as="sourcePoint"/>
+                        <mxPoint x="920" y="285" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="s6" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;strokeColor=#b85450;fontColor=#b85450;labelBackgroundColor=#ffffff;" value="6: lança AutoContratacaoError">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="920" y="355" as="sourcePoint"/>
+                        <mxPoint x="545" y="355" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="s7" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;strokeColor=#b85450;fontColor=#b85450;labelBackgroundColor=#ffffff;" value="7: propaga AutoContratacaoError (Exibe erro ao usuário)">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="545" y="390" as="sourcePoint"/>
+                        <mxPoint x="95" y="390" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="s8" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;strokeWidth=1.5;labelBackgroundColor=#ffffff;" value="8: buscar_slot(slot_id)">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="545" y="460" as="sourcePoint"/>
+                        <mxPoint x="920" y="460" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="s9" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;strokeWidth=1.5;labelBackgroundColor=#ffffff;" value="9: retorna slot">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="920" y="485" as="sourcePoint"/>
+                        <mxPoint x="545" y="485" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="s10" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;strokeWidth=1.5;labelBackgroundColor=#ffffff;" value="10: reservar() [Information Expert]">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="545" y="515" as="sourcePoint"/>
+                        <mxPoint x="1095" y="515" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="s11" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;strokeColor=#b85450;fontColor=#b85450;labelBackgroundColor=#ffffff;" value="11: lança SlotIndisponivelError">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="1095" y="585" as="sourcePoint"/>
+                        <mxPoint x="545" y="585" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="s12" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;strokeColor=#b85450;fontColor=#b85450;labelBackgroundColor=#ffffff;" value="12: propaga SlotIndisponivelError (Exibe erro: Horário já reservado)">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="545" y="620" as="sourcePoint"/>
+                        <mxPoint x="95" y="620" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="s13" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;strokeWidth=1.5;labelBackgroundColor=#ffffff;" value="13: status = StatusSlot.RESERVADO (ok)">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="1095" y="690" as="sourcePoint"/>
+                        <mxPoint x="545" y="690" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="s14" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;strokeWidth=1.5;labelBackgroundColor=#ffffff;" value="14: &amp;lt;&amp;lt;create&amp;gt;&amp;gt;(id, servico_id, slot_id, solicitante_id, prestador_id, CONFIRMADA)">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="545" y="730" as="sourcePoint"/>
+                        <mxPoint x="1270" y="730" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="s15" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;strokeWidth=1.5;labelBackgroundColor=#ffffff;" value="15: salvar(servico) [slot atualizado para RESERVADO]">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="545" y="775" as="sourcePoint"/>
+                        <mxPoint x="745" y="775" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="s16" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;strokeWidth=1.5;labelBackgroundColor=#ffffff;" value="16: salvar(contratacao) [contratação persistida]">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="545" y="820" as="sourcePoint"/>
+                        <mxPoint x="1450" y="820" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="s17" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;strokeWidth=1.5;labelBackgroundColor=#ffffff;" value="17: notificar(prestador_id, &quot;Nova Contratação Confirmada&quot;, detalhes) [Protected Variations / ASR-01]">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="545" y="870" as="sourcePoint"/>
+                        <mxPoint x="1635" y="870" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="s18" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;strokeWidth=1.5;labelBackgroundColor=#ffffff;" value="18: retorna contratacao confirmada">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="545" y="925" as="sourcePoint"/>
+                        <mxPoint x="95" y="925" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="classes-uml" name="4. Diagrama de Classes">
+        <mxGraphModel dx="1802" dy="1290" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1840" pageHeight="1280" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1;" value="Diagrama de Classes UML — CampusHub (Modelo de Domínio Rico, Portas, Casos de Uso e Adaptadores)" vertex="1">
+                    <mxGeometry height="30" width="1100" x="370" y="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="pkg_app" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;verticalAlign=top;spacingTop=6;fontSize=12;fontStyle=1;" value="application (Camada de Aplicação / Casos de Uso — Controller GRASP)" vertex="1">
+                    <mxGeometry height="310" width="760" x="40" y="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="cl_uc1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;align=left;spacingLeft=8;fontSize=11;" value="&amp;lt;&amp;lt;Controller&amp;gt;&amp;gt;&lt;br&gt;&lt;b&gt;SolicitarContratacaoUseCase&lt;/b&gt;&lt;hr&gt;- servico_repo: ServicoRepository&lt;br&gt;- contratacao_repo: ContratacaoRepository&lt;br&gt;- notificador: NotificadorPort&lt;hr&gt;+ executar(servico_id: str, slot_id: str, solicitante_id: str): Contratacao" vertex="1">
+                    <mxGeometry height="120" width="375" x="65" y="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="cl_uc2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;align=left;spacingLeft=8;fontSize=11;" value="&amp;lt;&amp;lt;Controller&amp;gt;&amp;gt;&lt;br&gt;&lt;b&gt;ConsultarServicosUseCase&lt;/b&gt;&lt;hr&gt;- servico_repo: ServicoRepository&lt;hr&gt;+ executar(apenas_com_slots_livres: bool): List[Servico]" vertex="1">
+                    <mxGeometry height="95" width="320" x="460" y="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="cl_uc3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;align=left;spacingLeft=8;fontSize=11;" value="&amp;lt;&amp;lt;Controller&amp;gt;&amp;gt;&lt;br&gt;&lt;b&gt;ConcluirEAvaliarUseCase&lt;/b&gt;&lt;hr&gt;- contratacao_repo: ContratacaoRepository&lt;br&gt;- notificador: NotificadorPort&lt;hr&gt;+ concluir(contratacao_id: str): Contratacao&lt;br&gt;+ avaliar(contratacao_id: str, nota: int, comentario: str): Avaliacao" vertex="1">
+                    <mxGeometry height="115" width="420" x="210" y="235" as="geometry"/>
+                </mxCell>
+                <mxCell id="pkg_ports" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;verticalAlign=top;spacingTop=6;fontSize=12;fontStyle=1;" value="ports (Portas de Saída / Interfaces Abstratas — Indirection &amp; Protected Variations)" vertex="1">
+                    <mxGeometry height="310" width="790" x="1000" y="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="cl_ps" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;align=left;spacingLeft=8;fontSize=11;" value="&amp;lt;&amp;lt;interface&amp;gt;&amp;gt;&lt;br&gt;&lt;b&gt;ServicoRepository&lt;/b&gt;&lt;hr&gt;+ salvar(servico: Servico): void&lt;br&gt;+ buscar_por_id(servico_id: str): Optional[Servico]&lt;br&gt;+ listar_disponiveis(): List[Servico]" vertex="1">
+                    <mxGeometry height="110" width="350" x="1025" y="105" as="geometry"/>
+                </mxCell>
+                <mxCell id="cl_pc" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;align=left;spacingLeft=8;fontSize=11;" value="&amp;lt;&amp;lt;interface&amp;gt;&amp;gt;&lt;br&gt;&lt;b&gt;ContratacaoRepository&lt;/b&gt;&lt;hr&gt;+ salvar(contratacao: Contratacao): void&lt;br&gt;+ buscar_por_id(contratacao_id: str): Optional[Contratacao]&lt;br&gt;+ listar_por_usuario(usuario_id: str): List[Contratacao]" vertex="1">
+                    <mxGeometry height="110" width="360" x="1405" y="105" as="geometry"/>
+                </mxCell>
+                <mxCell id="cl_pn" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;align=left;spacingLeft=8;fontSize=11;" value="&amp;lt;&amp;lt;interface&amp;gt;&amp;gt;&lt;br&gt;&lt;b&gt;NotificadorPort&lt;/b&gt;&lt;hr&gt;+ notificar(destinatario: str, assunto: str, mensagem: str): void" vertex="1">
+                    <mxGeometry height="85" width="360" x="1215" y="245" as="geometry"/>
+                </mxCell>
+                <mxCell id="pkg_dom" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;verticalAlign=top;spacingTop=6;fontSize=12;fontStyle=1;" value="domain (Núcleo de Domínio Rico — Information Expert &amp; Creator GRASP)" vertex="1">
+                    <mxGeometry height="760" width="1020" x="40" y="460" as="geometry"/>
+                </mxCell>
+                <mxCell id="cl_membro" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9673a6;align=left;spacingLeft=8;fontSize=11;" value="&amp;lt;&amp;lt;Entidade&amp;gt;&amp;gt;&lt;br&gt;&lt;b&gt;MembroComunidade&lt;/b&gt;&lt;hr&gt;+ id: str&lt;br&gt;+ nome: str&lt;br&gt;+ email: str&lt;br&gt;+ registro_academico: str" vertex="1">
+                    <mxGeometry height="115" width="210" x="70" y="510" as="geometry"/>
+                </mxCell>
+                <mxCell id="cl_serv" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9673a6;align=left;spacingLeft=8;fontSize=11;" value="&amp;lt;&amp;lt;Raiz de Agregado&amp;gt;&amp;gt;&lt;br&gt;&lt;b&gt;Servico&lt;/b&gt;&lt;hr&gt;+ id: str&lt;br&gt;+ prestador_id: str&lt;br&gt;+ titulo: str&lt;br&gt;+ descricao: str&lt;br&gt;+ categoria: str&lt;br&gt;+ valor: float&lt;br&gt;+ slots: List[SlotDisponibilidade]&lt;hr&gt;+ adicionar_slot(inicio, fim): SlotDisponibilidade&lt;br&gt;+ buscar_slot(slot_id: str): SlotDisponibilidade&lt;br&gt;+ obter_slots_livres(): List[SlotDisponibilidade]&lt;br&gt;+ validar_contratante(solicitante_id: str): void" vertex="1">
+                    <mxGeometry height="220" width="310" x="380" y="510" as="geometry"/>
+                </mxCell>
+                <mxCell id="cl_slot" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9673a6;align=left;spacingLeft=8;fontSize=11;" value="&amp;lt;&amp;lt;Entidade Interna&amp;gt;&amp;gt;&lt;br&gt;&lt;b&gt;SlotDisponibilidade&lt;/b&gt;&lt;hr&gt;+ id: str&lt;br&gt;+ servico_id: str&lt;br&gt;+ inicio: datetime&lt;br&gt;+ fim: datetime&lt;br&gt;+ status: StatusSlot&lt;hr&gt;+ esta_livre(): bool&lt;br&gt;+ reservar(): void&lt;br&gt;+ liberar(): void" vertex="1">
+                    <mxGeometry height="185" width="250" x="780" y="510" as="geometry"/>
+                </mxCell>
+                <mxCell id="cl_cont" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9673a6;align=left;spacingLeft=8;fontSize=11;" value="&amp;lt;&amp;lt;Raiz de Agregado&amp;gt;&amp;gt;&lt;br&gt;&lt;b&gt;Contratacao&lt;/b&gt;&lt;hr&gt;+ id: str&lt;br&gt;+ servico_id: str&lt;br&gt;+ slot_id: str&lt;br&gt;+ solicitante_id: str&lt;br&gt;+ prestador_id: str&lt;br&gt;+ status: StatusContratacao&lt;br&gt;+ criado_em: datetime&lt;br&gt;+ avaliacao: Optional[Avaliacao]&lt;hr&gt;+ concluir(): void&lt;br&gt;+ cancelar(): void&lt;br&gt;+ registrar_avaliacao(nota, comentario): Avaliacao" vertex="1">
+                    <mxGeometry height="225" width="310" x="380" y="790" as="geometry"/>
+                </mxCell>
+                <mxCell id="cl_aval" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9673a6;align=left;spacingLeft=8;fontSize=11;" value="&amp;lt;&amp;lt;Objeto de Valor&amp;gt;&amp;gt;&lt;br&gt;&lt;b&gt;Avaliacao&lt;/b&gt;&lt;hr&gt;+ id: str&lt;br&gt;+ contratacao_id: str&lt;br&gt;+ nota: int&lt;br&gt;+ comentario: str&lt;br&gt;+ criado_em: datetime&lt;hr&gt;+ validar_nota(): void" vertex="1">
+                    <mxGeometry height="160" width="250" x="780" y="810" as="geometry"/>
+                </mxCell>
+                <mxCell id="en_slot" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9673a6;align=left;spacingLeft=8;fontSize=11;" value="&amp;lt;&amp;lt;enumeration&amp;gt;&amp;gt;&lt;br&gt;&lt;b&gt;StatusSlot&lt;/b&gt;&lt;hr&gt;LIVRE&lt;br&gt;RESERVADO" vertex="1">
+                    <mxGeometry height="75" width="200" x="830" y="715" as="geometry"/>
+                </mxCell>
+                <mxCell id="en_cont" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9673a6;align=left;spacingLeft=8;fontSize=11;" value="&amp;lt;&amp;lt;enumeration&amp;gt;&amp;gt;&lt;br&gt;&lt;b&gt;StatusContratacao&lt;/b&gt;&lt;hr&gt;CONFIRMADA&lt;br&gt;CONCLUIDA&lt;br&gt;CANCELADA" vertex="1">
+                    <mxGeometry height="90" width="210" x="70" y="875" as="geometry"/>
+                </mxCell>
+                <mxCell id="cl_err" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9673a6;align=left;spacingLeft=8;fontSize=11;" value="&amp;lt;&amp;lt;Exceções de Domínio&amp;gt;&amp;gt;&lt;br&gt;&lt;b&gt;ErroDominio (Exception)&lt;/b&gt;&lt;hr&gt;+ mensagem: str&lt;hr&gt;Subclasses:&lt;br&gt;• AutoContratacaoError (RES01)&lt;br&gt;• SlotIndisponivelError (RES02 / ASR-02)&lt;br&gt;• TransicaoEstadoInvalidaError&lt;br&gt;• NotaInvalidaError (RES03)" vertex="1">
+                    <mxGeometry height="145" width="290" x="70" y="1045" as="geometry"/>
+                </mxCell>
+                <mxCell id="note_dom" parent="1" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#ffffc0;strokeColor=#c0c080;align=left;spacingLeft=10;spacingRight=10;fontSize=11;" value="&lt;b&gt;Justificativas GRASP no Domínio:&lt;/b&gt;&lt;br&gt;• &lt;b&gt;Information Expert:&lt;/b&gt; &lt;i&gt;Servico.validar_contratante()&lt;/i&gt; valida RES01 (detém prestador_id); &lt;i&gt;SlotDisponibilidade.reservar()&lt;/i&gt; valida RES02/ASR-02 (detém status).&lt;br&gt;• &lt;b&gt;Creator:&lt;/b&gt; &lt;i&gt;Servico.adicionar_slot()&lt;/i&gt; instancia SlotDisponibilidade; &lt;i&gt;Contratacao.registrar_avaliacao()&lt;/i&gt; instancia Avaliacao apenas se status == CONCLUIDA (RES03)." vertex="1">
+                    <mxGeometry height="135" width="640" x="390" y="1050" as="geometry"/>
+                </mxCell>
+                <mxCell id="r_m_s" edge="1" parent="1" source="cl_membro" style="endArrow=open;endFill=0;html=1;strokeWidth=1.5;labelBackgroundColor=#e1d5e7;exitX=1;exitY=0.5;entryX=0;entryY=0.26;" target="cl_serv" value="1..* oferece">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="r_m_c" edge="1" parent="1" source="cl_membro" style="endArrow=open;endFill=0;html=1;strokeWidth=1.5;labelBackgroundColor=#e1d5e7;edgeStyle=orthogonalEdgeStyle;exitX=0.5;exitY=1;entryX=0;entryY=0.25;" target="cl_cont" value="0..* solicita">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="175" y="846"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="r_s_sl" edge="1" parent="1" source="cl_serv" style="endArrow=open;endFill=0;startArrow=diamondThin;startFill=1;startSize=12;html=1;strokeWidth=1.5;labelBackgroundColor=#e1d5e7;exitX=1;exitY=0.42;entryX=0;entryY=0.5;" target="cl_slot" value="1..* possui">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="r_c_av" edge="1" parent="1" source="cl_cont" style="endArrow=open;endFill=0;startArrow=diamondThin;startFill=1;startSize=12;html=1;strokeWidth=1.5;labelBackgroundColor=#e1d5e7;exitX=1;exitY=0.44;entryX=0;entryY=0.5;" target="cl_aval" value="0..1 contém">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="r_c_s" edge="1" parent="1" source="cl_cont" style="endArrow=open;endFill=0;dashed=1;html=1;strokeWidth=1.5;labelBackgroundColor=#e1d5e7;exitX=0.5;exitY=0;entryX=0.5;entryY=1;" target="cl_serv" value="refere-se a">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pkg_out" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;verticalAlign=top;spacingTop=6;fontSize=12;fontStyle=1;" value="adapters.outbound (Infraestrutura — Pure Fabrication GRASP &amp; DIP SOLID)" vertex="1">
+                    <mxGeometry height="760" width="670" x="1120" y="460" as="geometry"/>
+                </mxCell>
+                <mxCell id="cl_sql_s" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#b85450;align=left;spacingLeft=8;fontSize=11;" value="&lt;b&gt;SqliteServicoRepository&lt;/b&gt;&lt;hr&gt;- conn: Connection&lt;hr&gt;+ salvar(servico: Servico): void&lt;br&gt;+ buscar_por_id(servico_id: str): Optional[Servico]&lt;br&gt;+ listar_disponiveis(): List[Servico]" vertex="1">
+                    <mxGeometry height="120" width="295" x="1145" y="515" as="geometry"/>
+                </mxCell>
+                <mxCell id="cl_mem_s" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#b85450;align=left;spacingLeft=8;fontSize=11;" value="&lt;b&gt;InMemoryServicoRepository&lt;/b&gt;&lt;hr&gt;- servicos: dict[str, Servico]&lt;hr&gt;+ salvar(servico: Servico): void&lt;br&gt;+ buscar_por_id(servico_id: str): Optional[Servico]&lt;br&gt;+ listar_disponiveis(): List[Servico]" vertex="1">
+                    <mxGeometry height="120" width="295" x="1470" y="515" as="geometry"/>
+                </mxCell>
+                <mxCell id="cl_sql_c" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#b85450;align=left;spacingLeft=8;fontSize=11;" value="&lt;b&gt;SqliteContratacaoRepository&lt;/b&gt;&lt;hr&gt;- conn: Connection&lt;hr&gt;+ salvar(contratacao: Contratacao): void&lt;br&gt;+ buscar_por_id(id: str): Optional[Contratacao]&lt;br&gt;+ listar_por_usuario(uid: str): List[Contratacao]" vertex="1">
+                    <mxGeometry height="120" width="295" x="1145" y="670" as="geometry"/>
+                </mxCell>
+                <mxCell id="cl_mem_c" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#b85450;align=left;spacingLeft=8;fontSize=11;" value="&lt;b&gt;InMemoryContratacaoRepository&lt;/b&gt;&lt;hr&gt;- contratacoes: dict[str, Contratacao]&lt;hr&gt;+ salvar(contratacao: Contratacao): void&lt;br&gt;+ buscar_por_id(id: str): Optional[Contratacao]&lt;br&gt;+ listar_por_usuario(uid: str): List[Contratacao]" vertex="1">
+                    <mxGeometry height="120" width="295" x="1470" y="670" as="geometry"/>
+                </mxCell>
+                <mxCell id="cl_email" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#b85450;align=left;spacingLeft=8;fontSize=11;" value="&lt;b&gt;EmailNotificador&lt;/b&gt;&lt;hr&gt;- servidor_smtp: str&lt;hr&gt;+ notificar(dest: str, assunto: str, msg: str): void" vertex="1">
+                    <mxGeometry height="105" width="295" x="1145" y="825" as="geometry"/>
+                </mxCell>
+                <mxCell id="cl_fake" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#b85450;align=left;spacingLeft=8;fontSize=11;" value="&lt;b&gt;NotificadorFake&lt;/b&gt;&lt;hr&gt;+ mensagens_enviadas: List[dict]&lt;hr&gt;+ notificar(dest: str, assunto: str, msg: str): void" vertex="1">
+                    <mxGeometry height="105" width="295" x="1470" y="825" as="geometry"/>
+                </mxCell>
+                <mxCell id="note_solid" parent="1" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#ffffc0;strokeColor=#c0c080;align=left;spacingLeft=10;spacingRight=10;fontSize=11;" value="&lt;b&gt;Princípios SOLID Evidenciados:&lt;/b&gt;&lt;br&gt;• &lt;b&gt;DIP &amp;amp; LSP:&lt;/b&gt; Os Casos de Uso dependem apenas das interfaces em &lt;i&gt;ports&lt;/i&gt;. Qualquer adaptador (&lt;i&gt;Sqlite&lt;/i&gt; vs &lt;i&gt;InMemory&lt;/i&gt;, &lt;i&gt;Email&lt;/i&gt; vs &lt;i&gt;Fake&lt;/i&gt;) pode ser substituído sem alterar a aplicação.&lt;br&gt;• &lt;b&gt;OCP:&lt;/b&gt; Para adicionar &lt;i&gt;WhatsAppNotificador&lt;/i&gt; ou &lt;i&gt;PostgresRepository&lt;/i&gt;, basta criar uma nova classe neste pacote implementando a porta correspondente.&lt;br&gt;• &lt;b&gt;ISP &amp;amp; SRP:&lt;/b&gt; Portas segregadas por responsabilidade (&lt;i&gt;ServicoRepository&lt;/i&gt;, &lt;i&gt;ContratacaoRepository&lt;/i&gt;, &lt;i&gt;NotificadorPort&lt;/i&gt;)." vertex="1">
+                    <mxGeometry height="210" width="620" x="1145" y="970" as="geometry"/>
+                </mxCell>
+                <mxCell id="cp_app_ports" edge="1" parent="1" source="pkg_app" style="endArrow=open;endFill=0;html=1;strokeWidth=2;strokeColor=#82b366;exitX=1;exitY=0.5;entryX=0;entryY=0.5;labelBackgroundColor=#ffffff;" target="pkg_ports" value="depende de abstrações (DIP)">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="cp_app_dom" edge="1" parent="1" source="pkg_app" style="endArrow=open;endFill=0;dashed=1;html=1;strokeWidth=2;strokeColor=#82b366;exitX=0.5;exitY=1;entryX=0.372;entryY=0;labelBackgroundColor=#ffffff;" target="pkg_dom" value="orquestra entidades">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="cp_out_ports" edge="1" parent="1" source="pkg_out" style="endArrow=block;endFill=0;endSize=12;dashed=1;html=1;strokeWidth=2;strokeColor=#b85450;exitX=0.5;exitY=0;entryX=0.576;entryY=1;labelBackgroundColor=#ffffff;" target="pkg_ports" value="realiza interfaces (&amp;lt;&amp;lt;implements&amp;gt;&amp;gt;)">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
