@@ -196,4 +196,13 @@ def executar_demonstracao_fatia_vertical(caminho_banco: str = "campushub.db") ->
 
 
 if __name__ == "__main__":
-    executar_demonstracao_fatia_vertical()
+    import sys
+
+    if "--web" in sys.argv:
+        from src.adapters.inbound.web_controller import iniciar_servidor_web
+
+        iniciar_servidor_web(porta=8000)
+    else:
+        executar_demonstracao_fatia_vertical()
+        print("\n[DICA] Para abrir a interface gráfica Web interativa no navegador, execute:")
+        print("       python -m src.main --web")

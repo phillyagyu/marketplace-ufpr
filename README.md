@@ -101,8 +101,15 @@ pytest -v
 
 ### 3. Executar o Protótipo Funcional (Fatia Vertical)
 
-Para rodar a demonstração completa da fatia vertical (consulta de serviços, contratação com persistência SQLite, disparo de notificação, tratamento de erros de auto-contratação e *overbooking*, conclusão e avaliação):
+O projeto conta com **dois Adaptadores Primários de Entrada (`src/adapters/inbound/`)** que consomem os mesmos Casos de Uso e o mesmo banco SQLite:
 
+**Opção A — Interface Gráfica Web Interativa no Navegador (`http://localhost:8000`):**
+```bash
+python -m src.main --web
+```
+*(Abre automaticamente o painel interativo do **CampusHub UFPR** no navegador para realizar consultas, contratações, testar bloqueios de auto-contratação e overbooking ao vivo, concluir serviços, avaliar e monitorar os disparos no `NotificadorPort`).*
+
+**Opção B — Roteiro Automatizado via Terminal (CLI):**
 ```bash
 python -m src.main
 ```
