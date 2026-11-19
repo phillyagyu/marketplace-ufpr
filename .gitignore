@@ -1,0 +1,14 @@
+# Ambientes virtuais Python
+.venv/
+venv/
+env/
+
+# Cache do Python e Pytest
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Arquivos locais de banco de dados SQLite gerados em execução
+*.db
+*.sqlite3

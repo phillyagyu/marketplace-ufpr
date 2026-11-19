@@ -64,5 +64,45 @@ marketplace-ufpr/
     ├── ports/                       # Portas de Saída abstratas (Repositories e NotificadorPort)
     ├── application/                 # Casos de Uso (Coordenação transacional da fatia vertical)
     ├── adapters/                    # Adaptadores Primários (CLI) e Secundários (SQLite, InMemory, Email, Fake)
+    ├── tests/                       # Suíte de testes automatizados (Unidade e Integração SQLite)
     └── main.py                      # Composition Root e Demonstração Executável da Fatia Vertical
+```
+
+---
+
+## Como Configurar e Executar o Projeto
+
+O núcleo do **CampusHub** e a persistência em **SQLite** utilizam exclusivamente a biblioteca padrão do **Python 3.10+** (atendendo à **RES05 — Portabilidade e Execução Local**). Para rodar a suíte de testes automatizados com `pytest`, basta instalar o `requirements.txt`.
+
+### 1. Clonar o repositório e criar o ambiente virtual (Recomendado)
+
+**No Linux / macOS:**
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+**No Windows (PowerShell):**
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+```
+
+### 2. Executar os Testes Automatizados
+
+Com o ambiente ativo na raiz do repositório, execute:
+
+```bash
+pytest -v
+```
+*(Alternativamente, os testes também podem ser executados sem dependências externas diretamente via `python -m src.tests.test_casos_de_uso`).*
+
+### 3. Executar o Protótipo Funcional (Fatia Vertical)
+
+Para rodar a demonstração completa da fatia vertical (consulta de serviços, contratação com persistência SQLite, disparo de notificação, tratamento de erros de auto-contratação e *overbooking*, conclusão e avaliação):
+
+```bash
+python -m src.main
 ```

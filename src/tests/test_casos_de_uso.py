@@ -1,6 +1,13 @@
 from datetime import datetime, timedelta
+import unittest
 
-import pytest
+try:
+    import pytest
+except ModuleNotFoundError:
+    class _PytestFallback:
+        raises = staticmethod(unittest.TestCase().assertRaises)
+
+    pytest = _PytestFallback()  # type: ignore[assignment]
 
 from src.adapters.outbound.memoria_repositorios import (
     InMemoryContratacaoRepository,
@@ -199,3 +206,16 @@ def test_fluxo_completo_com_sqlite():
     assert contratacao_db.status == StatusContratacao.CONCLUIDA
     assert contratacao_db.avaliacao is not None
     assert contratacao_db.avaliacao.nota == 5
+
+
+if __name__ == "__main__":
+    test_solicitar_contratacao_use_case()
+    print("[OK] test_solicitar_contratacao_use_case")
+    test_consultar_servicos_use_case()
+    print("[OK] test_consultar_servicos_use_case")
+    test_concluir_e_avaliar_use_case()
+    print("[OK] test_concluir_e_avaliar_use_case")
+    test_fluxo_completo_com_sqlite()
+    print("[OK] test_fluxo_completo_com_sqlite")
+    print("\nTodos os testes passaram com sucesso!")
+
