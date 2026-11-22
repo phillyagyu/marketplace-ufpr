@@ -62,9 +62,12 @@ class MarketplaceController:
             print(f"  [ERRO DE NEGÓCIO BLOQUEADO PELO DOMÍNIO] {erro.__class__.__name__}: \"{erro.mensagem}\"")
             return None
 
-    def concluir_servico(self, contratacao_id: str) -> Optional[Contratacao]:
+    def concluir_servico(self, contratacao_id: str, usuario_id: Optional[str] = None) -> Optional[Contratacao]:
         try:
-            contratacao = self.concluir_avaliar_uc.concluir(contratacao_id=contratacao_id)
+            contratacao = self.concluir_avaliar_uc.concluir(
+                contratacao_id=contratacao_id,
+                usuario_id=usuario_id,
+            )
             print(
                 f"  [SUCESSO] Contratação '{contratacao.id}' atualizada para "
                 f"'{contratacao.status.value.upper()}'."
@@ -79,12 +82,14 @@ class MarketplaceController:
         contratacao_id: str,
         nota: int,
         comentario: str,
+        solicitante_id: Optional[str] = None,
     ) -> Optional[Avaliacao]:
         try:
             avaliacao = self.concluir_avaliar_uc.avaliar(
                 contratacao_id=contratacao_id,
                 nota=nota,
                 comentario=comentario,
+                solicitante_id=solicitante_id,
             )
             print(
                 f"  [SUCESSO] Avaliação '{avaliacao.id}' registrada! "

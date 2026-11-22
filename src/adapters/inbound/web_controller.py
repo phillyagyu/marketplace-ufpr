@@ -1130,10 +1130,11 @@ HTML_PAGINA = """<!DOCTYPE html>
     }
 
     async function concluirServico(contratacao_id) {
+      const usuario_id = obterUsuarioLogado();
       const resp = await fetch('/api/concluir', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ contratacao_id })
+        body: JSON.stringify({ contratacao_id, usuario_id })
       });
       const dados = await resp.json();
       if (!resp.ok) {
@@ -1147,10 +1148,11 @@ HTML_PAGINA = """<!DOCTYPE html>
     async function avaliarServico(contratacao_id) {
       const nota = parseInt(document.getElementById(`nota-${contratacao_id}`).value, 10);
       const comentario = document.getElementById(`comentario-${contratacao_id}`).value;
+      const solicitante_id = obterUsuarioLogado();
       const resp = await fetch('/api/avaliar', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ contratacao_id, nota, comentario })
+        body: JSON.stringify({ contratacao_id, nota, comentario, solicitante_id })
       });
       const dados = await resp.json();
       if (!resp.ok) {
@@ -1309,7 +1311,10 @@ def criar_handler_web(contexto: CampusHubWebContext):
 
                 if parsed.path == "/api/concluir":
                     assert contexto.concluir_avaliar_uc is not None
-                    contratacao = contexto.concluir_avaliar_uc.concluir(dados["contratacao_id"])
+                    contratacao = contexto.concluir_avaliar_uc.concluir(
+                        contratacao_id=dados["contratacao_id"],
+                        usuario_id=dados.get("usuario_id"),
+                    )
                     self._enviar_json(
                         200,
                         {
@@ -1327,6 +1332,7 @@ def criar_handler_web(contexto: CampusHubWebContext):
                         contratacao_id=dados["contratacao_id"],
                         nota=int(dados["nota"]),
                         comentario=str(dados["comentario"]),
+                        solicitante_id=dados.get("solicitante_id"),
                     )
                     self._enviar_json(
                         200,

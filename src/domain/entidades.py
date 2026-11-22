@@ -1,8 +1,9 @@
 from datetime import datetime
 from enum import Enum
-from typing import Optional, List
+from typing import List, Optional
 
 from src.domain.excecoes import *
+
 
 class StatusSlot(Enum):
     LIVRE = "livre"
@@ -14,6 +15,7 @@ class StatusContratacao(Enum):
     CONCLUIDA = "concluida"
     CANCELADA = "cancelada"
 
+
 # qualquer ator universitario (aluno, técnico ou docente)
 class MembroComunidade:
     def __init__(self, id: str, nome: str, email: str, registro_academico: str):
@@ -22,9 +24,13 @@ class MembroComunidade:
         self.email = email
         self.registro_academico = registro_academico
 
+
 # controla o estado da janela de horário
 class SlotDisponibilidade:
     def __init__(self, id: str, servico_id: str, inicio: datetime, fim: datetime, status=None):
+        if fim <= inicio:
+            raise IntervaloHorarioInvalidoError()
+
         self.id = id
         self.servico_id = servico_id
         self.inicio = inicio
@@ -49,26 +55,39 @@ class SlotDisponibilidade:
     def liberar(self) -> None:
         self.status = StatusSlot.LIVRE
 
+
 # mantem os dados da oferta, gerencia sua lista de horários
 class Servico:
-    def __init__(self, id: str, prestador_id: str, titulo: str, descricao: str, categoria: str, valor: float, slots=None):
+    def __init__(
+        self,
+        id: str,
+        prestador_id: str,
+        titulo: str,
+        descricao: str,
+        categoria: str,
+        valor: float,
+        slots=None,
+    ):
+        if valor < 0:
+            raise ErroDominio("O valor do serviço não pode ser negativo.")
+
         self.id = id
         self.prestador_id = prestador_id
         self.titulo = titulo
         self.descricao = descricao
         self.categoria = categoria
         self.valor = valor
-        
+
         if slots is not None:
             self.slots = slots
         else:
             self.slots = []
 
-    # cria e adiciona um novo slot de horario na agenda do servico     
+    # cria e adiciona um novo slot de horario na agenda do servico
     def adicionar_slot(self, inicio: datetime, fim: datetime) -> SlotDisponibilidade:
         numero_slot = len(self.slots) + 1
         novo_id = f"slot-{numero_slot}"
-        
+
         novo_slot = SlotDisponibilidade(novo_id, self.id, inicio, fim)
         self.slots.append(novo_slot)
         return novo_slot
@@ -91,6 +110,7 @@ class Servico:
         if solicitante_id == self.prestador_id:
             raise AutoContratacaoError()
 
+
 # representa a avaliacao do servico e garante nota valida (1 a 5) e comentario preenchido
 class Avaliacao:
     def __init__(self, id: str, contratacao_id: str, nota: int, comentario: str, criado_em=None):
@@ -112,9 +132,20 @@ class Avaliacao:
         if self.comentario == "":
             raise NotaInvalidaError()
 
+
 # governa o ciclo de vida do contrato (confirmada, concluida, cancelada) e cria a avaliacao
 class Contratacao:
-    def __init__(self, id: str, servico_id: str, slot_id: str, solicitante_id: str, prestador_id: str, status=None, criado_em=None, avaliacao: Optional[Avaliacao]=None):
+    def __init__(
+        self,
+        id: str,
+        servico_id: str,
+        slot_id: str,
+        solicitante_id: str,
+        prestador_id: str,
+        status=None,
+        criado_em=None,
+        avaliacao: Optional[Avaliacao] = None,
+    ):
         self.id = id
         self.servico_id = servico_id
         self.slot_id = slot_id
@@ -133,17 +164,36 @@ class Contratacao:
 
         self.avaliacao = avaliacao
 
-    def concluir(self) -> None:
+    def concluir(self, usuario_id: Optional[str] = None) -> None:
+        if usuario_id is not None and usuario_id != self.prestador_id:
+            raise PermissaoNegadaError(
+                "Apenas o prestador responsável pelo serviço pode registrar sua conclusão (RF06)."
+            )
         if self.status != StatusContratacao.CONFIRMADA:
             raise TransicaoEstadoInvalidaError("Apenas contratações CONFIRMADAS podem ser concluídas.")
         self.status = StatusContratacao.CONCLUIDA
 
-    def cancelar(self) -> None:
+    def cancelar(self, usuario_id: Optional[str] = None) -> None:
+        if usuario_id is not None and usuario_id not in (self.solicitante_id, self.prestador_id):
+            raise PermissaoNegadaError(
+                "Apenas o solicitante ou o prestador vinculados podem cancelar a contratação (RF05)."
+            )
         if self.status == StatusContratacao.CONCLUIDA:
             raise TransicaoEstadoInvalidaError("Não é possível cancelar uma contratação já CONCLUÍDA.")
+        if self.status == StatusContratacao.CANCELADA:
+            raise TransicaoEstadoInvalidaError("Esta contratação já se encontra CANCELADA.")
         self.status = StatusContratacao.CANCELADA
 
-    def registrar_avaliacao(self, nota: int, comentario: str) -> Avaliacao:
+    def registrar_avaliacao(
+        self,
+        nota: int,
+        comentario: str,
+        solicitante_id: Optional[str] = None,
+    ) -> Avaliacao:
+        if solicitante_id is not None and solicitante_id != self.solicitante_id:
+            raise PermissaoNegadaError(
+                "Apenas o solicitante que contratou o serviço pode registrar uma avaliação (RF07)."
+            )
         if self.status != StatusContratacao.CONCLUIDA:
             raise TransicaoEstadoInvalidaError("A avaliação só pode ser registrada para contratações CONCLUÍDAS.")
         if self.avaliacao is not None:

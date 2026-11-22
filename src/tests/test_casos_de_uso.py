@@ -28,7 +28,9 @@ from src.application.casos_de_uso import (
 from src.domain.entidades import Servico, StatusContratacao, StatusSlot
 from src.domain.excecoes import (
     AutoContratacaoError,
+    IntervaloHorarioInvalidoError,
     NotaInvalidaError,
+    PermissaoNegadaError,
     SlotIndisponivelError,
     TransicaoEstadoInvalidaError,
 )
@@ -149,10 +151,23 @@ def test_concluir_e_avaliar_use_case():
     with pytest.raises(TransicaoEstadoInvalidaError):
         concluir_avaliar_uc.avaliar(contratacao.id, nota=5, comentario="Excelente!")
 
-    # conclusao altera status, persiste e notifica o solicitante
-    contratacao_concluida = concluir_avaliar_uc.concluir(contratacao.id)
+    # impede que o solicitante conclua o servico no lugar do prestador
+    with pytest.raises(PermissaoNegadaError):
+        concluir_avaliar_uc.concluir(contratacao.id, usuario_id="solicitante-1")
+
+    # conclusao pelo prestador altera status, persiste e notifica o solicitante
+    contratacao_concluida = concluir_avaliar_uc.concluir(contratacao.id, usuario_id="prestador-1")
     assert contratacao_concluida.status == StatusContratacao.CONCLUIDA
     assert notificador.mensagens_enviadas[-1]["destinatario"] == "solicitante-1"
+
+    # impede que o proprio prestador avalie o servico que prestou
+    with pytest.raises(PermissaoNegadaError):
+        concluir_avaliar_uc.avaliar(
+            contratacao.id,
+            nota=5,
+            comentario="Auto-avaliação",
+            solicitante_id="prestador-1",
+        )
 
     # valida nota e comentario nao vazio
     with pytest.raises(NotaInvalidaError):
@@ -160,13 +175,20 @@ def test_concluir_e_avaliar_use_case():
 
     # avaliacao valida eh registrada, persistida e bloqueia avaliacao duplicada
     avaliacao = concluir_avaliar_uc.avaliar(
-        contratacao.id, nota=5, comentario="Pontual e muito claro nas explicações."
+        contratacao.id,
+        nota=5,
+        comentario="Pontual e muito claro nas explicações.",
+        solicitante_id="solicitante-1",
     )
     assert avaliacao.nota == 5
     assert contratacao_repo.buscar_por_id(contratacao.id).avaliacao is not None
 
     with pytest.raises(TransicaoEstadoInvalidaError):
         concluir_avaliar_uc.avaliar(contratacao.id, nota=4, comentario="Segunda avaliação")
+
+    # valida invariante de intervalo de horario no SlotDisponibilidade
+    with pytest.raises(IntervaloHorarioInvalidoError):
+        servico.adicionar_slot(datetime(2026, 11, 20, 15, 0), datetime(2026, 11, 20, 14, 0))
 
 
 # Integracao com adaptadores SQLite (ASR-02 e ASR-03)
