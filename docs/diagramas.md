@@ -4,7 +4,9 @@ Este documento detalha as decisões de design e arquitetura representadas nos qu
 
 ---
 
-## 3.1 Diagrama de Classes — [`diagramas/classes.puml`](./diagramas/classes.puml)
+## 3.1 Diagrama de Classes — [`diagramas/classes.puml`](./diagramas/classes.puml) | [`diagramas/classes.png`](./diagramas/classes.png)
+
+![Diagrama de Classes UML](./diagramas/classes.png)
 
 O Diagrama de Classes modela o **Modelo de Domínio Rico** (*Rich Domain Model*) e sua relação com as Portas de Saída (`ports`), Casos de Uso (`application`) e Adaptadores Secundários (`adapters.outbound`), rejeitando o antipadrão de Modelo Anêmico.
 
@@ -20,7 +22,9 @@ O Diagrama de Classes modela o **Modelo de Domínio Rico** (*Rich Domain Model*)
 
 ---
 
-## 3.2 Diagrama de Sequência — [`diagramas/sequencia.puml`](./diagramas/sequencia.puml)
+## 3.2 Diagrama de Sequência — [`diagramas/sequencia.puml`](./diagramas/sequencia.puml) | [`diagramas/sequencia.png`](./diagramas/sequencia.png)
+
+![Diagrama de Sequência UML](./diagramas/sequencia.png)
 
 O Diagrama de Sequência retrata o fluxo dinâmico temporal da fatia vertical principal (**RF04 — Solicitar Contratação de Serviço**), incluindo os fluxos alternativos de exceção de negócio (`alt/else`).
 
@@ -35,7 +39,9 @@ O Diagrama de Sequência retrata o fluxo dinâmico temporal da fatia vertical pr
 
 ---
 
-## 3.3 Diagrama de Comunicação — [`diagramas/comunicacao.puml`](./diagramas/comunicacao.puml)
+## 3.3 Diagrama de Comunicação — [`diagramas/comunicacao.puml`](./diagramas/comunicacao.puml) | [`diagramas/comunicacao.png`](./diagramas/comunicacao.png)
+
+![Diagrama de Comunicação UML](./diagramas/comunicacao.png)
 
 Complementar ao Diagrama de Sequência, o Diagrama de Comunicação enfatiza a topologia estrutural e os vínculos de colaboração entre as instâncias que participam do Caso de Uso de contratação.
 
@@ -46,7 +52,9 @@ Complementar ao Diagrama de Sequência, o Diagrama de Comunicação enfatiza a t
 
 ---
 
-## 3.4 Diagrama de Componentes — [`diagramas/componentes.puml`](./diagramas/componentes.puml)
+## 3.4 Diagrama de Componentes — [`diagramas/componentes.puml`](./diagramas/componentes.puml) | [`diagramas/componentes.png`](./diagramas/componentes.png)
+
+![Diagrama de Componentes UML](./diagramas/componentes.png)
 
 O Diagrama de Componentes apresenta a visão macroscópica do **Monolito Modular em Camadas com Ports & Adapters (Arquitetura Hexagonal Simplificada)**.
 

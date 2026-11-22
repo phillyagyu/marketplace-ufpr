@@ -14,7 +14,7 @@ O núcleo do **CampusHub** foi modelado segundo a abordagem de **Modelo de Domí
 | **`SlotDisponibilidade`** | Entidade Interna | `id: str`, `servico_id: str`, `inicio: datetime`, `fim: datetime`, `status: StatusSlot` | Controla o estado da janela de horário (`LIVRE` ou `RESERVADO`). Possui os métodos de proteção de invariante `esta_livre() -> bool`, `reservar() -> None` e `liberar() -> None`. |
 | **`Contratacao`** | Entidade (Raiz de Agregado) | `id: str`, `servico_id: str`, `slot_id: str`, `solicitante_id: str`, `prestador_id: str`, `status: StatusContratacao`, `criado_em: datetime`, `avaliacao: Optional[Avaliacao]` | Governa o ciclo de vida do contrato (`CONFIRMADA`, `CANCELADA`, `CONCLUIDA`). Responsável por `concluir()`, `cancelar()` e pela criação segura de avaliações via `registrar_avaliacao(nota, comentario)`. |
 | **`Avaliacao`** | Objeto de Valor | `id: str`, `contratacao_id: str`, `nota: int`, `comentario: str`, `criado_em: datetime` | Valida em sua própria construção a invariante `1 <= nota <= 5` e comentário não vazio via `validar_nota()`, garantindo que nunca exista uma avaliação inválida em memória. |
-| **`ErroDominio`** *(e subclasses)* | Exceções de Domínio | `mensagem: str` | Hierarquia de exceções de negócio: `AutoContratacaoError`, `SlotIndisponivelError`, `TransicaoEstadoInvalidaError` e `NotaInvalidaError`. |
+| **`ErroDominio`** *(e subclasses)* | Exceções de Domínio | `mensagem: str` | Hierarquia de exceções de negócio: `AutoContratacaoError`, `SlotIndisponivelError`, `TransicaoEstadoInvalidaError`, `NotaInvalidaError`, `PermissaoNegadaError` e `IntervaloHorarioInvalidoError`. |
 
 ### Camada de Portas / Interfaces (`src/ports/`)
 | Interface (ABC Python) | Tipo | Métodos Definidos | Responsabilidade Arquitetural |
@@ -28,7 +28,8 @@ O núcleo do **CampusHub** foi modelado segundo a abordagem de **Modelo de Domí
 | :--- | :--- | :--- | :--- |
 | **`SolicitarContratacaoUseCase`** | Caso de Uso (*Application Service*) | `servico_repo: ServicoRepository`, `contratacao_repo: ContratacaoRepository`, `notificador: NotificadorPort` | Coordena a fatia vertical de mutação: recupera `Servico` e `Slot`, aciona as validações de domínio, reserva o *slot*, instancia e persiste a `Contratacao` e dispara a notificação. |
 | **`ConsultarServicosUseCase`** | Caso de Uso (*Query*) | `servico_repo: ServicoRepository` | Recupera e filtra os serviços com *slots* disponíveis para exibição ao solicitante. |
-| **`ConcluirEAvaliarUseCase`** | Caso de Uso | `contratacao_repo: ContratacaoRepository`, `notificador: NotificadorPort` | Orquestra a conclusão do serviço e o registro da avaliação vinculada. |
+| **`ConsultarContratacoesUseCase`** | Caso de Uso (*Query*) | `contratacao_repo: ContratacaoRepository` | Lista as contratações associadas a um membro da comunidade (como solicitante ou prestador). |
+| **`ConcluirEAvaliarUseCase`** | Caso de Uso | `contratacao_repo: ContratacaoRepository`, `notificador: NotificadorPort` | Orquestra a conclusão do serviço pelo prestador e o registro da avaliação vinculada pelo solicitante. |
 
 ---
 
@@ -100,7 +101,7 @@ Inversão de Dependência (DIP) via Injeção de Dependência no Bootstrap
 | **`domain/`** | Núcleo de Domínio | Contém as entidades (`MembroComunidade`, `Servico`, `SlotDisponibilidade`, `Contratacao`, `Avaliacao`), enumerações de estado e exceções de negócio (`AutoContratacaoError`, `SlotIndisponivelError`, `TransicaoEstadoInvalidaError`, `NotaInvalidaError`). **Não possui dependência de nenhum outro pacote do sistema nem de bibliotecas externas.** |
 | **`ports/`** | Portas de Saída (*Outbound Ports*) | Declara as interfaces abstratas (`abc.ABC`) que o núcleo exige do mundo externo para persistência e comunicação (`ServicoRepository`, `ContratacaoRepository`, `NotificadorPort`). |
 | **`application/`** | Casos de Uso (*Application Layer*) | Contém os coordenadores transacionais (`SolicitarContratacaoUseCase`, `ConsultarServicosUseCase`, `ConcluirEAvaliarUseCase`). Orquestra a busca nos repositórios, a execução das regras nas entidades de domínio e o disparo de notificações. |
-| **`adapters/inbound/`** | Adaptadores Primários (*Driving*) | Recebe os estímulos externos (`MarketplaceController` via CLI / Script de Demonstração da Fatia Vertical e a suíte de testes automatizados `pytest`) e invoca os Casos de Uso. |
+| **`adapters/inbound/`** | Adaptadores Primários (*Driving*) | Recebe os estímulos externos (`MarketplaceController` via CLI / Script de Demonstração da Fatia Vertical, `CampusHubWebContext` via interface Web interativa em `http://localhost:8000` e a suíte de testes automatizados `pytest`) e invoca os Casos de Uso. |
 | **`adapters/outbound/`** | Adaptadores Secundários (*Driven*) | Implementa tecnicamente as portas de saída: acesso a dados via `sqlite3` (`SqliteServicoRepository`, `SqliteContratacaoRepository`), repositórios em memória (`InMemoryServicoRepository`, `InMemoryContratacaoRepository`) e adaptadores de envio de mensagens (`EmailNotificador`, `NotificadorFake`). |
 | **`main.py` (*Composition Root*)** | Inicializador / Bootstrap | Único ponto do sistema que conhece todas as classes concretas simultaneamente para instanciar os adaptadores e injetá-los nos Casos de Uso. |
 

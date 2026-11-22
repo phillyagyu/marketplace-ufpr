@@ -93,4 +93,16 @@ Graças à aplicação combinada de **Ports & Adapters (Arquitetura Hexagonal)**
   * **100% da Camada de Aplicação (`src/application/`)** e **100% da Camada de Domínio (`src/domain/`)** — todas as regras de anti-overbooking (**RES02**), proibição de auto-contratação (**RES01**) e validação de avaliações (**RES03**) são reaproveitadas integralmente sem duplicação de código.
   * **100% da Camada de Portas (`src/ports/`) e Adaptadores de Saída (`src/adapters/outbound/`)**, bem como o próprio `MarketplaceController` via CLI (que pode coexistir com a API REST).
 * **Que decisões arquiteturais ajudariam ou dificultariam a mudança:**
-  * **Ajudam:** A separação estrita da **Arquitetura Hexagonal (ADR-001)** e o padrão **Controller (GRASP)**: os Casos de Uso na camada de Aplicação funcionam como uma fronteira de API agnóstica de protocolo de transporte (não retornam HTML nem códigos de status HTTP, mas sim objetos de domínio e exceções semânticas como `SlotIndisponivelError`, facilmente convertidas pelo adaptador REST em `HTTP 409 Conflict` ou `HTTP 422 Unprocessable Entity`).
+  * **Ajudam:** A separação estrita da **Arquitetura Hexagonal (ADR-001)** e o padrão **Controller (GRASP)**: os Casos de Uso na camada de Aplicação funcionam como uma fronteira de API agnóstica de protocolo de transporte (não retornam HTML nem códigos de status HTTP, mas sim objetos de domínio e exceções semânticas como `SlotIndisponivelError`, facilmente convertidas pelo adaptador REST em `HTTP 409 Conflict` ou `HTTP 422 Unprocessable Entity`). Inclusive, isso já foi demonstrado na prática no projeto ao disponibilizarmos dois adaptadores primários (`cli_controller.py` e `web_controller.py`) consumindo os mesmos casos de uso sem alterar uma única linha do domínio.
+
+---
+
+### Cenário de Mudança 4 (Defesa): Aumento Significativo de Carga e Extração de Funcionalidade para Implantação Independente
+
+* **Quais elementos seriam afetados:**
+  1. Para suportar alta concorrência de reservas simultâneas: substituição dos adaptadores SQLite por `PostgresServicoRepository` e `PostgresContratacaoRepository` com bloqueio pessimista (`SELECT ... FOR UPDATE` no *slot*) ou otimista (coluna de versão), além de um adaptador assíncrono `FilaNotificador(NotificadorPort)` para não bloquear a thread HTTP durante o envio de e-mails/WhatsApp.
+  2. Caso o módulo de **Notificações** precise ser separado para implantação independente (microsserviço externo): basta criar um adaptador `HttpNotificadorAdapter(NotificadorPort)` em `src/adapters/outbound/` que envia um `POST` ou mensagem via fila para o novo serviço independente.
+* **Quais elementos permaneceriam inalterados:**
+  * **100% da Camada de Domínio (`src/domain/`)** e **100% dos Casos de Uso (`src/application/`)**, pois eles já conversam exclusivamente através das portas em `src/ports/`.
+* **Que decisões arquiteturais ajudariam ou dificultariam a mudança:**
+  * **Ajudam:** O estilo **Monolito Modular** com fronteiras bem delimitadas (**ADR-001**) e o isolamento da porta `NotificadorPort` (**ADR-003**) permitem extrair um módulo para outro processo apenas trocando a implementação do adaptador injetado em `src/main.py`.
