@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from uuid import uuid4
 
 from src.domain.entidades import Avaliacao, Contratacao, Servico, StatusContratacao
@@ -66,6 +66,15 @@ class ConsultarServicosUseCase:
         return [s for s in servicos if len(s.obter_slots_livres()) > 0]
 
 
+class ConsultarContratacoesUseCase:
+    def __init__(self, contratacao_repo: ContratacaoRepository):
+        self.contratacao_repo = contratacao_repo
+
+    def executar(self, usuario_id: str) -> List[Contratacao]:
+        contratacoes = self.contratacao_repo.listar_por_usuario(usuario_id)
+        return sorted(contratacoes, key=lambda c: c.criado_em)
+
+
 class ConcluirEAvaliarUseCase:
     def __init__(
         self,
@@ -75,12 +84,12 @@ class ConcluirEAvaliarUseCase:
         self.contratacao_repo = contratacao_repo
         self.notificador = notificador
 
-    def concluir(self, contratacao_id: str) -> Contratacao:
+    def concluir(self, contratacao_id: str, usuario_id: Optional[str] = None) -> Contratacao:
         contratacao = self.contratacao_repo.buscar_por_id(contratacao_id)
         if contratacao is None:
             raise ErroDominio(f"Contratação '{contratacao_id}' não encontrada.")
 
-        contratacao.concluir()
+        contratacao.concluir(usuario_id=usuario_id)
         self.contratacao_repo.salvar(contratacao)
 
         self.notificador.notificar(
@@ -90,11 +99,21 @@ class ConcluirEAvaliarUseCase:
         )
         return contratacao
 
-    def avaliar(self, contratacao_id: str, nota: int, comentario: str) -> Avaliacao:
+    def avaliar(
+        self,
+        contratacao_id: str,
+        nota: int,
+        comentario: str,
+        solicitante_id: Optional[str] = None,
+    ) -> Avaliacao:
         contratacao = self.contratacao_repo.buscar_por_id(contratacao_id)
         if contratacao is None:
             raise ErroDominio(f"Contratação '{contratacao_id}' não encontrada.")
 
-        avaliacao = contratacao.registrar_avaliacao(nota=nota, comentario=comentario)
+        avaliacao = contratacao.registrar_avaliacao(
+            nota=nota,
+            comentario=comentario,
+            solicitante_id=solicitante_id,
+        )
         self.contratacao_repo.salvar(contratacao)
         return avaliacao

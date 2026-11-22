@@ -9,6 +9,7 @@ except ModuleNotFoundError:
 
     pytest = _PytestFallback()  # type: ignore[assignment]
 
+from src.adapters.inbound.cli_controller import MarketplaceController
 from src.adapters.outbound.memoria_repositorios import (
     InMemoryContratacaoRepository,
     InMemoryServicoRepository,
@@ -27,7 +28,9 @@ from src.application.casos_de_uso import (
 from src.domain.entidades import Servico, StatusContratacao, StatusSlot
 from src.domain.excecoes import (
     AutoContratacaoError,
+    IntervaloHorarioInvalidoError,
     NotaInvalidaError,
+    PermissaoNegadaError,
     SlotIndisponivelError,
     TransicaoEstadoInvalidaError,
 )
@@ -148,10 +151,23 @@ def test_concluir_e_avaliar_use_case():
     with pytest.raises(TransicaoEstadoInvalidaError):
         concluir_avaliar_uc.avaliar(contratacao.id, nota=5, comentario="Excelente!")
 
-    # conclusao altera status, persiste e notifica o solicitante
-    contratacao_concluida = concluir_avaliar_uc.concluir(contratacao.id)
+    # impede que o solicitante conclua o servico no lugar do prestador
+    with pytest.raises(PermissaoNegadaError):
+        concluir_avaliar_uc.concluir(contratacao.id, usuario_id="solicitante-1")
+
+    # conclusao pelo prestador altera status, persiste e notifica o solicitante
+    contratacao_concluida = concluir_avaliar_uc.concluir(contratacao.id, usuario_id="prestador-1")
     assert contratacao_concluida.status == StatusContratacao.CONCLUIDA
     assert notificador.mensagens_enviadas[-1]["destinatario"] == "solicitante-1"
+
+    # impede que o proprio prestador avalie o servico que prestou
+    with pytest.raises(PermissaoNegadaError):
+        concluir_avaliar_uc.avaliar(
+            contratacao.id,
+            nota=5,
+            comentario="Auto-avaliação",
+            solicitante_id="prestador-1",
+        )
 
     # valida nota e comentario nao vazio
     with pytest.raises(NotaInvalidaError):
@@ -159,13 +175,20 @@ def test_concluir_e_avaliar_use_case():
 
     # avaliacao valida eh registrada, persistida e bloqueia avaliacao duplicada
     avaliacao = concluir_avaliar_uc.avaliar(
-        contratacao.id, nota=5, comentario="Pontual e muito claro nas explicações."
+        contratacao.id,
+        nota=5,
+        comentario="Pontual e muito claro nas explicações.",
+        solicitante_id="solicitante-1",
     )
     assert avaliacao.nota == 5
     assert contratacao_repo.buscar_por_id(contratacao.id).avaliacao is not None
 
     with pytest.raises(TransicaoEstadoInvalidaError):
         concluir_avaliar_uc.avaliar(contratacao.id, nota=4, comentario="Segunda avaliação")
+
+    # valida invariante de intervalo de horario no SlotDisponibilidade
+    with pytest.raises(IntervaloHorarioInvalidoError):
+        servico.adicionar_slot(datetime(2026, 11, 20, 15, 0), datetime(2026, 11, 20, 14, 0))
 
 
 # Integracao com adaptadores SQLite (ASR-02 e ASR-03)
@@ -208,6 +231,40 @@ def test_fluxo_completo_com_sqlite():
     assert contratacao_db.avaliacao.nota == 5
 
 
+# MarketplaceController (Inbound Adapter / Controller GRASP)
+def test_marketplace_controller_inbound():
+    servico_repo = InMemoryServicoRepository()
+    contratacao_repo = InMemoryContratacaoRepository()
+    notificador = NotificadorFake()
+
+    servico = criar_servico_exemplo()
+    slot_id = servico.slots[0].id
+    servico_repo.salvar(servico)
+
+    controller = MarketplaceController(
+        solicitar_uc=SolicitarContratacaoUseCase(servico_repo, contratacao_repo, notificador),
+        consultar_uc=ConsultarServicosUseCase(servico_repo),
+        concluir_avaliar_uc=ConcluirEAvaliarUseCase(contratacao_repo, notificador),
+    )
+
+    assert len(controller.listar_servicos_disponiveis()) == 1
+
+    # auto-contratacao tratada graciosamente pelo controller (retorna None)
+    assert controller.solicitar_contratacao(servico.id, slot_id, servico.prestador_id) is None
+
+    # contratacao valida via controller
+    contratacao = controller.solicitar_contratacao(servico.id, slot_id, "solicitante-1")
+    assert contratacao is not None
+
+    # overbooking tratado graciosamente pelo controller (retorna None)
+    assert controller.solicitar_contratacao(servico.id, slot_id, "solicitante-2") is None
+
+    # conclusao e avaliacao via controller
+    assert controller.concluir_servico(contratacao.id) is not None
+    avaliacao = controller.avaliar_servico(contratacao.id, 5, "Excelente mentoria!")
+    assert avaliacao is not None and avaliacao.nota == 5
+
+
 if __name__ == "__main__":
     test_solicitar_contratacao_use_case()
     print("[OK] test_solicitar_contratacao_use_case")
@@ -217,5 +274,7 @@ if __name__ == "__main__":
     print("[OK] test_concluir_e_avaliar_use_case")
     test_fluxo_completo_com_sqlite()
     print("[OK] test_fluxo_completo_com_sqlite")
+    test_marketplace_controller_inbound()
+    print("[OK] test_marketplace_controller_inbound")
     print("\nTodos os testes passaram com sucesso!")
 
