@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Apresentação Final — CampusHub UFPR (Tema 11)</title>
+  <style>
+    :root {
+      --bg: #f4f6fb;
+      --slide-bg: #ffffff;
+      --text: #0f172a;
+      --muted: #475569;
+      --border: #e2e8f0;
+
+      /* Paleta Soft Pastel & Academica */
+      --indigo-bg: #e0e7ff;
+      --indigo-bd: #c7d2fe;
+      --indigo-tx: #3730a3;
+      --indigo-ac: #4f46e5;
+
+      --mint-bg: #dcfce7;
+      --mint-bd: #bbf7d0;
+      --mint-tx: #166534;
+
+      --rose-bg: #ffe4e6;
+      --rose-bd: #fecdd3;
+      --rose-tx: #9f1239;
+
+      --amber-bg: #fef3c7;
+      --amber-bd: #fde68a;
+      --amber-tx: #92400e;
+
+      --lavender-bg: #f3e8ff;
+      --lavender-bd: #e9d5ff;
+      --lavender-tx: #6b21a8;
+
+      --sky-bg: #e0f2fe;
+      --sky-bd: #bae6fd;
+      --sky-tx: #075985;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Topo / Barra de Progresso */
+    .progress-bar {
+      height: 5px;
+      background: #e2e8f0;
+      width: 100%;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #6366f1, #a855f7, #10b981);
+      width: 10%;
+      transition: width 0.25s ease;
+    }
+
+    /* Palco de Slides */
+    .deck-stage {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 32px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .slide {
+      display: none;
+      width: 100%;
+      max-width: 1320px;
+      height: 100%;
+      max-height: 780px;
+      background: var(--slide-bg);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 36px 46px;
+      box-shadow: 0 12px 36px rgba(15, 23, 42, 0.06);
+      flex-direction: column;
+      justify-content: space-between;
+      overflow-y: auto;
+      animation: fadeSlide 0.22s ease;
+    }
+    .slide.active {
+      display: flex;
+    }
+
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Cabecalho do Slide */
+    .slide-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      border-bottom: 2px solid #f1f5f9;
+      padding-bottom: 14px;
+      margin-bottom: 18px;
+    }
+    .slide-kicker {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--indigo-ac);
+      margin-bottom: 4px;
+    }
+    .slide-title {
+      font-size: 1.65rem;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.2;
+    }
+    .speaker-pill {
+      background: var(--lavender-bg);
+      color: var(--lavender-tx);
+      border: 1px solid var(--lavender-bd);
+      padding: 5px 14px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .slide-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    /* Grids e Cartoes */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; }
+    .grid-asym { display: grid; grid-template-columns: 1.15fr 1fr; gap: 22px; align-items: center; }
+
+    .card {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px 20px;
+    }
+    .card h3 {
+      font-size: 1.02rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card p, .card li {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .card ul {
+      padding-left: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .card-indigo { background: #f5f7ff; border-color: var(--indigo-bd); }
+    .card-indigo h3 { color: var(--indigo-tx); }
+
+    .card-mint { background: #f2fdf6; border-color: var(--mint-bd); }
+    .card-mint h3 { color: var(--mint-tx); }
+
+    .card-rose { background: #fff5f6; border-color: var(--rose-bd); }
+    .card-rose h3 { color: var(--rose-tx); }
+
+    .card-amber { background: #fffbeb; border-color: var(--amber-bd); }
+    .card-amber h3 { color: var(--amber-tx); }
+
+    .card-lavender { background: #faf5ff; border-color: var(--lavender-bd); }
+    .card-lavender h3 { color: var(--lavender-tx); }
+
+    .tag {
+      display: inline-block;
+      font-size: 0.73rem;
+      font-weight: 700;
+      padding: 2px 9px;
+      border-radius: 999px;
+    }
+    .tag-indigo { background: var(--indigo-bg); color: var(--indigo-tx); }
+    .tag-mint { background: var(--mint-bg); color: var(--mint-tx); }
+    .tag-rose { background: var(--rose-bg); color: var(--rose-tx); }
+    .tag-amber { background: var(--amber-bg); color: var(--amber-tx); }
+
+    code {
+      font-family: 'Cascadia Code', 'Fira Code', monospace;
+      font-size: 0.84em;
+      background: rgba(15, 23, 42, 0.06);
+      padding: 2px 6px;
+      border-radius: 5px;
+      color: #1e1b4b;
+      font-weight: 600;
+    }
+
+    /* Tabelas */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.87rem;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    th {
+      background: #f1f5f9;
+      color: #1e293b;
+      text-align: left;
+      padding: 10px 14px;
+      font-weight: 700;
+      border-bottom: 1px solid var(--border);
+    }
+    td {
+      padding: 10px 14px;
+      border-bottom: 1px solid #f1f5f9;
+      color: #334155;
+      vertical-align: top;
+    }
+    tr:last-child td { border-bottom: none; }
+    .row-highlight {
+      background: #f0fdf4;
+      font-weight: 600;
+    }
+
+    /* Imagens de Diagramas com Zoom */
+    .diagram-box {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 10px;
+      text-align: center;
+      cursor: zoom-in;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .diagram-box:hover {
+      box-shadow: 0 6px 20px rgba(79, 70, 229, 0.12);
+      border-color: var(--indigo-bd);
+    }
+    .diagram-box img {
+      max-width: 100%;
+      max-height: 410px;
+      object-fit: contain;
+      border-radius: 8px;
+    }
+    .diagram-caption {
+      font-size: 0.76rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* Notas do Apresentador (Tecla N) */
+    .speaker-notes {
+      display: none;
+      margin-top: 14px;
+      background: #fffbeb;
+      border: 1px dashed #f59e0b;
+      border-radius: 10px;
+      padding: 10px 16px;
+      font-size: 0.84rem;
+      color: #78350f;
+    }
+    body.show-notes .speaker-notes {
+      display: block;
+    }
+
+    /* Barra Inferior de Controle */
+    .controls-bar {
+      background: white;
+      border-top: 1px solid var(--border);
+      padding: 10px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.84rem;
+      color: var(--muted);
+    }
+    .controls-btns {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-ctrl {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-ctrl:hover { background: var(--indigo-bg); border-color: var(--indigo-bd); color: var(--indigo-tx); }
+
+    /* Modal Lightbox para Zoom nos Diagramas */
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.88);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      cursor: zoom-out;
+    }
+    .lightbox.open { display: flex; }
+    .lightbox img {
+      max-width: 96vw;
+      max-height: 92vh;
+      background: white;
+      padding: 16px;
+      border-radius: 12px;
+      object-fit: contain;
+    }
+
+    /* Impressao para PDF (Ctrl+P) */
+    @media print {
+      body { height: auto; overflow: visible; background: white; }
+      .progress-bar, .controls-bar, .speaker-notes { display: none !important; }
+      .deck-stage { display: block; padding: 0; }
+      .slide {
+        display: flex !important;
+        page-break-after: always;
+        max-height: none;
+        height: 96vh;
+        box-shadow: none;
+        border: 1px solid #cbd5e1;
+        margin-bottom: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+  <div class="deck-stage">
+
+    <!-- ===================================================================== -->
+    <!-- SLIDE 1: CAPA                                                         -->
+    <!-- ===================================================================== -->
+    <section class="slide active">
+      <div class="slide-body" style="text-align: center; align-items: center;">
+        <div style="display: inline-flex; gap: 10px; margin-bottom: 10px;">
+          <span class="tag tag-indigo" style="font-size: 0.85rem; padding: 5px 14px;">UFPR • Ciência da Computação</span>
+          <span class="tag tag-mint" style="font-size: 0.85rem; padding: 5px 14px;">Design e Arquitetura de Software (2026-2)</span>
+        </div>
+
+        <h1 style="font-size: 2.75rem; font-weight: 800; color: #1e1b4b; letter-spacing: -0.02em; margin-bottom: 6px;">
+          CampusHub UFPR
+        </h1>
+        <p style="font-size: 1.25rem; color: #475569; max-width: 780px; margin-bottom: 22px;">
+          <strong>Tema 11:</strong> Marketplace de Serviços dentro do Campus — Controle de disponibilidade, contratação sem <em>overbooking</em>, conclusão e avaliações.
+        </p>
+
+        <div class="grid-2" style="max-width: 820px; width: 100%; text-align: left; margin-bottom: 22px;">
+          <div class="card card-indigo">
+            <h3>Equipe (Grupo Tema 11)</h3>
+            <ul>
+              <li><strong>Eloiza Sthefanny Rocha da Silva Cardoso</strong></li>
+              <li><strong>Helen Kaori Iijima</strong></li>
+              <li><strong>Mateus Augusto Godoy De Oliveira</strong></li>
+              <li><strong>Phillip Yagyu Moribayashi</strong></li>
+            </ul>
+          </div>
+          <div class="card card-mint">
+            <h3>Estilo Arquitetural Adotado</h3>
+            <p style="font-size: 0.94rem; color: #14532d; font-weight: 600; margin-top: 4px;">
+              Monolito Modular<br/>
+              + Organização em Camadas<br/>
+              + Padrão Ports &amp; Adapters (Arquitetura Hexagonal)<br/>
+              + Modelo de Domínio Rico &amp; DIP (SOLID)
+            </p>
+          </div>
+        </div>
+
+        <div class="card card-amber" style="max-width: 820px; width: 100%;">
+          <p style="color: #78350f; font-size: 0.92rem;">
+            <strong>Questão Central do Trabalho:</strong> <em>"Como este sistema deve ser organizado para atender aos requisitos atuais e permitir sua evolução sem gerar dependências desnecessárias?"</em>
+          </p>
+        </div>
+      </div>
+
+      <div class="speaker-notes">
+        <strong>Dica de Apresentação (Abertura - 30s):</strong> Apresentar o grupo e destacar que todo o projeto foi construído para responder à questão central da disciplina: como isolar as regras de negócio do marketplace universitário para que banco de dados, notificações e interface possam evoluir sem acoplamento.
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SLIDE 2: PROBLEMA, ATORES E REQUISITOS                                -->
+    <!-- ===================================================================== -->
+    <section class="slide">
+      <div class="slide-header">
+        <div>
+          <div class="slide-kicker">1. Descrição do Problema e Requisitos</div>
+          <h2 class="slide-title">Contexto Universitário, Atores e Restrições de Negócio</h2>
+        </div>
+        <span class="speaker-pill">Apresentação: Parte 1 (Eloiza)</span>
+      </div>
+
+      <div class="slide-body">
+        <div class="grid-3">
+          <div class="card card-indigo">
+            <h3>O Problema no Campus</h3>
+            <p>
+              Estudantes, técnicos e docentes demandam serviços especializados de curto prazo (<strong>revisão ABNT/LaTeX, mentorias, análises estatísticas</strong>).
+            </p>
+            <p style="margin-top: 8px;">
+              Hoje a oferta ocorre de forma informal (murais e grupos), gerando <strong>conflitos de agenda (overbooking)</strong> e insegurança quanto à reputação do prestador.
+            </p>
+          </div>
+
+          <div class="card card-lavender">
+            <h3>Principais Atores</h3>
+            <ul>
+              <li><strong>Solicitante (Primário):</strong> Busca serviços, agenda <em>slots</em> livres e avalia o serviço após concluído.</li>
+              <li><strong>Prestador (Primário):</strong> Publica ofertas, gerencia janelas de horário (<em>slots</em>) e conclui atendimentos.</li>
+              <li><strong>Serviço de Notificação (Secundário):</strong> Servidor SMTP (<code>@ufpr.br</code>) ou API WhatsApp.</li>
+            </ul>
+          </div>
+
+          <div class="card card-rose">
+            <h3>Restrições Críticas (Invariantes)</h3>
+            <ul>
+              <li><strong>RES01 (Anti Auto-Contratação):</strong> Um membro não pode contratar seu próprio serviço (<code>solicitante_id != prestador_id</code>).</li>
+              <li><strong>RES02 (Anti-Overbooking):</strong> Um <em>slot</em> pertence a 1 serviço e só aceita 1 contratação ativa.</li>
+              <li><strong>RES03 (Integridade de Avaliação):</strong> Nota inteira (1 a 5), única e restrita a contratações <code>CONCLUIDA</code>s.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card" style="background: #f8fafc;">
+          <h3>Ciclo de Vida Coberto pelos 8 Requisitos Funcionais (RF01 a RF08)</h3>
+          <p style="font-size: 0.9rem; margin-top: 4px;">
+            <code>RF01</code> Cadastrar Oferta &rarr;
+            <code>RF02</code> Gerenciar Agenda (Slots) &rarr;
+            <code>RF03</code> Consultar/Filtrar Serviços Livres &rarr;
+            <code>RF04</code> Solicitar Contratação (Reserva Slot) &rarr;
+            <code>RF05</code> Cancelar (Libera Slot) &rarr;
+            <code>RF06</code> Concluir Serviço &rarr;
+            <code>RF07</code> Avaliar (1 a 5 ★) &rarr;
+            <code>RF08</code> Notificar Partes.
+          </p>
+        </div>
+      </div>
+
+      <div class="speaker-notes">
+        <strong>Roteiro de Fala (Eloiza):</strong> Explicar brevemente o cenário do Tema 11 na UFPR e enfatizar as 3 restrições de negócio (RES01, RES02 e RES03), pois são elas que justificam por que escolhemos um Modelo de Domínio Rico em vez de validação espalhada na tela.
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SLIDE 3: ASRs (REQUISITOS ARQUITETURALMENTE SIGNIFICATIVOS)           -->
+    <!-- ===================================================================== -->
+    <section class="slide">
+      <div class="slide-header">
+        <div>
+          <div class="slide-kicker">1.e &amp; 1.f Requisitos Arquiteturalmente Significativos (ASRs)</div>
+          <h2 class="slide-title">Os 3 ASRs que Moldaram a Arquitetura do CampusHub</h2>
+        </div>
+        <span class="speaker-pill">Apresentação: Parte 1 (Eloiza)</span>
+      </div>
+
+      <div class="slide-body">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 24%;">ASR e Atributo de Qualidade</th>
+              <th style="width: 38%;">Cenário Concreto no Sistema</th>
+              <th style="width: 38%;">Influência Direta na Arquitetura e no Design</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <span class="tag tag-indigo">ASR-01</span><br/>
+                <strong>Modificabilidade de Integrações Externas</strong>
+              </td>
+              <td>
+                Políticas da universidade podem exigir trocar o envio de e-mail SMTP por API de WhatsApp ou Telegram sem tocar em nenhuma linha das regras de negócio.
+              </td>
+              <td>
+                Exigiu <strong>Ports &amp; Adapters (Hexagonal)</strong>, <strong>DIP (SOLID)</strong> e <strong>Protected Variations (GRASP)</strong>: criamos a interface <code>NotificadorPort</code> e injetamos <code>EmailNotificador</code> ou <code>NotificadorFake</code>.
+              </td>
+            </tr>
+            <tr class="row-highlight">
+              <td>
+                <span class="tag tag-mint">ASR-02</span><br/>
+                <strong>Consistência Transacional e Anti-Overbooking</strong>
+              </td>
+              <td>
+                No ato da contratação (RF04), validar disponibilidade, mudar o <em>slot</em> para <code>RESERVADO</code> e gravar a <code>Contratacao</code> devem ocorrer de forma atômica, sem dupla alocação.
+              </td>
+              <td>
+                Descartou microsserviços distribuídos (consistência eventual) em favor de um <strong>Monolito Modular com transação ACID local</strong> e <strong>Modelo de Domínio Rico</strong> (<em>Information Expert</em> em <code>SlotDisponibilidade.reservar()</code>).
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <span class="tag tag-amber">ASR-03</span><br/>
+                <strong>Testabilidade Isolada e Independência de Banco</strong>
+              </td>
+              <td>
+                Toda a lógica de negócio deve rodar em testes automatizados determinísticos em memória (&lt; 1s) sem servidor SGBD externo, e permitir migrar de SQLite para PostgreSQL.
+              </td>
+              <td>
+                Determinou o padrão <strong>Repository</strong> (<code>ServicoRepository</code>, <code>ContratacaoRepository</code>), permitindo alternar entre <code>InMemory...Repository</code> (testes) e <code>Sqlite...Repository</code> (produção/protótipo).
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="speaker-notes">
+        <strong>Roteiro de Fala (Eloiza):</strong> Destacar que os ASRs não são frases genéricas como "o sistema deve ser rápido". Cada ASR tem um cenário concreto e ditou diretamente uma decisão: ASR-01 gerou a porta NotificadorPort; ASR-02 gerou o Monolito Modular com Domínio Rico; ASR-03 gerou os Repositórios abstratos.
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SLIDE 4: MODELO DE DOMINIO RICO, GRASP, SOLID E CLASSES               -->
+    <!-- ===================================================================== -->
+    <section class="slide">
+      <div class="slide-header">
+        <div>
+          <div class="slide-kicker">2 &amp; 3. Modelo de Domínio, GRASP, SOLID e Diagrama de Classes</div>
+          <h2 class="slide-title">Distribuição de Responsabilidades (Clique no diagrama para ampliar)</h2>
+        </div>
+        <span class="speaker-pill">Apresentação: Parte 2 (Helen)</span>
+      </div>
+
+      <div class="slide-body">
+        <div class="grid-asym">
+          <div class="diagram-box" onclick="abrirZoom('./diagramas/classes.png')">
+            <img src="./diagramas/classes.png" alt="Diagrama de Classes UML" />
+            <div class="diagram-caption">🔍 Clique na imagem para abrir o Diagrama de Classes em Tela Cheia</div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div class="card card-lavender">
+              <h3>Padrões GRASP Aplicados no Código</h3>
+              <ul>
+                <li><strong>Information Expert:</strong> <code>Servico.validar_contratante()</code> valida RES01 (detém <code>prestador_id</code>); <code>SlotDisponibilidade.reservar()</code> valida RES02 (detém <code>status</code>).</li>
+                <li><strong>Creator:</strong> <code>Contratacao.registrar_avaliacao()</code> instancia <code>Avaliacao</code> apenas se <code>status == CONCLUIDA</code> (RES03).</li>
+                <li><strong>Controller:</strong> Casos de Uso e <code>MarketplaceController</code> apenas coordenam o fluxo sem conter <code>if</code>s de regra de negócio.</li>
+                <li><strong>Pure Fabrication &amp; Protected Variations:</strong> <code>Sqlite...Repository</code> e <code>EmailNotificador</code> isolam SQL e SMTP fora do domínio.</li>
+              </ul>
+            </div>
+
+            <div class="card card-mint">
+              <h3>Princípios SOLID e Alta Coesão / Baixo Acoplamento</h3>
+              <ul>
+                <li><strong>SRP &amp; Alta Coesão:</strong> <code>src/domain/</code> tem zero <code>import sqlite3</code> ou <code>smtplib</code>.</li>
+                <li><strong>DIP, OCP &amp; LSP:</strong> Casos de uso dependem apenas de <code>src/ports/</code> (classes abstratas <code>ABC</code>). Qualquer adaptador <code>Sqlite</code> ou <code>InMemory</code> é substituível sem alterar a aplicação.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="speaker-notes">
+        <strong>Roteiro de Fala (Helen):</strong> Clicar na imagem do Diagrama de Classes para mostrar os 4 pacotes coloridos (application em verde, ports em amarelo, domain em roxo e adapters.outbound em vermelho) e apontar onde cada padrão GRASP e princípio SOLID foi aplicado.
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SLIDE 5: DIAGRAMAS DE SEQUENCIA E COMUNICACAO                         -->
+    <!-- ===================================================================== -->
+    <section class="slide">
+      <div class="slide-header">
+        <div>
+          <div class="slide-kicker">3. Modelagem Comportamental e Consistência entre Modelos</div>
+          <h2 class="slide-title">Diagramas de Sequência e Comunicação — Solicitar Contratação (RF04)</h2>
+        </div>
+        <span class="speaker-pill">Apresentação: Parte 2 (Helen)</span>
+      </div>
+
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="diagram-box" onclick="abrirZoom('./diagramas/sequencia.png')">
+            <img src="./diagramas/sequencia.png" alt="Diagrama de Sequência UML" style="max-height: 320px;" />
+            <div class="diagram-caption">🔍 Diagrama de Sequência (Clique para ampliar) — Fluxo temporal e blocos <code>alt</code> de exceção</div>
+          </div>
+
+          <div class="diagram-box" onclick="abrirZoom('./diagramas/comunicacao.png')">
+            <img src="./diagramas/comunicacao.png" alt="Diagrama de Comunicação UML" style="max-height: 320px;" />
+            <div class="diagram-caption">🔍 Diagrama de Comunicação (Clique para ampliar) — Topologia em estrela centrada no UseCase</div>
+          </div>
+        </div>
+
+        <div class="card card-indigo">
+          <h3>Coerência Estrita entre Diagramas e Código-Fonte (Seção 3 do Edital)</h3>
+          <p>
+            Todas as mensagens numeradas nos diagramas dinâmicos (<code>1.2: buscar_por_id</code>, <code>1.3: validar_contratante</code>, <code>1.4: buscar_slot</code>, <code>1.5: reservar</code>, <code>1.6/1.7: salvar</code>, <code>1.8: notificar</code>) possuem <strong>exatamente a mesma assinatura e ordem de parâmetros</strong> no Diagrama de Classes e nos arquivos Python em <code>src/</code>. O disparo externo (<code>notificar</code>) só ocorre após a gravação atômica no repositório.
+          </p>
+        </div>
+      </div>
+
+      <div class="speaker-notes">
+        <strong>Roteiro de Fala (Helen):</strong> Mostrar que o Diagrama de Sequência destaca os dois fluxos alternativos de erro (RES01 AutoContratacaoError e RES02 SlotIndisponivelError) interrompendo o fluxo antes do banco de dados, enquanto o Diagrama de Comunicação mostra o Caso de Uso no centro radiando mensagens para o Domínio e para as Portas.
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SLIDE 6: PROPOSTA ARQUITETURAL E DIAGRAMA DE COMPONENTES              -->
+    <!-- ===================================================================== -->
+    <section class="slide">
+      <div class="slide-header">
+        <div>
+          <div class="slide-kicker">4. Proposta Arquitetural e Organização das Dependências</div>
+          <h2 class="slide-title">Arquitetura Hexagonal (Ports &amp; Adapters) em Monolito Modular</h2>
+        </div>
+        <span class="speaker-pill">Apresentação: Parte 3 (Mateus)</span>
+      </div>
+
+      <div class="slide-body">
+        <div class="grid-asym">
+          <div class="diagram-box" onclick="abrirZoom('./diagramas/componentes.png')">
+            <img src="./diagramas/componentes.png" alt="Diagrama de Componentes UML" />
+            <div class="diagram-caption">🔍 Clique para ampliar o Diagrama de Componentes</div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div class="card card-indigo">
+              <h3>Regra de Direção das Dependências</h3>
+              <p>Todas as dependências de código apontam <strong>para dentro (em direção ao Domínio)</strong>:</p>
+              <ul style="margin-top: 6px;">
+                <li><code>adapters/inbound</code> (CLI, Web e Pytest) &rarr; invoca <code>application</code></li>
+                <li><code>application</code> (UseCases) &rarr; depende apenas de <code>domain</code> e <code>ports</code></li>
+                <li><code>adapters/outbound</code> (SQLite, InMemory, SMTP, Fake) &rarr; implementa <code>ports</code> (<strong>Inversão de Dependência - DIP</strong>)</li>
+                <li><code>domain</code> &rarr; <strong>não depende de ninguém</strong></li>
+              </ul>
+            </div>
+
+            <div class="card card-amber">
+              <h3>Persistência ACID e Dependência Externa (Seções 4 e 8)</h3>
+              <ul>
+                <li><strong>Persistência (<code>sqlite3</code>):</strong> Transações atômicas com <code>with self.conn:</code> garantindo que <code>Slot</code> e <code>Contratacao</code> nunca fiquem dessincronizados (ASR-02).</li>
+                <li><strong>Integração Substituível (<code>NotificadorPort</code>):</strong> <code>EmailNotificador</code> (SMTP institucional) e <code>NotificadorFake</code> (Spy em memória) injetados no <em>Composition Root</em> (<code>src/main.py</code>).</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="speaker-notes">
+        <strong>Roteiro de Fala (Mateus):</strong> Ampliar o Diagrama de Componentes e apontar as setas tracejadas de realização (&lt;&lt;implements&gt;&gt;) na camada vermelha de baixo: elas apontam DE BAIXO PARA CIMA (da infraestrutura para as portas amarelas), provando visualmente a Inversão de Dependência (DIP).
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SLIDE 7: ALTERNATIVAS, TRADE-OFFS E ADRs                              -->
+    <!-- ===================================================================== -->
+    <section class="slide">
+      <div class="slide-header">
+        <div>
+          <div class="slide-kicker">5 &amp; 6. Alternativas Arquiteturais, Trade-offs e ADRs</div>
+          <h2 class="slide-title">Por que Monolito Modular Hexagonal? (Matriz e Decisões)</h2>
+        </div>
+        <span class="speaker-pill">Apresentação: Parte 3 (Mateus)</span>
+      </div>
+
+      <div class="slide-body">
+        <table>
+          <thead>
+            <tr>
+              <th>Critério / Atributo</th>
+              <th>Alt. A: Monolito Simples (Acoplado)</th>
+              <th>Alt. B: Microsserviços Distribuídos</th>
+              <th>Alt. C: Monolito Modular + Hexagonal (Escolhida)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Modificabilidade (ASR-01)</strong></td>
+              <td><code>--</code> (SQL e SMTP misturados à regra)</td>
+              <td><code>++</code> (Serviços isolados)</td>
+              <td class="row-highlight"><code>++</code> (Isolamento via Portas e Adaptadores)</td>
+            </tr>
+            <tr>
+              <td><strong>Consistência (ASR-02)</strong></td>
+              <td><code>++</code> (Transação ACID local)</td>
+              <td><code>--</code> (Consistência eventual / Sagas)</td>
+              <td class="row-highlight"><code>++</code> (Transação ACID local + Domínio Rico)</td>
+            </tr>
+            <tr>
+              <td><strong>Testabilidade (ASR-03)</strong></td>
+              <td><code>--</code> (Exige banco ativo)</td>
+              <td><code>-</code> (Testes distribuídos complexos)</td>
+              <td class="row-highlight"><code>++</code> (Testes em memória em ms via Fakes)</td>
+            </tr>
+            <tr>
+              <td><strong>Implantação e Custo (RES05)</strong></td>
+              <td><code>++</code> (Processo único simples)</td>
+              <td><code>--</code> (Múltiplos containers e rede)</td>
+              <td class="row-highlight"><code>+</code> (Processo único; custo inicial de criar interfaces)</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="grid-3">
+          <div class="card card-indigo">
+            <h3>ADR-001: Monolito Modular Hexagonal</h3>
+            <p><strong>Decisão:</strong> Processo único dividido em camadas concêntricas e portas.<br/><strong>Trade-off:</strong> Maior estrutura inicial de pacotes e exigência de disciplina nos <em>imports</em> em troca de consistência ACID e baixo acoplamento.</p>
+          </div>
+          <div class="card card-mint">
+            <h3>ADR-002: Domínio Rico + Repository</h3>
+            <p><strong>Decisão:</strong> Entidades puras validam invariantes; persistência via interfaces <code>Repository</code>.<br/><strong>Trade-off:</strong> Exige mapeamento manual (<em>Data Mapper</em>) no SQLite, mas viabiliza testes unitários instantâneos.</p>
+          </div>
+          <div class="card card-amber">
+            <h3>ADR-003: Porta Síncrona NotificadorPort</h3>
+            <p><strong>Decisão:</strong> Isolar envio externo atrás de <code>NotificadorPort</code> com injeção no bootstrap.<br/><strong>Trade-off:</strong> Chamada síncrona atrela latência ao provedor, mas elimina necessidade de broker externo (RabbitMQ) no escopo atual.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="speaker-notes">
+        <strong>Roteiro de Fala (Mateus):</strong> Explicar por que descartamos o Monolito Simples (viola ASR-01 e ASR-03) e por que descartamos Microsserviços (introduz consistência eventual na reserva de slots, prejudicando o ASR-02, além de violar a RES05). Destacar os trade-offs honestos registrados nos 3 ADRs.
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SLIDE 8: DEMONSTRACAO DO PROTOTIPO E TESTES                           -->
+    <!-- ===================================================================== -->
+    <section class="slide">
+      <div class="slide-header">
+        <div>
+          <div class="slide-kicker">7 &amp; 8. Protótipo Funcional da Fatia Vertical e Testes Automatizados</div>
+          <h2 class="slide-title">Demonstração Prática: Duas Interfaces (CLI e Web) sobre o Mesmo Núcleo</h2>
+        </div>
+        <span class="speaker-pill">Apresentação: Parte 4 (Phillip)</span>
+      </div>
+
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card card-indigo">
+            <h3>Roteiro da Fatia Vertical ao Vivo (Seção 7)</h3>
+            <ul>
+              <li><strong>1. Consulta (RF03):</strong> Filtragem de serviços com <em>slots</em> livres no catálogo (<code>ConsultarServicosUseCase</code>).</li>
+              <li><strong>2. Mutação + Persistência SQLite + Notificação (RF04/RF08):</strong> Lucas agenda um horário livre &rarr; <em>slot</em> muda para <code>RESERVADO</code> no <code>campushub.db</code> e dispara e-mail via <code>NotificadorPort</code>.</li>
+              <li><strong>3. Fluxos de Erro Bloqueados pelo Domínio:</strong>
+                <ul>
+                  <li>Auto-contratação pela prestadora Ana &rarr; <code>AutoContratacaoError</code> (<strong>RES01</strong>)</li>
+                  <li>Dupla reserva do mesmo <em>slot</em> por Bruna &rarr; <code>SlotIndisponivelError</code> (<strong>RES02 / ASR-02</strong>)</li>
+                  <li>Avaliar antes de concluir ou sem permissão &rarr; <code>TransicaoEstadoInvalidaError</code> / <code>PermissaoNegadaError</code> (<strong>RES03</strong>)</li>
+                </ul>
+              </li>
+              <li><strong>4. Conclusão e Avaliação 5★ (RF06/RF07):</strong> Ciclo completo persistido no SQLite.</li>
+            </ul>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 14px;">
+            <div class="card card-mint">
+              <h3>Comandos de Execução Local (RES05)</h3>
+              <p style="margin-bottom: 6px;"><strong>1. Interface Gráfica Web Interativa (<code>http://localhost:8000</code>):</strong></p>
+              <p><code>python -m src.main --web</code></p>
+              <p style="margin: 10px 0 6px;"><strong>2. Roteiro Automatizado no Terminal (CLI):</strong></p>
+              <p><code>python -m src.main</code></p>
+              <p style="margin: 10px 0 6px;"><strong>3. Suíte de Testes Automatizados (Unidade + SQLite + Controller):</strong></p>
+              <p><code>pytest -v</code> &nbsp;ou&nbsp; <code>python -m src.tests.test_casos_de_uso</code></p>
+            </div>
+
+            <div class="card card-lavender">
+              <h3>Prova Real de Desacoplamento na Apresentação</h3>
+              <p>
+                A inclusão do Front-end Web (<code>web_controller.py</code>) ao lado do CLI (<code>cli_controller.py</code>) foi feita adicionando apenas um novo <em>Inbound Adapter</em>, <strong>sem alterar nenhuma linha de <code>domain/</code>, <code>ports/</code>, <code>application/</code> ou <code>adapters/outbound/</code>!</strong>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="speaker-notes">
+        <strong>Roteiro de Fala (Phillip):</strong> Neste momento, alternar para a aba do navegador com o CampusHub Web aberto (<code>http://localhost:8000</code>) e executar os cliques ao vivo na frente da professora!
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SLIDE 9: ANALISE DE EVOLUCAO E CENARIOS DA DEFESA                     -->
+    <!-- ===================================================================== -->
+    <section class="slide">
+      <div class="slide-header">
+        <div>
+          <div class="slide-kicker">9 &amp; 13. Análise de Evolução e Resposta a Mudanças de Cenário</div>
+          <h2 class="slide-title">"Se uma tecnologia ou integração mudar, o que é afetado?"</h2>
+        </div>
+        <span class="speaker-pill">Apresentação: Parte 4 (Phillip / Todos)</span>
+      </div>
+
+      <div class="slide-body">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 22%;">Cenário de Mudança</th>
+              <th style="width: 28%;">Elementos Afetados (Apenas Bordas)</th>
+              <th style="width: 25%;">Elementos 100% Inalterados</th>
+              <th style="width: 25%;">Decisão Arquitetural que Ajuda / Trade-off</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>1. Banco de Dados:</strong><br/><code>SQLite</code> &rarr; <code>PostgreSQL</code></td>
+              <td>Criar <code>PostgresServicoRepository</code> e <code>PostgresContratacaoRepository</code> em <code>adapters/outbound/</code> e injetar em <code>main.py</code>.</td>
+              <td><code>domain/</code>, <code>application/</code>, <code>ports/</code>, <code>adapters/inbound/</code> e testes em memória.</td>
+              <td><strong>ADR-002 (Repository + DIP):</strong> Domínio puro sem ORM. <em>Custo:</em> escrever SQL/Data Mapper do novo banco.</td>
+            </tr>
+            <tr class="row-highlight">
+              <td><strong>2. Notificações:</strong><br/><code>E-mail SMTP</code> &rarr; <code>WhatsApp API</code></td>
+              <td>Criar <code>WhatsAppNotificador(NotificadorPort)</code> em <code>adapters/outbound/</code> e trocar 1 linha no <code>main.py</code>.</td>
+              <td><code>domain/</code>, <code>application/</code> (UseCases), <code>ports/</code> e repositórios de dados.</td>
+              <td><strong>ADR-003 (Protected Variations / OCP):</strong> Caso de uso só conhece <code>NotificadorPort</code>.</td>
+            </tr>
+            <tr>
+              <td><strong>3. Nova Interface:</strong><br/>Inclusão de <code>App Mobile / API REST</code></td>
+              <td>Criar controlador REST em <code>adapters/inbound/</code> convertendo JSON &harr; UseCases.</td>
+              <td>Todo o núcleo (<code>domain/</code>, <code>application/</code>, <code>ports/</code>) e <code>adapters/outbound/</code>.</td>
+              <td><strong>ADR-001 (Hexagonal):</strong> Já comprovado na prática com <code>cli_controller.py</code> + <code>web_controller.py</code>!</td>
+            </tr>
+            <tr>
+              <td><strong>4. Aumento de Carga / Extração de Serviço</strong></td>
+              <td>Lock transacional no Postgres (<code>SELECT FOR UPDATE</code>) e adaptador <code>HttpNotificadorAdapter</code> ou Fila Assíncrona.</td>
+              <td>Regras de negócio em <code>domain/</code> e contratos das portas em <code>ports/</code>.</td>
+              <td><strong>ADR-001 &amp; ADR-003:</strong> Fronteiras modulares permitem extrair um adaptador para outro processo sem reescrever o domínio.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="speaker-notes">
+        <strong>Roteiro de Fala (Phillip / Grupo):</strong> Este slide responde diretamente à Seção 9 e às 5 perguntas surpresa listadas na Seção 13 do PDF da professora. Deixar este slide aberto durante a sessão de perguntas!
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SLIDE 10: CONCLUSAO E RESPOSTA A QUESTAO CENTRAL                      -->
+    <!-- ===================================================================== -->
+    <section class="slide">
+      <div class="slide-header">
+        <div>
+          <div class="slide-kicker">Conclusão e Síntese Arquitetural</div>
+          <h2 class="slide-title">Resposta à Questão Central da Disciplina</h2>
+        </div>
+        <span class="speaker-pill">Fechamento: Equipe CampusHub</span>
+      </div>
+
+      <div class="slide-body">
+        <div class="card card-indigo" style="text-align: center; padding: 20px;">
+          <p style="font-size: 1.1rem; color: #1e1b4b; font-weight: 700;">
+            "Como este sistema deve ser organizado para atender aos requisitos atuais e permitir sua evolução sem gerar dependências desnecessárias?"
+          </p>
+        </div>
+
+        <div class="grid-3">
+          <div class="card card-lavender">
+            <h3>1. Domínio Rico e Isolado no Centro</h3>
+            <p>
+              Encapsular as regras críticas universitárias (proibição de auto-contratação <code>RES01</code>, bloqueio de <em>slot</em> contra <em>overbooking</em> <code>RES02</code> e integridade de avaliações <code>RES03</code>) em entidades Python puras (<code>src/domain/</code>) guiadas por <strong>Information Expert</strong> e <strong>Creator (GRASP)</strong>.
+            </p>
+          </div>
+
+          <div class="card card-mint">
+            <h3>2. Orquestração Mediada por Portas</h3>
+            <p>
+              Fazer os Casos de Uso (<code>src/application/</code>) coordenarem transações dependendo exclusivamente de contratos abstratos (<code>src/ports/</code>), aplicando rigorosamente o <strong>Princípio da Inversão de Dependência (DIP)</strong> e o <strong>Princípio Aberto/Fechado (OCP)</strong>.
+            </p>
+          </div>
+
+          <div class="card card-amber">
+            <h3>3. Bordas Plugáveis e Testáveis</h3>
+            <p>
+              Relegar banco de dados (<code>SQLite</code> / <code>InMemory</code>), mensageria (<code>SMTP</code> / <code>Fake</code>) e interface (<code>CLI</code> / <code>Web</code>) a adaptadores externos intercambiáveis (<code>src/adapters/</code>), garantindo <strong>testes em milissegundos</strong> hoje e <strong>evolução sem refatoração</strong> amanhã.
+            </p>
+          </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 6px; font-size: 0.95rem; color: var(--muted); font-weight: 600;">
+          Obrigado! Estamos à disposição para perguntas e cenários de evolução.
+        </div>
+      </div>
+
+      <div class="speaker-notes">
+        <strong>Fechamento:</strong> Agradecer à professora e deixar o Front-end Web e o Slide 9 prontos para responder às perguntas da defesa.
+      </div>
+    </section>
+
+  </div>
+
+  <!-- BARRA DE CONTROLES INFERIOR -->
+  <div class="controls-bar">
+    <div>
+      <strong>CampusHub UFPR (Tema 11)</strong> • Use as setas do teclado <code>&larr;</code> <code>&rarr;</code> para navegar • Clique nos diagramas para ampliar
+    </div>
+
+    <div class="controls-btns">
+      <span id="slideCounter" style="font-weight: 700; color: #1e293b; margin-right: 8px;">Slide 1 / 10</span>
+      <button class="btn-ctrl" onclick="mudarSlide(-1)">&larr; Anterior</button>
+      <button class="btn-ctrl" onclick="mudarSlide(1)">Próximo &rarr;</button>
+      <button class="btn-ctrl" onclick="toggleNotas()" title="Atalho: Tecla N">📝 Notas de Fala (N)</button>
+      <button class="btn-ctrl" onclick="toggleFullscreen()" title="Atalho: Tecla F">⛶ Tela Cheia (F)</button>
+      <button class="btn-ctrl" onclick="window.print()" title="Exportar todos os slides para PDF">🖨️ Salvar PDF</button>
+    </div>
+  </div>
+
+  <!-- LIGHTBOX DE ZOOM PARA OS DIAGRAMAS UML -->
+  <div class="lightbox" id="lightbox" onclick="fecharZoom()">
+    <img id="lightboxImg" src="" alt="Diagrama Ampliado" />
+  </div>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    let slideAtual = 0;
+
+    function atualizarSlide() {
+      slides.forEach((s, idx) => {
+        s.classList.toggle('active', idx === slideAtual);
+      });
+      document.getElementById('slideCounter').textContent = `Slide ${slideAtual + 1} / ${slides.length}`;
+      const pct = ((slideAtual + 1) / slides.length) * 100;
+      document.getElementById('progressFill').style.width = `${pct}%`;
+    }
+
+    function mudarSlide(delta) {
+      const novo = slideAtual + delta;
+      if (novo >= 0 && novo < slides.length) {
+        slideAtual = novo;
+        atualizarSlide();
+      }
+    }
+
+    function toggleNotas() {
+      document.body.classList.toggle('show-notes');
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    function abrirZoom(src) {
+      const lb = document.getElementById('lightbox');
+      document.getElementById('lightboxImg').src = src;
+      lb.classList.add('open');
+    }
+
+    function fecharZoom() {
+      document.getElementById('lightbox').classList.remove('open');
+    }
+
+    document.addEventListener('keydown', (e) => {
+      const lb = document.getElementById('lightbox');
+      if (lb.classList.contains('open')) {
+        if (e.key === 'Escape' || e.key === ' ') fecharZoom();
+        return;
+      }
+      if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') {
+        e.preventDefault();
+        mudarSlide(1);
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault();
+        mudarSlide(-1);
+      } else if (e.key === 'n' || e.key === 'N') {
+        toggleNotas();
+      } else if (e.key === 'f' || e.key === 'F') {
+        toggleFullscreen();
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Guia Completo do Código — CampusHub UFPR (Tema 11)</title>
+  <style>
+    :root {
+      --bg: #f6f8fc;
+      --surface: #ffffff;
+      --surface-soft: #f8fafc;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --muted: #475569;
+
+      /* Paleta Soft Pastel */
+      --indigo-bg: #e0e7ff;
+      --indigo-bd: #c7d2fe;
+      --indigo-tx: #3730a3;
+      --indigo-ac: #4f46e5;
+
+      --mint-bg: #dcfce7;
+      --mint-bd: #bbf7d0;
+      --mint-tx: #166534;
+
+      --rose-bg: #ffe4e6;
+      --rose-bd: #fecdd3;
+      --rose-tx: #9f1239;
+
+      --amber-bg: #fef3c7;
+      --amber-bd: #fde68a;
+      --amber-tx: #92400e;
+
+      --lavender-bg: #f3e8ff;
+      --lavender-bd: #e9d5ff;
+      --lavender-tx: #6b21a8;
+
+      --sky-bg: #e0f2fe;
+      --sky-bd: #bae6fd;
+      --sky-tx: #075985;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding-bottom: 60px;
+    }
+
+    /* Header */
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 32px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(15, 23, 42, 0.04);
+    }
+    .header-inner {
+      max-width: 1380px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+    .header-title h1 {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #1e1b4b;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .header-title p {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    .nav-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .nav-pill {
+      text-decoration: none;
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface-soft);
+      color: var(--muted);
+      transition: all 0.15s;
+    }
+    .nav-pill:hover {
+      background: var(--indigo-bg);
+      color: var(--indigo-tx);
+      border-color: var(--indigo-bd);
+    }
+
+    /* Layout Principal */
+    .container {
+      max-width: 1380px;
+      margin: 28px auto 0;
+      padding: 0 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .section-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 28px 32px;
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.02);
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 12px;
+      border-bottom: 2px solid #f1f5f9;
+      padding-bottom: 14px;
+      margin-bottom: 20px;
+    }
+    .kicker {
+      font-size: 0.76rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--indigo-ac);
+    }
+    .section-head h2 {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 999px;
+    }
+    .badge-lavender { background: var(--lavender-bg); color: var(--lavender-tx); border: 1px solid var(--lavender-bd); }
+    .badge-amber { background: var(--amber-bg); color: var(--amber-tx); border: 1px solid var(--amber-bd); }
+    .badge-mint { background: var(--mint-bg); color: var(--mint-tx); border: 1px solid var(--mint-bd); }
+    .badge-rose { background: var(--rose-bg); color: var(--rose-tx); border: 1px solid var(--rose-bd); }
+    .badge-sky { background: var(--sky-bg); color: var(--sky-tx); border: 1px solid var(--sky-bd); }
+    .badge-indigo { background: var(--indigo-bg); color: var(--indigo-tx); border: 1px solid var(--indigo-bd); }
+
+    /* Grids */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; }
+    @media (max-width: 980px) {
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: var(--surface-soft);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px 20px;
+    }
+    .card h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #1e293b;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .card p, .card li {
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+    .card ul {
+      padding-left: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .card-lavender { background: #faf5ff; border-color: var(--lavender-bd); }
+    .card-mint { background: #f2fdf6; border-color: var(--mint-bd); }
+    .card-amber { background: #fffbeb; border-color: var(--amber-bd); }
+    .card-rose { background: #fff5f6; border-color: var(--rose-bd); }
+    .card-sky { background: #f0f9ff; border-color: var(--sky-bd); }
+    .card-indigo { background: #f5f7ff; border-color: var(--indigo-bd); }
+
+    /* Blocos de Codigo */
+    pre {
+      background: #1e293b;
+      color: #f8fafc;
+      padding: 16px 18px;
+      border-radius: 12px;
+      overflow-x: auto;
+      font-family: 'Cascadia Code', 'Fira Code', Consolas, monospace;
+      font-size: 0.83rem;
+      line-height: 1.55;
+      margin-top: 10px;
+      border: 1px solid #334155;
+    }
+    code {
+      font-family: 'Cascadia Code', 'Fira Code', Consolas, monospace;
+      font-size: 0.85em;
+      background: rgba(15, 23, 42, 0.07);
+      padding: 2px 6px;
+      border-radius: 5px;
+      color: #1e1b4b;
+      font-weight: 600;
+    }
+    pre code {
+      background: transparent;
+      color: inherit;
+      padding: 0;
+      font-weight: normal;
+    }
+    .kw { color: #c084fc; font-weight: bold; }
+    .cls { color: #38bdf8; font-weight: bold; }
+    .fn { color: #fde047; }
+    .cm { color: #94a3b8; font-style: italic; }
+    .st { color: #86efac; }
+
+    /* Fluxo Passo a Passo */
+    .flow-steps {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 12px;
+    }
+    @media (max-width: 1100px) {
+      .flow-steps { grid-template-columns: repeat(2, 1fr); }
+    }
+    .flow-step {
+      background: var(--surface-soft);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      position: relative;
+    }
+    .flow-num {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--indigo-ac);
+      color: white;
+      font-weight: 800;
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 8px;
+    }
+    .flow-step h4 {
+      font-size: 0.9rem;
+      color: #0f172a;
+      margin-bottom: 4px;
+    }
+    .flow-step p {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    /* Tabela Cola da Defesa */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    th {
+      background: #f1f5f9;
+      padding: 12px 14px;
+      text-align: left;
+      font-weight: 700;
+      color: #1e293b;
+      border-bottom: 1px solid var(--border);
+    }
+    td {
+      padding: 12px 14px;
+      border-bottom: 1px solid #f1f5f9;
+      color: #334155;
+      vertical-align: top;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:nth-child(even) { background: #f8fafc; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <div class="header-title">
+        <h1>
+          Guia Completo do Código — CampusHub UFPR
+          <span class="badge badge-indigo">Arquitetura Hexagonal em Python</span>
+        </h1>
+        <p>Explicação detalhada de todos os arquivos, classes, métodos e decisões GRASP/SOLID para estudo da equipe e defesa</p>
+      </div>
+
+      <nav class="nav-pills">
+        <a href="#fluxo" class="nav-pill">1. Fluxo de Execução</a>
+        <a href="#dominio" class="nav-pill">2. Domínio (domain/)</a>
+        <a href="#portas" class="nav-pill">3. Portas (ports/)</a>
+        <a href="#aplicacao" class="nav-pill">4. Casos de Uso (application/)</a>
+        <a href="#outbound" class="nav-pill">5. Infraestrutura (outbound/)</a>
+        <a href="#inbound" class="nav-pill">6. Entrada &amp; Main (inbound/)</a>
+        <a href="#cola-defesa" class="nav-pill">7. Cola Rápida p/ Defesa</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <!-- =================================================================== -->
+    <!-- 1. VISAO GERAL DO FLUXO DE EXECUCAO                                 -->
+    <!-- =================================================================== -->
+    <section class="section-box" id="fluxo">
+      <div class="section-head">
+        <div>
+          <div class="kicker">Visão Ponta a Ponta</div>
+          <h2>1. Como o Código Funciona em Tempo de Execução?</h2>
+        </div>
+        <span class="badge badge-mint">De Fora para Dentro (Inversão de Dependência)</span>
+      </div>
+
+      <p style="color: var(--muted); margin-bottom: 18px; font-size: 0.94rem;">
+        Quando alguém roda <code>python -m src.main</code> (ou clica em <strong>"Agendar Horário"</strong> no Front-end Web), a requisição atravessa as camadas seguindo exatamente esta sequência de 6 passos:
+      </p>
+
+      <div class="flow-steps">
+        <div class="flow-step" style="background: #f5f7ff; border-color: var(--indigo-bd);">
+          <div class="flow-num">1</div>
+          <h4>Bootstrap (<code>src/main.py</code>)</h4>
+          <p>É o <em>Composition Root</em>: instancia o banco <code>SQLite</code> e o <code>EmailNotificador</code> e injeta-os dentro dos Casos de Uso pelo construtor.</p>
+        </div>
+
+        <div class="flow-step" style="background: #f0f9ff; border-color: var(--sky-bd);">
+          <div class="flow-num">2</div>
+          <h4>Entrada (<code>adapters/inbound</code>)</h4>
+          <p>O <code>MarketplaceController</code> (CLI) ou <code>web_controller.py</code> (HTTP) recebe o pedido do usuário e chama <code>use_case.executar(...)</code>.</p>
+        </div>
+
+        <div class="flow-step" style="background: #f2fdf6; border-color: var(--mint-bd);">
+          <div class="flow-num">3</div>
+          <h4>Orquestração (<code>src/application</code>)</h4>
+          <p>O <code>SolicitarContratacaoUseCase</code> busca o serviço pela porta abstrata <code>servico_repo.buscar_por_id()</code>.</p>
+        </div>
+
+        <div class="flow-step" style="background: #faf5ff; border-color: var(--lavender-bd);">
+          <div class="flow-num">4</div>
+          <h4>Regras Puras (<code>src/domain</code>)</h4>
+          <p>As entidades <code>Servico</code> e <code>SlotDisponibilidade</code> validam <strong>RES01</strong> (auto-contratação) e <strong>RES02</strong> (overbooking) em memória.</p>
+        </div>
+
+        <div class="flow-step" style="background: #fff5f6; border-color: var(--rose-bd);">
+          <div class="flow-num">5</div>
+          <h4>Persistência (<code>adapters/outbound</code>)</h4>
+          <p>Se nenhuma exceção foi lançada, o caso de uso chama <code>salvar()</code> nos repositórios SQLite dentro de uma transação atômica <code>with self.conn:</code>.</p>
+        </div>
+
+        <div class="flow-step" style="background: #fffbeb; border-color: var(--amber-bd);">
+          <div class="flow-num">6</div>
+          <h4>Notificação (<code>NotificadorPort</code>)</h4>
+          <p>Somente <strong>após</strong> gravar no banco com sucesso, o caso de uso chama <code>notificador.notificar()</code> (SMTP ou Fake).</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- 2. CAMADA DE DOMINIO (src/domain/)                                  -->
+    <!-- =================================================================== -->
+    <section class="section-box" id="dominio">
+      <div class="section-head">
+        <div>
+          <div class="kicker">Núcleo do Sistema • Zero Dependências Externas</div>
+          <h2>2. Camada de Domínio (<code>src/domain/</code>)</h2>
+        </div>
+        <span class="badge badge-lavender">Rich Domain Model • Information Expert &amp; Creator (GRASP)</span>
+      </div>
+
+      <p style="color: var(--muted); margin-bottom: 18px; font-size: 0.93rem;">
+        Esta é a camada mais importante do trabalho. Note que nos arquivos <code>src/domain/entidades.py</code> e <code>src/domain/excecoes.py</code> <strong>não existe nenhum <code>import sqlite3</code>, nem HTTP, nem JSON</strong>. O único motivo para esses arquivos mudarem (<strong>SRP - SOLID</strong>) é se uma regra de negócio da universidade mudar.
+      </p>
+
+      <div class="grid-2">
+        <div class="card card-lavender">
+          <h3>
+            <span>2.1 <code>src/domain/excecoes.py</code></span>
+            <span class="badge badge-lavender">Exceções Semânticas</span>
+          </h3>
+          <p>Define a classe base <code>ErroDominio(Exception)</code> e 6 subclasses específicas que representam violações das regras do edital:</p>
+          <ul>
+            <li><code>AutoContratacaoError</code> &rarr; Protege a <strong>RES01</strong> (prestador tentando contratar o próprio serviço).</li>
+            <li><code>SlotIndisponivelError</code> &rarr; Protege a <strong>RES02 e ASR-02</strong> (tentativa de <em>overbooking</em> em horário já reservado).</li>
+            <li><code>TransicaoEstadoInvalidaError</code> &rarr; Impede avaliar antes de concluir, avaliar duas vezes ou cancelar contrato já concluído (<strong>RES03</strong>).</li>
+            <li><code>NotaInvalidaError</code> &rarr; Impede nota fora de <code>1..5</code> ou comentário vazio (<strong>RES03</strong>).</li>
+            <li><code>PermissaoNegadaError</code> &rarr; Garante que só o prestador conclua (<strong>RF06</strong>) e só o solicitante avalie (<strong>RF07</strong>).</li>
+            <li><code>IntervaloHorarioInvalidoError</code> &rarr; Impede criar um slot com <code>fim &lt;= inicio</code>.</li>
+          </ul>
+        </div>
+
+        <div class="card card-lavender">
+          <h3>
+            <span>2.2 <code>SlotDisponibilidade</code> e <code>Servico</code></span>
+            <span class="badge badge-lavender">Information Expert &amp; Creator</span>
+          </h3>
+          <p>Em vez de o Caso de Uso fazer <code>if slot.status == LIVRE:</code> (o que seria um <em>Modelo Anêmico</em>), a própria entidade protege seu estado:</p>
+<pre><code><span class="kw">class</span> <span class="cls">SlotDisponibilidade</span>:
+    <span class="kw">def</span> <span class="fn">reservar</span>(self) -> <span class="cls">None</span>:
+        <span class="cm"># Information Expert (GRASP): o Slot detém 'self.status',</span>
+        <span class="cm"># logo ele mesmo valida e bloqueia overbooking (ASR-02)</span>
+        <span class="kw">if not</span> self.esta_livre():
+            <span class="kw">raise</span> <span class="cls">SlotIndisponivelError</span>()
+        self.status = StatusSlot.RESERVADO
+
+<span class="kw">class</span> <span class="cls">Servico</span>:
+    <span class="kw">def</span> <span class="fn">adicionar_slot</span>(self, inicio, fim) -> <span class="cls">SlotDisponibilidade</span>:
+        <span class="cm"># Creator (GRASP): Servico contém e agrega SlotDisponibilidade</span>
+        novo_slot = <span class="cls">SlotDisponibilidade</span>(f<span class="st">"slot-{len(self.slots)+1}"</span>, self.id, inicio, fim)
+        self.slots.append(novo_slot)
+        <span class="kw">return</span> novo_slot
+
+    <span class="kw">def</span> <span class="fn">validar_contratante</span>(self, solicitante_id: str) -> <span class="cls">None</span>:
+        <span class="cm"># Information Expert (GRASP): Servico detém 'self.prestador_id' (RES01)</span>
+        <span class="kw">if</span> solicitante_id == self.prestador_id:
+            <span class="kw">raise</span> <span class="cls">AutoContratacaoError</span>()</code></pre>
+        </div>
+      </div>
+
+      <div class="card card-lavender" style="margin-top: 18px;">
+        <h3>
+          <span>2.3 <code>Contratacao</code> e <code>Avaliacao</code> (<code>src/domain/entidades.py</code>)</span>
+          <span class="badge badge-lavender">Raiz de Agregado &amp; Creator GRASP</span>
+        </h3>
+        <p>
+          Por que ninguém instancia <code>Avaliacao(...)</code> solta no meio do sistema? Porque segundo a <strong>RES03</strong>, uma avaliação só pode existir vinculada a uma contratação real que já atingiu o estado <code>CONCLUIDA</code>. Por isso aplicamos o padrão <strong>Creator (GRASP)</strong> dentro de <code>Contratacao.registrar_avaliacao()</code>:
+        </p>
+<pre><code><span class="kw">class</span> <span class="cls">Contratacao</span>:
+    <span class="kw">def</span> <span class="fn">concluir</span>(self, usuario_id: Optional[str] = <span class="cls">None</span>) -> <span class="cls">None</span>:
+        <span class="kw">if</span> usuario_id <span class="kw">is not None and</span> usuario_id != self.prestador_id:
+            <span class="kw">raise</span> <span class="cls">PermissaoNegadaError</span>(<span class="st">"Apenas o prestador responsável pode concluir (RF06)."</span>)
+        <span class="kw">if</span> self.status != StatusContratacao.CONFIRMADA:
+            <span class="kw">raise</span> <span class="cls">TransicaoEstadoInvalidaError</span>(<span class="st">"Apenas contratações CONFIRMADAS podem ser concluídas."</span>)
+        self.status = StatusContratacao.CONCLUIDA
+
+    <span class="kw">def</span> <span class="fn">registrar_avaliacao</span>(self, nota: int, comentario: str, solicitante_id: Optional[str] = <span class="cls">None</span>) -> <span class="cls">Avaliacao</span>:
+        <span class="cm"># 1. Valida se quem está avaliando é realmente o solicitante (RF07)</span>
+        <span class="kw">if</span> solicitante_id <span class="kw">is not None and</span> solicitante_id != self.solicitante_id:
+            <span class="kw">raise</span> <span class="cls">PermissaoNegadaError</span>(<span class="st">"Apenas o solicitante pode registrar avaliação (RF07)."</span>)
+        <span class="cm"># 2. Valida máquina de estados e unicidade da avaliação (RES03)</span>
+        <span class="kw">if</span> self.status != StatusContratacao.CONCLUIDA:
+            <span class="kw">raise</span> <span class="cls">TransicaoEstadoInvalidaError</span>(<span class="st">"A avaliação só pode ser registrada para contratações CONCLUÍDAS."</span>)
+        <span class="kw">if</span> self.avaliacao <span class="kw">is not None</span>:
+            <span class="kw">raise</span> <span class="cls">TransicaoEstadoInvalidaError</span>(<span class="st">"Esta contratação já possui uma avaliação registrada."</span>)
+
+        <span class="cm"># 3. Creator (GRASP): Instancia Avaliacao (que por sua vez valida 1 <= nota <= 5 no __init__)</span>
+        self.avaliacao = <span class="cls">Avaliacao</span>(f<span class="st">"aval-{self.id}"</span>, self.id, nota, comentario)
+        <span class="kw">return</span> self.avaliacao</code></pre>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- 3. CAMADA DE PORTAS (src/ports/interfaces.py)                       -->
+    <!-- =================================================================== -->
+    <section class="section-box" id="portas">
+      <div class="section-head">
+        <div>
+          <div class="kicker">Fronteira Hexagonal • Contratos Abstratos</div>
+          <h2>3. Camada de Portas de Saída (<code>src/ports/interfaces.py</code>)</h2>
+        </div>
+        <span class="badge badge-amber">DIP &amp; ISP (SOLID) • Indirection &amp; Protected Variations (GRASP)</span>
+      </div>
+
+      <div class="grid-2">
+        <div class="card card-amber">
+          <h3>O que este arquivo faz?</h3>
+          <p>
+            Declara <strong>3 classes base abstratas (<code>abc.ABC</code>)</strong> que funcionam como "tomadas" (Portas). Os Casos de Uso só enxergam essas 3 interfaces; eles não fazem ideia se os dados vêm de um dicionário em memória, de um arquivo SQLite ou de um servidor PostgreSQL.
+          </p>
+          <ul>
+            <li><strong>Princípio da Segregação de Interfaces (ISP - SOLID):</strong> Em vez de criar uma interface gigante <code>BancoDeDadosPort</code>, separamos em 3 interfaces pequenas e coesas:
+              <ul>
+                <li><code>ServicoRepository</code> (<code>salvar</code>, <code>buscar_por_id</code>, <code>listar_disponiveis</code>)</li>
+                <li><code>ContratacaoRepository</code> (<code>salvar</code>, <code>buscar_por_id</code>, <code>listar_por_usuario</code>)</li>
+                <li><code>NotificadorPort</code> (<code>notificar(destinatario, assunto, mensagem)</code>)</li>
+              </ul>
+            </li>
+            <li>Assim, o <code>ConsultarServicosUseCase</code> depende <strong>apenas</strong> de <code>ServicoRepository</code>!</li>
+          </ul>
+        </div>
+
+        <div>
+<pre style="margin-top: 0;"><code><span class="kw">from</span> abc <span class="kw">import</span> ABC, abstractmethod
+<span class="kw">from</span> src.domain.entidades <span class="kw">import</span> Contratacao, Servico
+
+<span class="kw">class</span> <span class="cls">ServicoRepository</span>(ABC):
+    @abstractmethod
+    <span class="kw">def</span> <span class="fn">salvar</span>(self, servico: Servico) -> <span class="cls">None</span>: <span class="kw">pass</span>
+
+    @abstractmethod
+    <span class="kw">def</span> <span class="fn">buscar_por_id</span>(self, servico_id: str) -> Optional[Servico]: <span class="kw">pass</span>
+
+    @abstractmethod
+    <span class="kw">def</span> <span class="fn">listar_disponiveis</span>(self) -> List[Servico]: <span class="kw">pass</span>
+
+<span class="kw">class</span> <span class="cls">NotificadorPort</span>(ABC):
+    @abstractmethod
+    <span class="kw">def</span> <span class="fn">notificar</span>(self, destinatario: str, assunto: str, mensagem: str) -> <span class="cls">None</span>:
+        <span class="kw">pass</span></code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- 4. CAMADA DE APLICACAO / CASOS DE USO (src/application/)            -->
+    <!-- =================================================================== -->
+    <section class="section-box" id="aplicacao">
+      <div class="section-head">
+        <div>
+          <div class="kicker">Orquestração de Fluxo Transacional</div>
+          <h2>4. Camada de Aplicação / Casos de Uso (<code>src/application/casos_de_uso.py</code>)</h2>
+        </div>
+        <span class="badge badge-mint">Controller (GRASP) • OCP &amp; DIP (SOLID)</span>
+      </div>
+
+      <p style="color: var(--muted); margin-bottom: 18px; font-size: 0.93rem;">
+        Os Casos de Uso recebem as Portas no construtor (<strong>Injeção de Dependência</strong>) e apenas coordenam a conversa entre os Repositórios, as Entidades de Domínio e o Notificador.
+      </p>
+
+      <div class="grid-2">
+        <div class="card card-mint">
+          <h3>4.1 <code>SolicitarContratacaoUseCase</code> (Fatia Vertical de Mutação)</h3>
+          <p>Observe como o método <code>executar()</code> bate linha por linha com o <strong>Diagrama de Sequência</strong> e com o <strong>Diagrama de Comunicação</strong>:</p>
+<pre><code><span class="kw">class</span> <span class="cls">SolicitarContratacaoUseCase</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, servico_repo: ServicoRepository,
+                 contratacao_repo: ContratacaoRepository,
+                 notificador: NotificadorPort):
+        <span class="cm"># DIP (SOLID): recebe abstrações, nunca classes concretas!</span>
+        self.servico_repo = servico_repo
+        self.contratacao_repo = contratacao_repo
+        self.notificador = notificador
+
+    <span class="kw">def</span> <span class="fn">executar</span>(self, servico_id: str, slot_id: str, solicitante_id: str) -> <span class="cls">Contratacao</span>:
+        <span class="cm"># Passo 1.2: Busca o serviço no repositório</span>
+        servico = self.servico_repo.buscar_por_id(servico_id)
+        <span class="kw">if</span> servico <span class="kw">is None</span>:
+            <span class="kw">raise</span> <span class="cls">ErroDominio</span>(f<span class="st">"Serviço '{servico_id}' não encontrado."</span>)
+
+        <span class="cm"># Passo 1.3: Delega validação de auto-contratação (RES01) ao Domínio</span>
+        servico.validar_contratante(solicitante_id)
+
+        <span class="cm"># Passos 1.4 e 1.5: Busca o slot e reserva (protege ASR-02 / Anti-Overbooking)</span>
+        slot = servico.buscar_slot(slot_id)
+        slot.reservar()
+
+        <span class="cm"># Passo 1.5.1: Instancia a contratação CONFIRMADA</span>
+        nova_contratacao = <span class="cls">Contratacao</span>(
+            id=f<span class="st">"cont-{uuid4().hex[:8]}"</span>,
+            servico_id=servico.id, slot_id=slot.id,
+            solicitante_id=solicitante_id, prestador_id=servico.prestador_id
+        )
+
+        <span class="cm"># Passos 1.6 e 1.7: Persiste o slot atualizado e a nova contratação</span>
+        self.servico_repo.salvar(servico)
+        self.contratacao_repo.salvar(nova_contratacao)
+
+        <span class="cm"># Passo 1.8: Só dispara notificação externa APÓS persistir com sucesso!</span>
+        self.notificador.notificar(destinatario=servico.prestador_id, ...)
+        <span class="kw">return</span> nova_contratacao</code></pre>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <div class="card card-mint">
+            <h3>4.2 <code>ConsultarServicosUseCase</code> &amp; <code>ConsultarContratacoesUseCase</code></h3>
+            <p>Implementam as consultas (<em>Queries</em>) exigidas na Seção 7 do PDF:</p>
+            <ul>
+              <li><code>ConsultarServicosUseCase.executar(apenas_com_slots_livres=True)</code>: busca os serviços no <code>ServicoRepository</code> e, quando o filtro está ativo, retorna apenas aqueles onde <code>len(s.obter_slots_livres()) &gt; 0</code>.</li>
+              <li><code>ConsultarContratacoesUseCase.executar(usuario_id)</code>: lista o histórico de contratações de um membro (como solicitante ou prestador).</li>
+            </ul>
+          </div>
+
+          <div class="card card-mint">
+            <h3>4.3 <code>ConcluirEAvaliarUseCase</code></h3>
+            <p>Orquestra o fechamento do ciclo de vida do contrato (<strong>RF06 e RF07</strong>):</p>
+            <ul>
+              <li><code>concluir(contratacao_id, usuario_id)</code>: recupera a contratação do repositório, chama <code>contratacao.concluir(usuario_id)</code> no domínio, salva o novo status <code>CONCLUIDA</code> e dispara e-mail avisando o solicitante que ele já pode avaliar.</li>
+              <li><code>avaliar(contratacao_id, nota, comentario, solicitante_id)</code>: recupera a contratação, delega a criação da avaliação para <code>contratacao.registrar_avaliacao(...)</code> (<em>Creator GRASP</em>) e persiste no repositório.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- 5. ADAPTADORES SECUNDARIOS / OUTBOUND (src/adapters/outbound/)      -->
+    <!-- =================================================================== -->
+    <section class="section-box" id="outbound">
+      <div class="section-head">
+        <div>
+          <div class="kicker">Infraestrutura Plugável • Implementação Técnica das Portas</div>
+          <h2>5. Adaptadores Secundários (<code>src/adapters/outbound/</code>)</h2>
+        </div>
+        <span class="badge badge-rose">Pure Fabrication (GRASP) • LSP &amp; DIP (SOLID)</span>
+      </div>
+
+      <div class="grid-3">
+        <div class="card card-rose">
+          <h3>
+            <span>5.1 <code>notificadores.py</code></span>
+            <span class="badge badge-rose">Seção 8 / ASR-01</span>
+          </h3>
+          <p>Contém duas classes que herdam de <code>NotificadorPort</code>:</p>
+          <ul>
+            <li><strong><code>EmailNotificador</code>:</strong> Simula o despacho via servidor SMTP institucional (<code>[SMTP:smtp.ufpr.br] Para: ...</code>).</li>
+            <li><strong><code>NotificadorFake</code>:</strong> <em>Test Double (Spy)</em> que guarda cada mensagem enviada numa lista em memória (<code>self.mensagens_enviadas</code>). Permite que os testes automatizados façam <code>assert len(notificador.mensagens_enviadas) == 1</code> sem precisar de rede!</li>
+          </ul>
+        </div>
+
+        <div class="card card-rose">
+          <h3>
+            <span>5.2 <code>memoria_repositorios.py</code></span>
+            <span class="badge badge-rose">ASR-03 (Testes &lt; 1s)</span>
+          </h3>
+          <p>Implementa <code>InMemoryServicoRepository</code> e <code>InMemoryContratacaoRepository</code> usando dicionários Python (<code>self.servicos = {}</code>).</p>
+          <p style="margin-top: 8px;">
+            <strong>Por que existe?</strong> Graças ao <strong>Princípio da Substituição de Liskov (LSP)</strong>, podemos injetar esses repositórios em memória nos testes unitários para testar 100% das regras de negócio em milissegundos sem tocar no disco!
+          </p>
+        </div>
+
+        <div class="card card-rose">
+          <h3>
+            <span>5.3 <code>sqlite_repositorios.py</code></span>
+            <span class="badge badge-rose">ASR-02 (ACID SQLite)</span>
+          </h3>
+          <p>Implementa a persistência relacional real com a biblioteca nativa <code>sqlite3</code> (4 tabelas: <code>servicos</code>, <code>slots</code>, <code>contratacoes</code>, <code>avaliacoes</code>):</p>
+          <ul>
+            <li><strong>Atomicidade (<code>with self.conn:</code>):</strong> Abre transação SQLite que faz <code>COMMIT</code> automático no fim do bloco ou <code>ROLLBACK</code> se houver falha.</li>
+            <li><strong>Padrão <em>Data Mapper</em> (ADR-002):</strong> Os métodos privados <code>_reconstruir_servico()</code> e <code>_reconstruir_contratacao()</code> convertem as linhas SQL de volta para os objetos puros do Domínio.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- 6. ADAPTADORES PRIMARIOS (INBOUND), MAIN.PY E TESTES                -->
+    <!-- =================================================================== -->
+    <section class="section-box" id="inbound">
+      <div class="section-head">
+        <div>
+          <div class="kicker">Camada de Apresentação, Bootstrap e Verificação</div>
+          <h2>6. Adaptadores de Entrada (<code>adapters/inbound/</code>), <code>main.py</code> e Testes</h2>
+        </div>
+        <span class="badge badge-sky">Controller (GRASP) • Composition Root</span>
+      </div>
+
+      <div class="grid-3">
+        <div class="card card-sky">
+          <h3>6.1 <code>cli_controller.py</code></h3>
+          <p>
+            Implementa o <code>MarketplaceController</code> (Adaptador Primário de Terminal). Ele recebe os 3 Casos de Uso no construtor, chama os métodos de aplicação e envolve as chamadas em blocos <code>try / except ErroDominio</code> para exibir mensagens amigáveis no terminal sem deixar o programa quebrar com <em>stacktrace</em>.
+          </p>
+        </div>
+
+        <div class="card card-sky">
+          <h3>6.2 <code>web_controller.py</code></h3>
+          <p>
+            Segundo Adaptador Primário (Interface Gráfica Web em <code>http://localhost:8000</code> usando <code>http.server</code> nativo).
+          </p>
+          <p style="margin-top: 6px;">
+            <strong>Por que é importante na defesa?</strong> Prova na prática a <strong>Análise de Evolução (Seção 9)</strong>: adicionamos uma interface Web inteira com API JSON consumindo os <strong>mesmos Casos de Uso e o mesmo SQLite</strong> sem mudar 1 linha do Domínio!
+          </p>
+        </div>
+
+        <div class="card card-indigo">
+          <h3>6.3 <code>src/main.py</code> (Composition Root)</h3>
+          <p>
+            É o <strong>único arquivo do sistema</strong> que conhece todas as classes concretas ao mesmo tempo para "ligar os fios" (Injeção de Dependência):
+          </p>
+          <ul>
+            <li><code>python -m src.main</code> &rarr; Roda os 8 passos da fatia vertical no terminal e grava em <code>campushub.db</code>.</li>
+            <li><code>python -m src.main --web</code> &rarr; Sobe o Front-end Web interativo na porta 8000.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- 7. COLA RAPIDA PARA A DEFESA ("ONDE ESTA NO CODIGO?")               -->
+    <!-- =================================================================== -->
+    <section class="section-box" id="cola-defesa">
+      <div class="section-head">
+        <div>
+          <div class="kicker">Mapa Rápido para Perguntas da Professora</div>
+          <h2>7. "Me mostra no código onde está..." (Guia de Navegação Rápida)</h2>
+        </div>
+        <span class="badge badge-indigo">Pronto para Consulta na Defesa</span>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 28%;">Se a professora pedir para ver...</th>
+            <th style="width: 32%;">Qual arquivo e método abrir</th>
+            <th style="width: 40%;">O que explicar ao mostrar a tela</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Inversão de Dependência (DIP - SOLID) e Ports &amp; Adapters</strong></td>
+            <td>
+              1) <code>src/ports/interfaces.py</code><br/>
+              2) <code>src/application/casos_de_uso.py</code> (linhas 14–23)
+            </td>
+            <td>Mostrar que o construtor do <code>SolicitarContratacaoUseCase</code> recebe apenas as interfaces abstratas (<code>ServicoRepository</code>, <code>ContratacaoRepository</code>, <code>NotificadorPort</code>) e nunca importa SQLite ou SMTP.</td>
+          </tr>
+          <tr>
+            <td><strong>Injeção de Dependência (Onde as classes concretas são plugadas?)</strong></td>
+            <td>
+              <code>src/main.py</code> (função <code>executar_demonstracao_fatia_vertical</code>, linhas 86–109)
+            </td>
+            <td>Mostrar que o <code>main.py</code> instancia <code>SqliteServicoRepository</code> e <code>EmailNotificador</code> e passa como argumento para os casos de uso. Para trocar por WhatsApp ou Postgres, só muda essa linha!</td>
+          </tr>
+          <tr>
+            <td><strong>Information Expert (GRASP) e Anti-Overbooking (ASR-02 / RES02)</strong></td>
+            <td>
+              <code>src/domain/entidades.py</code>:<br/>
+              • <code>SlotDisponibilidade.reservar()</code> (linha 51)<br/>
+              • <code>Servico.validar_contratante()</code> (linha 108)
+            </td>
+            <td>Mostrar que quem verifica se o slot está livre e muda para <code>RESERVADO</code> (ou lança <code>SlotIndisponivelError</code>) é a própria entidade <code>SlotDisponibilidade</code>, e quem bloqueia auto-contratação é <code>Servico</code>.</td>
+          </tr>
+          <tr>
+            <td><strong>Creator (GRASP) e Integridade da Avaliação (RES03)</strong></td>
+            <td>
+              <code>src/domain/entidades.py</code>:<br/>
+              • <code>Contratacao.registrar_avaliacao()</code> (linha 184)
+            </td>
+            <td>Mostrar que <code>Contratacao</code> valida se quem avalia é o solicitante, checa se <code>self.status == StatusContratacao.CONCLUIDA</code> e se ainda não há avaliação antes de instanciar <code>Avaliacao(...)</code>.</td>
+          </tr>
+          <tr>
+            <td><strong>Dependência Externa Substituível (Seção 8 / ASR-01)</strong></td>
+            <td>
+              <code>src/adapters/outbound/notificadores.py</code>
+            </td>
+            <td>Mostrar <code>EmailNotificador</code> e <code>NotificadorFake</code> lado a lado implementando a mesma porta <code>NotificadorPort</code>.</td>
+          </tr>
+          <tr>
+            <td><strong>Testabilidade Isolada em Memória vs. Banco Real (ASR-03)</strong></td>
+            <td>
+              <code>src/tests/test_casos_de_uso.py</code>:<br/>
+              • <code>test_solicitar_contratacao_use_case()</code> (InMemory)<br/>
+              • <code>test_fluxo_completo_com_sqlite()</code> (SQLite)
+            </td>
+            <td>Mostrar que o mesmo <code>SolicitarContratacaoUseCase</code> é testado primeiro com <code>InMemoryServicoRepository</code> + <code>NotificadorFake</code> e depois com <code>SqliteServicoRepository</code> sem mudar uma linha do caso de uso!</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+  </div>
+
+</body>
+</html>
